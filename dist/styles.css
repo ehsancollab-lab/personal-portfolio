@@ -235,6 +235,12 @@ button { font: inherit; }
   background: var(--surface);
 }
 
+.project-card-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
 .project-card img {
   display: block;
   width: 100%;

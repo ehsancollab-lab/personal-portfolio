@@ -14,6 +14,13 @@ const safeStorage = {
   },
 };
 
+const contentStorageKey = "ehsan-portfolio-cms-v1";
+let contentOverride = null;
+try {
+  const storedContent = safeStorage.get(contentStorageKey);
+  if (storedContent) contentOverride = JSON.parse(storedContent);
+} catch { /* Ignore malformed browser-local draft data and use the supplied content. */ }
+
 const languageParam = new URLSearchParams(window.location.search).get("lang");
 const savedLanguage = safeStorage.get("ehsan-portfolio-language");
 const browserLanguage = navigator.language?.toLowerCase().startsWith("fa") ? "fa" : "en";
@@ -24,9 +31,10 @@ let theme = safeStorage.get("ehsan-portfolio-theme") === "dark" ? "dark" : "ligh
 
 function externalAnchor(href, text) {
   const anchor = document.createElement("a");
-  anchor.href = href;
+  const safeHref = /^(https:\/\/|mailto:|tel:|\/|\.\/|#)/i.test(String(href || "")) && !/^\/\//.test(String(href || ""));
+  anchor.href = safeHref ? href : "#";
   anchor.textContent = text;
-  if (href.startsWith("http")) {
+  if (String(href).startsWith("https://")) {
     anchor.target = "_blank";
     anchor.rel = "noopener noreferrer";
   }
@@ -34,10 +42,20 @@ function externalAnchor(href, text) {
 }
 
 function renderLinks(target, labels) {
-  target.replaceChildren(...contactLinks.map(({ key, href }) => externalAnchor(href, labels[key])));
+  const managedLinks = Array.isArray(contentOverride?.contactLinks) ? contentOverride.contactLinks : null;
+  const links = managedLinks
+    ? managedLinks.map(({ href, label }) => ({ href, label: label?.[language] || label?.en || "" })).filter(({ label, href }) => label && href)
+    : contactLinks.map(({ key, href }) => ({ href, label: labels[key] }));
+  target.replaceChildren(...links.map(({ href, label }) => externalAnchor(href, label)));
 }
 
 function renderBio(strings) {
+  const managedBio = contentOverride?.profile?.bio?.[language];
+  const originalBio = strings.bioSegments.map((segment) => segment.text !== undefined ? segment.text : strings.companyNames[segment.link]).join("");
+  if (managedBio !== undefined && managedBio !== originalBio) {
+    bio.textContent = managedBio;
+    return;
+  }
   const nodes = strings.bioSegments.map((segment) => {
     if (segment.text !== undefined) return document.createTextNode(segment.text);
     const key = segment.link;
@@ -48,14 +66,18 @@ function renderBio(strings) {
 
 function renderProjects(strings) {
   const number = new Intl.NumberFormat(language);
-  const cards = projects.map((filename, index) => {
+  const managedProjects = Array.isArray(contentOverride?.projects)
+    ? contentOverride.projects.filter((project) => project.visible !== false && projects.includes(project.image))
+    : projects.map((image, index) => ({ image, title: {}, visible: true, id: String(index) }));
+  const cards = managedProjects.map((project, index) => {
+    const filename = project.image;
     const figure = document.createElement("figure");
     figure.className = "project-card";
     figure.setAttribute("role", "listitem");
 
     const image = document.createElement("img");
     image.src = `./assets/projects/${encodeURIComponent(filename)}`;
-    image.alt = `${strings.projectAlt} ${number.format(index + 1)}`;
+    image.alt = project.title?.[language]?.trim() || `${strings.projectAlt} ${number.format(index + 1)}`;
     image.width = 2760;
     image.height = 1921;
     image.decoding = "async";
@@ -67,6 +89,19 @@ function renderProjects(strings) {
     }
 
     figure.append(image);
+    const projectHref = String(project.href || "");
+    if (/^(https:\/\/|mailto:|tel:|\/|\.\/|#)/i.test(projectHref) && !/^\/\//.test(projectHref)) {
+      const link = document.createElement("a");
+      link.className = "project-card-link";
+      link.href = projectHref;
+      if (projectHref.startsWith("https://")) {
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+      }
+      link.setAttribute("aria-label", image.alt);
+      link.append(figure);
+      return link;
+    }
     return figure;
   });
   projectGrid.setAttribute("role", "list");
@@ -83,8 +118,8 @@ function applyLanguage(nextLanguage) {
   document.title = strings.title;
   document.querySelector('meta[name="description"]').content = strings.description;
   document.querySelector('[data-i18n="skipLink"]').textContent = strings.skipLink;
-  document.querySelector("#greeting").textContent = strings.greeting;
-  document.querySelector("#contact-prompt").textContent = strings.contactPrompt;
+  document.querySelector("#greeting").textContent = contentOverride?.profile?.greeting?.[language] ?? strings.greeting;
+  document.querySelector("#contact-prompt").textContent = contentOverride?.profile?.contactPrompt?.[language] ?? strings.contactPrompt;
   document.querySelector("#cv-label").textContent = strings.downloadCv;
   document.querySelector("#case-studies-tab").textContent = strings.caseStudies;
   document.querySelector("#experience-tab").textContent = strings.experience;
@@ -136,3 +171,11 @@ document.querySelectorAll('.planned-tab[aria-disabled="true"]').forEach((tab) =>
 
 document.querySelector("#copyright-year").textContent = String(new Date().getFullYear());
 applyLanguage(language);
+
+window.addEventListener("storage", (event) => {
+  if (event.key !== contentStorageKey) return;
+  try {
+    contentOverride = event.newValue ? JSON.parse(event.newValue) : null;
+    applyLanguage(language);
+  } catch { /* Keep the last rendered content if a different tab writes invalid JSON. */ }
+});

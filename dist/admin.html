@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="description" content="Content workspace for Ehsan Masoomi’s portfolio." />
+    <title>Portfolio dashboard — Ehsan Masoomi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./admin.css" />
+    <script type="module" src="./admin.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#dashboard-main" data-ui="skip">Skip to dashboard content</a>
+
+    <div class="dashboard-layout">
+      <aside class="sidebar" id="sidebar">
+        <a class="brand" href="./index.html" aria-label="Ehsan Masoomi portfolio">
+          <span class="brand-avatar"><img src="./assets/figma/profile.png" width="36" height="36" alt="" /></span>
+          <span class="brand-copy"><strong>EM</strong><small data-ui="workspace">Portfolio workspace</small></span>
+        </a>
+
+        <div class="side-label" data-ui="manage">Manage content</div>
+        <nav class="side-nav" aria-label="Content sections">
+          <button class="side-link is-active" type="button" data-section="overview">
+            <span class="nav-icon" aria-hidden="true">⌂</span><span data-ui="overview">Overview</span>
+          </button>
+          <button class="side-link" type="button" data-section="projects">
+            <span class="nav-icon" aria-hidden="true">▧</span><span data-ui="selectedWork">Selected Work</span><span class="nav-count" id="nav-project-count">20</span>
+          </button>
+          <button class="side-link" type="button" data-section="caseStudies">
+            <span class="nav-icon" aria-hidden="true">▤</span><span data-ui="caseStudies">Case Studies</span><span class="nav-count" id="nav-case-count">0</span>
+          </button>
+          <button class="side-link" type="button" data-section="experience">
+            <span class="nav-icon" aria-hidden="true">◷</span><span data-ui="experience">Experience</span><span class="nav-count" id="nav-experience-count">0</span>
+          </button>
+          <button class="side-link" type="button" data-section="about">
+            <span class="nav-icon" aria-hidden="true">◉</span><span data-ui="about">About me</span>
+          </button>
+          <button class="side-link" type="button" data-section="profile">
+            <span class="nav-icon" aria-hidden="true">⚙</span><span data-ui="profileContact">Profile & contact</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <a class="site-link" href="./index.html" target="_blank" rel="noopener noreferrer">
+            <span aria-hidden="true">↗</span><span data-ui="viewPortfolio">View portfolio</span>
+          </a>
+          <div class="user-chip">
+            <img src="./assets/figma/profile.png" width="34" height="34" alt="" />
+            <span><strong>Ehsan Masoomi</strong><small data-ui="designerRole">Senior AI Product Designer</small></span>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main-column" id="dashboard-main">
+        <header class="topbar">
+          <button class="mobile-menu" id="mobile-menu" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
+          <div class="breadcrumbs"><span data-ui="workspace">Portfolio workspace</span><span class="crumb-sep">/</span><strong id="breadcrumb-current" data-ui="overview">Overview</strong></div>
+          <div class="topbar-actions">
+            <a class="icon-link" href="./index.html" target="_blank" rel="noopener noreferrer" data-ui-title="viewPortfolio" aria-label="View portfolio">↗</a>
+            <button class="language-toggle" id="language-toggle" type="button" aria-label="Switch language"><span>EN</span><i></i><span>فا</span></button>
+            <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme"><img src="./assets/figma/theme-toggle.svg" width="32" height="32" alt="" /></button>
+            <span class="saved-indicator" id="saved-indicator"><i></i><span data-ui="allChangesSaved">All changes saved</span></span>
+          </div>
+        </header>
+
+        <div class="content-wrap">
+          <div class="page-heading">
+            <div>
+              <p class="eyebrow" data-ui="contentManagement">CONTENT MANAGEMENT</p>
+              <h1 id="page-title" data-ui="overview">Overview</h1>
+              <p class="page-subtitle" id="page-subtitle" data-ui="overviewSubtitle">Manage your portfolio content in one place.</p>
+            </div>
+            <div class="heading-actions">
+              <a class="button button-secondary" href="./index.html" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span><span data-ui="previewSite">Preview site</span></a>
+              <button class="button button-primary" id="primary-action" type="button" hidden><span aria-hidden="true">＋</span><span data-ui="addNew">Add new</span></button>
+            </div>
+          </div>
+
+          <section class="local-notice" aria-label="Storage information">
+            <span class="notice-icon" aria-hidden="true">i</span>
+            <div><strong data-ui="localStorageTitle">Saved in this browser</strong><p data-ui="localStorageCopy">Edits stay on this device. Export a JSON backup to move them; publishing to all visitors needs a database and admin access.</p></div>
+            <button class="notice-dismiss" id="dismiss-notice" type="button" aria-label="Dismiss">×</button>
+          </section>
+
+          <section class="overview-panel" id="overview-panel">
+            <div class="stats-grid">
+              <article class="stat-card"><span class="stat-icon work-icon" aria-hidden="true">▧</span><div><p data-ui="selectedWork">Selected Work</p><strong id="stat-projects">20</strong><small data-ui="projectImages">project images</small></div></article>
+              <article class="stat-card"><span class="stat-icon case-icon" aria-hidden="true">▤</span><div><p data-ui="caseStudies">Case Studies</p><strong id="stat-cases">0</strong><small data-ui="draftEntries">draft entries</small></div></article>
+              <article class="stat-card"><span class="stat-icon experience-icon" aria-hidden="true">◷</span><div><p data-ui="experience">Experience</p><strong id="stat-experience">0</strong><small data-ui="workEntries">work entries</small></div></article>
+            </div>
+
+            <div class="overview-grid">
+              <section class="panel section-panel">
+                <div class="panel-heading"><div><h2 data-ui="contentSections">Content sections</h2><p data-ui="contentSectionsHint">Choose a section to review or edit.</p></div><span class="panel-menu" aria-hidden="true">•••</span></div>
+                <div class="section-shortcuts">
+                  <button class="shortcut-row" type="button" data-section="projects"><span class="shortcut-icon work-icon">▧</span><span class="shortcut-copy"><strong data-ui="selectedWork">Selected Work</strong><small id="shortcut-projects">20 images</small></span><span class="shortcut-arrow">→</span></button>
+                  <button class="shortcut-row" type="button" data-section="caseStudies"><span class="shortcut-icon case-icon">▤</span><span class="shortcut-copy"><strong data-ui="caseStudies">Case Studies</strong><small id="shortcut-cases">0 entries</small></span><span class="shortcut-arrow">→</span></button>
+                  <button class="shortcut-row" type="button" data-section="experience"><span class="shortcut-icon experience-icon">◷</span><span class="shortcut-copy"><strong data-ui="experience">Experience</strong><small id="shortcut-experience">0 entries</small></span><span class="shortcut-arrow">→</span></button>
+                  <button class="shortcut-row" type="button" data-section="about"><span class="shortcut-icon about-icon">◉</span><span class="shortcut-copy"><strong data-ui="about">About me</strong><small data-ui="aboutDraft">Draft content</small></span><span class="shortcut-arrow">→</span></button>
+                </div>
+              </section>
+
+              <section class="panel activity-panel">
+                <div class="panel-heading"><div><h2 data-ui="workspaceStatus">Workspace status</h2><p data-ui="workspaceStatusHint">A quick view of your content setup.</p></div><span class="status-dot-label"><i></i><span data-ui="draft">Draft</span></span></div>
+                <div class="status-list">
+                  <div class="status-row"><span class="status-symbol">✓</span><span data-ui="bilingualContent">English and Persian fields</span><span class="status-value" data-ui="ready">Ready</span></div>
+                  <div class="status-row"><span class="status-symbol">✓</span><span data-ui="themeSupport">Light and dark themes</span><span class="status-value" data-ui="ready">Ready</span></div>
+                  <div class="status-row"><span class="status-symbol pending">◷</span><span data-ui="publicSections">Case Studies, Experience, About pages</span><span class="status-value pending-text" data-ui="awaitingDesign">Awaiting design</span></div>
+                  <div class="status-row"><span class="status-symbol pending">◷</span><span data-ui="sharedPublishing">Shared publishing</span><span class="status-value pending-text" data-ui="backendNeeded">Backend needed</span></div>
+                </div>
+                <div class="activity-foot"><span class="avatar-stack"><img src="./assets/figma/profile.png" alt="" /></span><span data-ui="onlyYouCanSee">Only your browser has these edits</span></div>
+              </section>
+            </div>
+
+            <section class="panel next-panel"><div class="next-icon" aria-hidden="true">✦</div><div><h2 data-ui="nextSteps">Your content, ready for the next design handoff</h2><p data-ui="nextStepsCopy">Case Studies, Experience, and About entries can be drafted here without inventing project outcomes. They can be connected to their public layouts when those designs are ready.</p></div><button class="text-button" type="button" data-section="caseStudies"><span data-ui="manageCaseStudies">Manage Case Studies</span><span aria-hidden="true">→</span></button></section>
+          </section>
+
+          <section class="editor-panel" id="editor-panel" hidden>
+            <div class="editor-toolbar">
+              <div class="filter-tabs" id="filter-tabs" hidden>
+                <button type="button" class="filter-tab is-active" data-filter="all" data-ui="allItems">All items</button>
+                <button type="button" class="filter-tab" data-filter="published" data-ui="published">Visible</button>
+                <button type="button" class="filter-tab" data-filter="draft" data-ui="draft">Draft</button>
+              </div>
+              <div class="search-wrap"><span aria-hidden="true">⌕</span><input id="item-search" type="search" data-ui-placeholder="searchContent" placeholder="Search content" /></div>
+            </div>
+            <div class="items-grid" id="items-grid"></div>
+            <div class="empty-state" id="empty-state" hidden><div class="empty-icon" aria-hidden="true">▤</div><h2 data-ui="nothingHere">Nothing here yet</h2><p data-ui="emptyCopy">Create your first item. You can add or change the text later.</p><button class="button button-primary" id="empty-action" type="button"><span aria-hidden="true">＋</span><span data-ui="addFirst">Add your first item</span></button></div>
+          </section>
+
+          <section class="profile-editor" id="profile-editor" hidden></section>
+
+          <section class="settings-panel" id="settings-panel" hidden>
+            <article class="panel settings-card"><div><h2 data-ui="backupTitle">Backup and transfer</h2><p data-ui="backupCopy">Export your current content to a JSON file, or restore a previous backup.</p></div><div class="settings-actions"><button class="button button-secondary" id="export-button" type="button"><span aria-hidden="true">↓</span><span data-ui="exportJson">Export JSON</span></button><label class="button button-secondary upload-button"><span aria-hidden="true">↑</span><span data-ui="importJson">Import JSON</span><input id="import-input" type="file" accept="application/json,.json" /></label></div></article>
+            <article class="panel settings-card"><div><h2 data-ui="appearanceTitle">Appearance</h2><p data-ui="appearanceCopy">Choose the dashboard language and color theme.</p></div><div class="settings-actions"><button class="button button-secondary" id="settings-language" type="button"><span data-ui="switchLanguage">Switch language</span><span aria-hidden="true">⇄</span></button><button class="button button-secondary" id="settings-theme" type="button"><span data-ui="switchTheme">Switch theme</span><span aria-hidden="true">◐</span></button></div></article>
+            <article class="panel settings-card reset-card"><div><h2 data-ui="resetTitle">Reset local edits</h2><p data-ui="resetCopy">Restore the starting content from the supplied portfolio files. This clears saved edits in this browser.</p></div><button class="button button-danger" id="reset-button" type="button" data-ui="reset">Reset content</button></article>
+          </section>
+
+          <footer class="dashboard-footer"><span>© <span id="current-year"></span> Ehsan Masoomi</span><span data-ui="footerNote">Portfolio content workspace</span></footer>
+        </div>
+      </main>
+    </div>
+
+    <dialog class="editor-dialog" id="editor-dialog" aria-labelledby="dialog-title">
+      <form method="dialog" class="dialog-scrim"><button class="scrim-close" aria-label="Close dialog" value="cancel"></button></form>
+      <div class="dialog-card">
+        <header class="dialog-header"><div><p class="eyebrow" id="dialog-kicker">CONTENT</p><h2 id="dialog-title">Edit item</h2></div><button class="close-button" id="close-dialog" type="button" aria-label="Close">×</button></header>
+        <form id="item-form" class="item-form"></form>
+        <footer class="dialog-footer"><button class="button button-secondary" id="cancel-dialog" type="button" data-ui="cancel">Cancel</button><button class="button button-primary" id="save-dialog" type="submit" form="item-form"><span data-ui="saveChanges">Save changes</span></button></footer>
+      </div>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>

@@ -21,5 +21,6 @@ Then open `http://localhost:4173`.
 - The CV download and theme control sit in the top header row, as shown in Figma. The theme control uses the Figma moon icon.
 - The language selector is hidden from the header per the latest feedback. Persian remains available with `?lang=fa`; language and theme preferences are stored in the visitor's browser.
 - The other navigation tabs are present with hover feedback but remain unavailable until their designs and content are provided.
-- No dashboard, backend, or database is included yet.
+- `admin.html` is a bilingual, responsive content dashboard for the supplied images, case-study drafts, experience, About blocks, and profile/contact details. It supports create, edit, delete, reorder, visibility, import, and JSON export.
+- Dashboard changes are stored in the current browser. Selected Work and profile/contact edits appear on the portfolio in that same browser; other sections remain drafts until their public page designs are ready. Shared publishing needs a database and authenticated admin access, neither of which is part of this static version.
 
