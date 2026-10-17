@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Ehsan Masoomi — Senior AI Product Designer. Selected work across SaaS, fintech, and AI-driven B2C products."
+    />
+    <meta name="theme-color" content="#ffffff" />
+    <title>Ehsan Masoomi — Senior AI Product Designer</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#selected-work" data-i18n="skipLink">Skip to selected work</a>
+
+    <header class="site-header" id="top">
+      <div class="header-top">
+        <a class="avatar-mark" href="#top" aria-label="Ehsan Masoomi">EM</a>
+        <div class="display-controls" aria-label="Display settings">
+          <button class="utility-control" id="language-toggle" type="button" aria-label="Switch language to Persian">فارسی</button>
+          <button class="utility-control" id="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">Dark mode</button>
+        </div>
+      </div>
+
+      <section class="profile-intro" aria-labelledby="greeting">
+        <h1 id="greeting" data-i18n="greeting">Hi, I’m Ehsan 👋🏻</h1>
+        <p class="bio" id="bio"></p>
+      </section>
+
+      <section class="contact-block" aria-labelledby="contact-prompt">
+        <p class="contact-prompt" id="contact-prompt" data-i18n="contactPrompt">
+          Feel free to reach out to me through any of the channels below.
+        </p>
+        <div class="contact-actions">
+          <nav class="contact-links" id="header-contact-links" aria-label="Contact links"></nav>
+          <a class="cv-link" id="cv-link" href="./assets/Ehsan-Masoomi-CV-EN.pdf" download="Ehsan-Masoomi-CV-EN.pdf" data-i18n="downloadCv">Download CV</a>
+        </div>
+      </section>
+
+      <nav class="primary-nav" aria-label="Portfolio sections">
+        <a class="nav-tab is-current" href="#selected-work" aria-current="page" data-i18n="selectedWork">Selected Work</a>
+        <button class="nav-tab planned-tab" type="button" disabled aria-disabled="true" id="case-studies-tab">Case Studies</button>
+        <button class="nav-tab planned-tab" type="button" disabled aria-disabled="true" id="experience-tab">Experience</button>
+        <button class="nav-tab planned-tab" type="button" disabled aria-disabled="true" id="about-tab">About me</button>
+      </nav>
+    </header>
+
+    <main class="work-section" id="selected-work" tabindex="-1">
+      <h2 class="visually-hidden" data-i18n="selectedWork">Selected Work</h2>
+      <div class="project-grid" id="project-grid" aria-label="Selected work"></div>
+    </main>
+
+    <footer class="site-footer">
+      <p class="copyright"><span>© </span><span id="copyright-year">2026</span><span> Ehsan Masoomi</span></p>
+      <nav class="contact-links footer-links" id="footer-contact-links" aria-label="Contact links"></nav>
+    </footer>
+  </body>
+</html>
