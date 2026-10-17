@@ -3,7 +3,6 @@ import { companyLinks, contactLinks, copy, projects } from "./content.js";
 const root = document.documentElement;
 const bio = document.querySelector("#bio");
 const projectGrid = document.querySelector("#project-grid");
-const languageToggle = document.querySelector("#language-toggle");
 const themeToggle = document.querySelector("#theme-toggle");
 
 const safeStorage = {
@@ -15,7 +14,12 @@ const safeStorage = {
   },
 };
 
-let language = safeStorage.get("ehsan-portfolio-language") === "fa" ? "fa" : "en";
+const languageParam = new URLSearchParams(window.location.search).get("lang");
+const savedLanguage = safeStorage.get("ehsan-portfolio-language");
+const browserLanguage = navigator.language?.toLowerCase().startsWith("fa") ? "fa" : "en";
+let language = ["fa", "en"].includes(languageParam)
+  ? languageParam
+  : (["fa", "en"].includes(savedLanguage) ? savedLanguage : browserLanguage);
 let theme = safeStorage.get("ehsan-portfolio-theme") === "dark" ? "dark" : "light";
 
 function externalAnchor(href, text) {
@@ -81,7 +85,7 @@ function applyLanguage(nextLanguage) {
   document.querySelector('[data-i18n="skipLink"]').textContent = strings.skipLink;
   document.querySelector("#greeting").textContent = strings.greeting;
   document.querySelector("#contact-prompt").textContent = strings.contactPrompt;
-  document.querySelector("#cv-link").textContent = strings.downloadCv;
+  document.querySelector("#cv-label").textContent = strings.downloadCv;
   document.querySelector("#case-studies-tab").textContent = strings.caseStudies;
   document.querySelector("#experience-tab").textContent = strings.experience;
   document.querySelector("#about-tab").textContent = strings.about;
@@ -91,8 +95,6 @@ function applyLanguage(nextLanguage) {
   document.querySelectorAll('[data-i18n="selectedWork"]').forEach((element) => {
     element.textContent = strings.selectedWork;
   });
-  languageToggle.textContent = isPersian ? "English" : "فارسی";
-  languageToggle.setAttribute("aria-label", isPersian ? "تغییر زبان به انگلیسی" : "Switch language to Persian");
   document.querySelector(".contact-block").setAttribute("aria-label", isPersian ? "راه‌های تماس" : "Contact information");
   document.querySelector(".display-controls").setAttribute("aria-label", isPersian ? "تنظیمات نمایش" : "Display settings");
   document.querySelector(".primary-nav").setAttribute("aria-label", isPersian ? "بخش‌های پرتفولیو" : "Portfolio sections");
@@ -112,23 +114,25 @@ function updateThemeControl() {
   const isDark = theme === "dark";
   const strings = copy[language];
   root.dataset.theme = theme;
-  themeToggle.textContent = language === "fa"
-    ? (isDark ? "تم روشن" : "تم تاریک")
-    : (isDark ? "Light mode" : "Dark mode");
   themeToggle.setAttribute("aria-pressed", String(isDark));
   themeToggle.setAttribute("aria-label", language === "fa"
     ? (isDark ? "تغییر به تم روشن" : "تغییر به تم تاریک")
     : (isDark ? "Switch to light theme" : "Switch to dark theme"));
+  themeToggle.title = language === "fa"
+    ? (isDark ? "تغییر به تم روشن" : "تغییر به تم تاریک")
+    : (isDark ? "Switch to light theme" : "Switch to dark theme");
   document.querySelector('meta[name="theme-color"]').content = isDark ? "#131315" : "#ffffff";
   safeStorage.set("ehsan-portfolio-theme", theme);
 }
 
-languageToggle.addEventListener("click", () => applyLanguage(language === "en" ? "fa" : "en"));
 themeToggle.addEventListener("click", () => {
   theme = theme === "light" ? "dark" : "light";
   updateThemeControl();
 });
 
+document.querySelectorAll('.planned-tab[aria-disabled="true"]').forEach((tab) => {
+  tab.addEventListener("click", (event) => event.preventDefault());
+});
+
 document.querySelector("#copyright-year").textContent = String(new Date().getFullYear());
 applyLanguage(language);
-updateThemeControl();

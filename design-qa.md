@@ -1,30 +1,21 @@
 # Design QA — Selected Work
 
-**Findings**
-- [P2] Browser-rendered comparison is blocked. The local server returned HTTP 200 for the page, JavaScript, a project image, and the CV PDF. Chromium could not create its runtime profile/crashpad state, so no implementation screenshot or visual comparison was produced.
-- [P2] The profile portrait is not available locally. The ZIP contains the 20 project frames but no portrait; the Figma asset URL is outside this environment's allowed network hosts. The implementation uses the initials `EM` until the portrait is supplied.
+## Requested corrections
 
-**Open Questions**
-- The supplied design shows the light theme only. The dark palette is an implementation variant and has not been visually reviewed.
-- The three future tabs remain disabled pending their designs and content.
+- [x] Replaced the initials mark with the exact profile image exported from the Figma avatar node.
+- [x] Moved the CV download to the top right of the first header row and applied the Figma button shape, icon, spacing, and label.
+- [x] Replaced the text-only theme control with the exported 32 × 32 Figma moon control; its click still changes the light/dark palette.
+- [x] Removed the language selector from the header while retaining Persian content through `?lang=fa` and browser language detection.
+- [x] Applied Figma's Inter family, text colors (`#333` and `#3f3f3f`), and light control/surface color (`#f2f2f2`).
+- [x] Added slightly heavier hover text to the section buttons without enabling the unfinished sections.
 
-**Evidence and comparison state**
-- Source visual truth: [Figma node 78:76435](https://www.figma.com/design/3JAVZyBOnAA5iYFDe0Z5wT/Case-Study?node-id=78-76435)
-- Source frame: 1536 × 5646 CSS px. The Figma screenshot tool returned a 490 × 1800 preview; original dimensions were 1536 × 5646.
-- Implementation URL: `http://127.0.0.1:4173/`
-- Implementation screenshot: not captured; no implementation pixel dimensions or density normalization are available.
-- Intended state: English, light theme; responsive rules target desktop, tablet, and mobile. Browser interaction states were not captured.
-- Full-view comparison: unavailable because the implementation screenshot could not be captured.
-- Focused-region comparison: unavailable for the same reason.
-- Static checks: page, JS module, sample image, and CV PDF returned HTTP 200; both JavaScript modules passed Node syntax parsing.
+## Verification limits
 
-**Implementation Checklist**
-- [x] Keep the supplied project images in the Figma frame order.
-- [x] Connect the supplied CV PDF to the download control.
-- [x] Add English/Persian copy, RTL direction, theme toggle, and responsive grid rules.
-- [ ] Capture desktop, tablet, and mobile browser views and compare them to the source.
-- [ ] Replace the initials mark with the supplied portrait asset when available.
+- The source frame was inspected at node `78:76565` (1536 × 499 CSS px), and its avatar and header icons were exported from the corresponding Figma nodes.
+- An implementation screenshot and interactive browser check could not be captured in this environment because Chromium exits during startup with a Crashpad permission error.
+- Inter is requested from Google Fonts to match the Figma family. The network sandbox blocked a local fetch, so runtime font loading has not been visually confirmed; the site has system sans-serif fallbacks.
+- The supplied frame covers only the light theme. The dark palette remains an implementation variant until a dark-theme design is provided.
 
 **Final result: blocked**
 
-Blocker: browser-rendered evidence could not be captured in this environment, so visual fidelity and responsive states remain unverified.
+The requested code changes are applied and the private Site deployment succeeded, but the rendered output could not be compared against the implementation in a browser here.

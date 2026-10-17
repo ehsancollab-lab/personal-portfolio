@@ -9,6 +9,9 @@
     />
     <meta name="theme-color" content="#ffffff" />
     <title>Ehsan Masoomi — Senior AI Product Designer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./styles.css" />
     <script type="module" src="./app.js"></script>
   </head>
@@ -17,10 +20,17 @@
 
     <header class="site-header" id="top">
       <div class="header-top">
-        <a class="avatar-mark" href="#top" aria-label="Ehsan Masoomi">EM</a>
+        <a class="avatar-mark" href="#top" aria-label="Ehsan Masoomi">
+          <img src="./assets/figma/profile.png" width="40" height="40" alt="" />
+        </a>
         <div class="display-controls" aria-label="Display settings">
-          <button class="utility-control" id="language-toggle" type="button" aria-label="Switch language to Persian">فارسی</button>
-          <button class="utility-control" id="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">Dark mode</button>
+          <a class="cv-link" id="cv-link" href="./assets/Ehsan-Masoomi-CV-EN.pdf" download="Ehsan-Masoomi-CV-EN.pdf">
+            <img src="./assets/figma/download-cv.svg" width="20" height="20" alt="" />
+            <span id="cv-label" data-i18n="downloadCv">Download CV</span>
+          </a>
+          <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <img src="./assets/figma/theme-toggle.svg" width="32" height="32" alt="" />
+          </button>
         </div>
       </div>
 
@@ -33,17 +43,14 @@
         <p class="contact-prompt" id="contact-prompt" data-i18n="contactPrompt">
           Feel free to reach out to me through any of the channels below.
         </p>
-        <div class="contact-actions">
-          <nav class="contact-links" id="header-contact-links" aria-label="Contact links"></nav>
-          <a class="cv-link" id="cv-link" href="./assets/Ehsan-Masoomi-CV-EN.pdf" download="Ehsan-Masoomi-CV-EN.pdf" data-i18n="downloadCv">Download CV</a>
-        </div>
+        <nav class="contact-links" id="header-contact-links" aria-label="Contact links"></nav>
       </section>
 
       <nav class="primary-nav" aria-label="Portfolio sections">
         <a class="nav-tab is-current" href="#selected-work" aria-current="page" data-i18n="selectedWork">Selected Work</a>
-        <button class="nav-tab planned-tab" type="button" disabled aria-disabled="true" id="case-studies-tab">Case Studies</button>
-        <button class="nav-tab planned-tab" type="button" disabled aria-disabled="true" id="experience-tab">Experience</button>
-        <button class="nav-tab planned-tab" type="button" disabled aria-disabled="true" id="about-tab">About me</button>
+        <button class="nav-tab planned-tab" type="button" aria-disabled="true" id="case-studies-tab">Case Studies</button>
+        <button class="nav-tab planned-tab" type="button" aria-disabled="true" id="experience-tab">Experience</button>
+        <button class="nav-tab planned-tab" type="button" aria-disabled="true" id="about-tab">About me</button>
       </nav>
     </header>
 
