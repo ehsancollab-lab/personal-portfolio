@@ -290,7 +290,9 @@ export async function handleRequest(request, env) {
     if (path === '/login' || path === '/login.html') {
       if (!['GET', 'HEAD'].includes(request.method)) throw new HttpError(405, 'method_not_allowed');
       if (authenticated) return secure(Response.redirect(url.origin + '/', 303));
-      return secure(await env.ASSETS.fetch(new Request(new URL('/login.html', url), request)));
+      // Pages redirects .html assets to their extensionless URLs. Fetch the pretty
+      // path so /login serves the form instead of returning a redirect to itself.
+      return secure(await env.ASSETS.fetch(new Request(new URL('/login', url), request)));
     }
     if (['/login.css', '/login.js', '/assets/figma/profile.png'].includes(path) && ['GET', 'HEAD'].includes(request.method)) return secure(await env.ASSETS.fetch(request));
     if (!authenticated) {
