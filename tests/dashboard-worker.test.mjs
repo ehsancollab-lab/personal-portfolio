@@ -40,7 +40,7 @@ function mockGitHub(t, options = {}) {
   const calls = [];
   globalThis.fetch = async (url, init) => {
     assert.equal(new URL(url).origin, 'https://api.github.com');
-    assert.equal(init.redirect, 'error');
+    assert.equal(init.redirect, 'manual');
     assert.equal(init.headers.Authorization, 'Bearer test-only-github-token');
     const path = new URL(url).pathname;
     const body = init.body ? JSON.parse(init.body) : undefined;
