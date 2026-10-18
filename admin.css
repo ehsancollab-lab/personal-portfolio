@@ -1,3 +1,6 @@
+@import url('./case-cards.css');
+@import url('./case-editor.css');
+@font-face { font-family: Inter; font-style: normal; font-weight: 100 900; font-display: swap; src: url('./assets/fonts/inter-latin-wght-normal.woff2') format('woff2'); }
 :root {
   color-scheme: light;
   --page-bg: #f7f7f8;
@@ -556,3 +559,9 @@ body { color: #373737; font-size: 16px; }
   .project-tile-actions { inset: auto 0 14px; opacity: 1; }
   .project-tile:hover > img, .project-tile:focus-within > img, .project-tile:focus-visible > img { filter: none; transform: none; }
 }
+
+.items-grid.case-gallery { display: grid; width: min(908px, calc(100% - 48px)); grid-template-columns: repeat(2, minmax(0,1fr)); gap: 64px 32px; margin: 98px auto 0; }
+.editor-panel.is-cases .editor-toolbar { display: none; }
+.items-grid.case-gallery .case-study-card-title { font-size: 17px; }
+.items-grid.case-gallery .case-study-card-summary { font-size: 15px; }
+@media(max-width: 700px) { .items-grid.case-gallery { width: calc(100% - 36px); grid-template-columns: minmax(0,1fr); gap: 48px; margin-top: 48px; } }

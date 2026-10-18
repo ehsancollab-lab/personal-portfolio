@@ -1,3 +1,4 @@
+import { normalizeStoryDoc, storyImages, documentMarkdown } from '../story-model.js';
 const COOKIE = '__Host-portfolio-session';
 const SESSION_SECONDS = 8 * 60 * 60;
 const CONTENT_PATH = 'data/portfolio.json';
@@ -11,15 +12,15 @@ export class HttpError extends Error {
 function json(value, status = 200, headers = {}) {
   return new Response(JSON.stringify(value), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', ...headers } });
 }
-function secure(response) {
+function secure(response, cacheControl = 'no-store') {
   const headers = new Headers(response.headers);
-  headers.set('Cache-Control', 'no-store');
+  headers.set('Cache-Control', cacheControl);
   headers.set('X-Content-Type-Options', 'nosniff');
   headers.set('X-Frame-Options', 'DENY');
   headers.set('Referrer-Policy', 'same-origin');
   headers.set('X-Robots-Tag', 'noindex, nofollow');
   headers.set('Strict-Transport-Security', 'max-age=31536000');
-  headers.set('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'");
+  headers.set('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'");
   return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
 }
 function encode64(bytes) {
@@ -167,6 +168,10 @@ export function normalizePublishedContent(candidate) {
       row.href = string(item.href ?? '', 2048);
       if (!validHref(row.href)) throw new HttpError(400, 'invalid_link');
       if (hasImage) { row.image = image(item.image ?? ''); row.visible = item.visible !== false; }
+      if (key === 'caseStudies') {
+        try { row.document = normalizeStoryDoc(item.document); }
+        catch (error) { throw new HttpError(400, error.message === 'invalid_story_image' ? 'invalid_image' : 'invalid_story'); }
+      }
       return row;
     });
   };
@@ -186,8 +191,10 @@ export function normalizePublishedContent(candidate) {
 export async function extractUploads(content) {
   const output = normalizePublishedContent(content);
   const uploads = new Map();
-  for (const item of [...output.projects, ...output.caseStudies, ...output.experience]) {
-    const match = imageData.exec(item.image);
+  const images = [...output.projects, ...output.caseStudies, ...output.experience].map(item => [item, 'image']);
+  for (const story of output.caseStudies) for (const node of storyImages(story.document)) images.push([node.attrs, 'src']);
+  for (const [item, field] of images) {
+    const match = imageData.exec(item[field]);
     if (!match) continue;
     let bytes;
     try { bytes = decode64(match[2]); } catch { throw new HttpError(400, 'invalid_image'); }
@@ -202,8 +209,9 @@ export async function extractUploads(content) {
     const digest = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)), (value) => value.toString(16).padStart(2, '0')).join('');
     const path = `uploads/${digest}.${match[1] === 'jpeg' ? 'jpg' : match[1]}`;
     uploads.set(`assets/${path}`, match[2]);
-    item.image = path;
+    item[field] = path;
   }
+  for (const story of output.caseStudies) if (story.document) story.body = documentMarkdown(story.document).slice(0, 200000);
   return { content: output, uploads };
 }
 function githubContentToken(env) {
@@ -276,6 +284,15 @@ export async function writeContent(env, candidate, expectedRevision) {
   const head = await github(env, `/git/ref/heads/${encodeURIComponent(branch(env))}`);
   const current = await readContent(env, head.object.sha);
   if (current.revision !== expectedRevision) throw new HttpError(409, 'content_conflict');
+  // Preserve rich stories if an already-open older dashboard omits this field.
+  for (const item of content.caseStudies) {
+    const submitted = candidate.caseStudies.find(entry => entry.id === item.id);
+    const original = current.content.caseStudies.find(entry => entry.id === item.id);
+    if (submitted && !Object.hasOwn(submitted, 'document') && original?.document) {
+      if (submitted.body !== original.body) throw new HttpError(409, 'content_conflict');
+      item.document = original.document;
+    }
+  }
   const commit = await github(env, `/git/commits/${head.object.sha}`);
   const entries = [];
   // Sequential uploads bound CPU and memory use. One tree publishes all files atomically.
@@ -317,7 +334,7 @@ export async function handleRequest(request, env) {
       // path so /login serves the form instead of returning a redirect to itself.
       return secure(await env.ASSETS.fetch(new Request(new URL('/login', url), request)));
     }
-    if (['/login.css', '/login.js', '/assets/figma/profile.png'].includes(path) && ['GET', 'HEAD'].includes(request.method)) return secure(await env.ASSETS.fetch(request));
+    if (['/login.css', '/login.js', '/assets/figma/profile.png', '/assets/fonts/inter-latin-wght-normal.woff2'].includes(path) && ['GET', 'HEAD'].includes(request.method)) return secure(await env.ASSETS.fetch(request));
     if (!authenticated) {
       if (path.startsWith('/api/')) throw new HttpError(401, 'sign_in_required');
       return secure(Response.redirect(url.origin + '/login', 303));
@@ -336,13 +353,15 @@ export async function handleRequest(request, env) {
     if (!['GET', 'HEAD'].includes(request.method)) throw new HttpError(405, 'method_not_allowed');
     if (path.startsWith('/assets/uploads/')) {
       if (!uploadPath.test(path.slice('/assets/'.length))) throw new HttpError(404, 'not_found');
+      const deployed = await env.ASSETS.fetch(request);
+      if (deployed.status === 200 && deployed.headers.get('Content-Type')?.startsWith('image/')) return secure(deployed, 'private, max-age=31536000, immutable');
       const file = await github(env, `/contents${path}?ref=${encodeURIComponent(branch(env))}`);
       if (file.encoding !== 'base64' || typeof file.content !== 'string') throw new HttpError(502, 'invalid_image');
       const extensions = { png: 'png', jpg: 'jpeg', webp: 'webp', gif: 'gif', avif: 'avif' };
-      return secure(new Response(request.method === 'HEAD' ? null : decode64(file.content.replace(/\s/g, '')), { headers: { 'Content-Type': `image/${extensions[path.split('.').pop()]}` } }));
+      return secure(new Response(request.method === 'HEAD' ? null : decode64(file.content.replace(/\s/g, '')), { headers: { 'Content-Type': `image/${extensions[path.split('.').pop()]}` } }), 'private, max-age=31536000, immutable');
     }
     if (path === '/admin.html') return secure(Response.redirect(url.origin + '/', 303));
-    return secure(await env.ASSETS.fetch(request));
+    return secure(await env.ASSETS.fetch(request), path.startsWith('/assets/optimized/') ? 'private, max-age=31536000, immutable' : path.startsWith('/assets/') ? 'private, max-age=3600' : 'no-store');
   } catch (error) {
     if (!(error instanceof HttpError)) {
       // Log only the exception type and call sites, never messages or environment values.

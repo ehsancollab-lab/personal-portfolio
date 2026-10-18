@@ -1,6 +1,11 @@
 import { contactLinks, copy, projects } from './content.js';
 import { caseStudyAssets, defaultCaseStudies, defaultExperience } from './case-content.js';
 
+import { normalizeStoryDoc } from './story-model.js';
+import { responsiveImage } from './images.js';
+import { animateTypography } from './typography.js';
+import { caseCard } from './case-cards.js';
+
 const DRAFT_KEY = 'ehsan-portfolio-server-draft-v1';
 const RECOVERY_KEY = 'ehsan-portfolio-recovery-draft';
 const THEME_KEY = 'ehsan-portfolio-theme';
@@ -89,6 +94,9 @@ function normalizeData(candidate) {
     normalized.href = validHref(item.href) ? String(item.href || '') : '';
     normalized.image = [...imageNames, ...caseStudyAssets].includes(item.image) || validImageDataUrl(item.image) || validUploadedImage(item.image) ? item.image : '';
     normalized.visible = item.visible !== false;
+    if (fields.includes('body')) {
+      try { normalized.document = normalizeStoryDoc(item.document); } catch { throw new Error('invalid_story'); }
+    }
     return normalized;
   };
   const contacts = candidate.contactLinks.map((item) => ({
@@ -382,9 +390,8 @@ function renderProjectTile(item, index) {
   card.setAttribute('aria-keyshortcuts', 'Alt+ArrowUp Alt+ArrowDown');
 
   const image = document.createElement('img');
-  image.src = adminAssetPath(item.image);
+  responsiveImage(image, adminAssetPath(item.image), { eager: index < 2, sizes: '(max-width: 680px) calc(100vw - 36px), (max-width: 1500px) 48vw, 710px' });
   image.alt = '';
-  image.loading = 'lazy';
   image.draggable = false;
   card.append(image);
 
@@ -409,6 +416,7 @@ function renderItems(focusProjectId = '') {
   });
   host.replaceChildren();
   host.classList.toggle('project-gallery', isProjects);
+  host.classList.toggle('case-gallery', activeSection === 'caseStudies');
   host.setAttribute('role', 'list');
   host.setAttribute('aria-label', isProjects ? t('selectedWork') : t('contentSections'));
   empty.hidden = filtered.length !== 0;
@@ -428,6 +436,10 @@ function renderItems(focusProjectId = '') {
   filtered.forEach(({ item, index }) => {
     if (isProjects) {
       host.append(renderProjectTile(item, index));
+      return;
+    }
+    if (activeSection === 'caseStudies') {
+      host.append(caseCard(item, { resolveImage: adminAssetPath, eager: index < 2, controls: [makeButton(t('edit'), 'project-action-button', 'edit', item.id), makeButton(t('delete'), 'project-action-button is-delete', 'delete', item.id)] }));
       return;
     }
     const card = document.createElement('article');
@@ -655,14 +667,39 @@ function checkbox(labelText, checked, name) {
 function itemDefaults(section, item) {
   const base = item ? deepCopy(item) : { id: id() };
   if (section === 'projects') return { ...base, image: base.image || imageNames.find((img) => !data.projects.some((project) => project.image === img)) || imageNames[0], title: base.title || '', href: base.href || '', visible: base.visible !== false };
-  if (section === 'caseStudies') return { ...base, title: base.title || '', summary: base.summary || '', body: base.body || '', href: base.href || '', image: base.image || '', visible: base.visible !== false };
+  if (section === 'caseStudies') return { ...base, title: base.title || '', summary: base.summary || '', body: base.body || '', href: base.href || '', image: base.image || '', visible: item ? base.visible !== false : false };
   if (section === 'experience') return { ...base, role: base.role || '', company: base.company || '', dates: base.dates || '', description: base.description || '', href: base.href || '', image: base.image || '', visible: base.visible !== false };
   return base;
 }
 function typeCopy(section, edit) {
   return t((edit ? 'edit' : 'new') + ({ projects: 'Project', caseStudies: 'Case', experience: 'Experience' })[section]);
 }
-function openEditor(section, item = null) {
+let storyEditorOpening = false;
+async function openEditor(section, item = null) {
+  if (section === 'caseStudies') {
+    if (storyEditorOpening || document.querySelector('.story-composer')) return;
+    storyEditorOpening = true;
+    try {
+      const { openCaseEditor } = await import('./case-editor.js');
+      openCaseEditor({ item: itemDefaults(section, item), isNew: !item, resolveImage: adminAssetPath, imageOptions: imageOptions(true), imageFileToDataUrl, storage,
+        async onSave(model) {
+          const previous = data.caseStudies;
+          const exists = data.caseStudies.some(entry => entry.id === model.id);
+          data.caseStudies = exists ? data.caseStudies.map(entry => entry.id === model.id ? model : entry) : [model, ...data.caseStudies];
+          if (!saveData()) { data.caseStudies = previous; return false; }
+          const deadline = Date.now() + 35000;
+          while (saving && Date.now() < deadline) await new Promise(resolve => setTimeout(resolve, 100));
+          if (saving) return false;
+          await publishData();
+          renderItems();
+          return document.querySelector('.publishing-bar').dataset.state === 'saved';
+        },
+        onClose() { renderItems(); document.querySelector('#primary-action').focus(); }
+      });
+    } catch { showToast('Could not open the story editor. Refresh the dashboard and try again.'); }
+    finally { storyEditorOpening = false; }
+    return;
+  }
   const dialog = document.querySelector('#editor-dialog');
   const form = document.querySelector('#item-form');
   const model = itemDefaults(section, item);
@@ -675,13 +712,6 @@ function openEditor(section, item = null) {
     form.append(field(t('image'), model.image, { select: selectOptions, name: 'image' }));
     form.append(textGroup('title', model.title));
     form.append(field(t('link'), model.href, { name: 'href', placeholder: 'https://…' }));
-    form.append(checkbox(t('visible'), model.visible, 'visible'));
-  } else if (section === 'caseStudies') {
-    form.append(textGroup('title', model.title));
-    form.append(textGroup('summary', model.summary, { multiline: true }));
-    form.append(textGroup('details', model.body, { multiline: true, rows: 20, hint: t('caseDetailsHint') }));
-    form.append(field(t('link'), model.href, { name: 'href', placeholder: 'https://…' }));
-    form.append(field(t('image'), model.image, { select: [{ value: '', label: t('optional') }, ...imageOptions(true)], name: 'image' }));
     form.append(checkbox(t('visible'), model.visible, 'visible'));
   } else if (section === 'experience') {
     form.append(textGroup('role', model.role));
@@ -840,7 +870,9 @@ function renderSection() {
   if (activeSection === 'overview') updateCounts();
   else if (activeSection === 'profile') renderProfile();
   else if (activeSection !== 'settings') renderItems();
+  document.querySelector('#editor-panel').classList.toggle('is-cases', activeSection === 'caseStudies');
   updateContentAvailability();
+  animateTypography(document.querySelector('.content-wrap'));
 }
 function setSection(section) {
   activeSection = section;
@@ -1008,3 +1040,5 @@ applySettings();
 renderItems();
 updateCounts();
 loadPublishedData();
+
+animateTypography(document.querySelector('.dashboard-header'));

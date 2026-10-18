@@ -1,8 +1,16 @@
 import { companyLinks, contactLinks, copy, projects } from "./content.js";
 import { caseStudyAssets, defaultCaseStudies, defaultExperience } from "./case-content.js";
 
+import { responsiveImage } from "./images.js";
+import { caseCard } from "./case-cards.js";
+import { normalizeStoryDoc } from "./story-model.js";
+import { renderStory } from "./story-render.js";
+import { publishedContent } from "./published-content.js";
+import { animateTypography } from "./typography.js";
+import { createSiteHeader } from "./site-shell.js";
+
 const root = document.documentElement;
-const page = document.body.dataset.page || "selected-work";
+let page = document.body.dataset.page || "selected-work";
 const projectAssets = [...projects];
 
 const safeStorage = {
@@ -62,7 +70,11 @@ function normalizeContent(candidate) {
     image: [...projectAssets, ...caseStudyAssets].includes(item.image) || validImageDataUrl(item.image) || validUploadedImage(item.image) ? String(item.image) : "",
     visible: item.visible !== false,
   });
-  const caseStudies = candidate.caseStudies.map((item) => normalizeItem(item, ["title", "summary", "body"]));
+  const caseStudies = candidate.caseStudies.map((item) => {
+    const normalized = normalizeItem(item, ["title", "summary", "body"]);
+    try { normalized.document = normalizeStoryDoc(item.document); } catch { normalized.document = null; }
+    return normalized;
+  });
   const experience = candidate.experience.map((item) => normalizeItem(item, ["role", "company", "dates", "description"]));
   return {
     version: 3,
@@ -88,11 +100,7 @@ function normalizeContent(candidate) {
   };
 }
 
-let contentOverride = null;
-try {
-  const response = await fetch(new URL('./data/portfolio.json', import.meta.url), { cache: 'no-cache' });
-  if (response.ok) contentOverride = normalizeContent(await response.json());
-} catch { /* The supplied portfolio remains available if the content request fails. */ }
+let contentOverride = normalizeContent(publishedContent);
 
 let theme = safeStorage.get("ehsan-portfolio-theme") === "dark" ? "dark" : "light";
 
@@ -157,10 +165,9 @@ function createProjectCard(project, index) {
   figure.className = "project-card";
   figure.setAttribute("role", "listitem");
   const image = document.createElement("img");
-  image.src = assetPath(project.image);
+  responsiveImage(image, assetPath(project.image), { eager: index < 2, priority: index === 0, sizes: "(max-width: 700px) calc(100vw - 40px), (max-width: 1536px) calc((100vw - 156px) / 2), 690px" });
   image.alt = text(project.title).trim() || copy.projectAlt + " " + (index + 1);
-  image.width = 2760;
-  image.height = 1921;
+
   image.decoding = "async";
   image.loading = index < 2 ? "eager" : "lazy";
   figure.append(image);
@@ -202,126 +209,12 @@ function renderCaseStudies() {
     list.append(empty);
     return;
   }
-  items.forEach((item, index) => {
-    const link = document.createElement("a");
-    link.className = "case-study-card";
-    link.href = "./case-study.html?id=" + encodeURIComponent(item.id);
-
-    const thumbnail = document.createElement("img");
-    const src = assetPath(item.image);
-    if (src) thumbnail.src = src;
-    thumbnail.alt = "";
-    thumbnail.loading = index === 0 ? "eager" : "lazy";
-    thumbnail.width = 115;
-    thumbnail.height = 79;
-
-    const textWrap = document.createElement("span");
-    textWrap.className = "case-study-card-copy";
-    const title = document.createElement("span");
-    title.className = "case-study-card-title";
-    title.textContent = text(item.title) || "Untitled case study";
-    const summary = document.createElement("span");
-    summary.className = "case-study-card-summary";
-    summary.textContent = text(item.summary);
-    textWrap.append(title, summary);
-    link.append(thumbnail, textWrap);
-    list.append(link);
-  });
-}
-
-function appendInlineText(target, value) {
-  const parts = String(value).split(/(\*\*[^*]+\*\*)/g);
-  for (const part of parts) {
-    if (part.startsWith("**") && part.endsWith("**")) {
-      const strong = document.createElement("strong");
-      strong.textContent = part.slice(2, -2);
-      target.append(strong);
-    } else if (part) {
-      target.append(document.createTextNode(part));
-    }
+  items.forEach((item, index) => list.append(caseCard(item, { resolveImage: assetPath, eager: index < 2, href: "./case-study.html?id=" + encodeURIComponent(item.id) })));
+  if (items.length % 2 === 1) {
+    const placeholder = caseCard({ id: 'coming-soon', title: 'New case studies will be displayed here soon.', summary: 'Since symmetry is really important to me and visual asymmetry bothers me, I’ve added a sample card here for now.' });
+    placeholder.classList.add('case-study-card-placeholder');
+    list.append(placeholder);
   }
-}
-
-function makeFigure(alt, name) {
-  const src = assetPath(name);
-  if (!src) return null;
-  const figure = document.createElement("figure");
-  figure.className = "case-article-figure";
-  if (name === "evaluation.png") figure.classList.add("is-narrow");
-  const image = document.createElement("img");
-  image.src = src;
-  image.alt = alt;
-  image.loading = "lazy";
-  image.decoding = "async";
-  figure.append(image);
-  if (alt) {
-    const caption = document.createElement("figcaption");
-    caption.textContent = alt;
-    figure.append(caption);
-  }
-  return figure;
-}
-
-function renderArticleBody(target, source) {
-  const lines = String(source || "").replace(/\r/g, "").split("\n");
-  let paragraph = [];
-  let bullets = [];
-
-  const flushParagraph = () => {
-    if (!paragraph.length) return;
-    const p = document.createElement("p");
-    appendInlineText(p, paragraph.join(" "));
-    target.append(p);
-    paragraph = [];
-  };
-  const flushBullets = () => {
-    if (!bullets.length) return;
-    const list = document.createElement("ul");
-    bullets.forEach((line) => {
-      const item = document.createElement("li");
-      appendInlineText(item, line);
-      list.append(item);
-    });
-    target.append(list);
-    bullets = [];
-  };
-  const flush = () => {
-    flushParagraph();
-    flushBullets();
-  };
-
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (!trimmed) {
-      flush();
-      continue;
-    }
-    const heading = trimmed.match(/^(#{2,4})\s+(.+)$/);
-    if (heading) {
-      flush();
-      const level = Math.min(4, heading[1].length);
-      const node = document.createElement("h" + level);
-      node.textContent = heading[2];
-      target.append(node);
-      continue;
-    }
-    const image = trimmed.match(/^!\[(.*?)\]\(([^)]+)\)$/);
-    if (image) {
-      flush();
-      const figure = makeFigure(image[1], image[2]);
-      if (figure) target.append(figure);
-      continue;
-    }
-    const bullet = trimmed.match(/^[-•]\s+(.+)$/);
-    if (bullet) {
-      flushParagraph();
-      bullets.push(bullet[1]);
-      continue;
-    }
-    flushBullets();
-    paragraph.push(trimmed);
-  }
-  flush();
 }
 
 function renderExperience() {
@@ -422,7 +315,7 @@ function renderCaseStudyDetails() {
   title.textContent = text(item.title);
   const body = document.createElement("div");
   body.className = "case-article-body";
-  renderArticleBody(body, item.body);
+  renderStory(body, item.document, { body: item.body, resolveImage: assetPath });
   article.append(title, body);
   if (item.href && validHref(item.href)) {
     const projectLink = externalAnchor(item.href, "Visit project");
@@ -465,6 +358,12 @@ function updateTheme() {
   document.querySelectorAll(".theme-toggle").forEach((toggle) => {
     toggle.setAttribute("aria-pressed", String(dark));
     toggle.setAttribute("aria-label", dark ? "Switch to light theme" : "Switch to dark theme");
+    const image = toggle.querySelector('img');
+    if (image) {
+      image.src = dark ? './assets/ui/sun-fill.svg' : './assets/figma/theme-toggle.svg';
+      image.width = dark ? 20 : 32;
+      image.height = dark ? 20 : 32;
+    }
     toggle.title = dark ? "Switch to light theme" : "Switch to dark theme";
   });
   document.querySelector('meta[name="theme-color"]').content = dark ? "#131315" : "#ffffff";
@@ -477,12 +376,87 @@ document.addEventListener("click", (event) => {
   updateTheme();
 });
 
-renderHeaderAndFooter();
-if (page === "selected-work") renderProjects();
-if (page === "case-studies") renderCaseStudies();
-if (page === "experience") renderExperience();
-if (page === "case-study") renderCaseStudyDetails();
-updateTheme();
+const pageViews = new Map();
+const scrollPositions = new Map();
+const sharedHeader = document.querySelector('.site-header') || createSiteHeader();
+const initialMain = document.querySelector('main');
+const routeKey = (url = new URL(location.href)) => routeFor(url) + url.search;
+function routeFor(url) {
+  const filename = url.pathname.replace(/\/$/, '').split('/').pop().replace(/\.html$/, '');
+  return ({ '': 'selected-work', index: 'selected-work', 'case-studies': 'case-studies', experience: 'experience', 'case-study': 'case-study' })[filename] || null;
+}
+function makePage(next) {
+  const main = document.createElement('main');
+  main.tabIndex = -1;
+  const config = {
+    'selected-work': ['work-section', 'selected-work', '<h2 class="visually-hidden">Selected Work</h2><div class="project-grid" id="project-grid" aria-label="Selected work"></div>'],
+    'case-studies': ['case-studies-section', 'case-studies-content', '<h2 class="visually-hidden">Case Studies</h2><div class="case-studies-list" id="case-studies-list" aria-label="Case studies"></div>'],
+    experience: ['experience-section', 'experience-content', '<h2 class="visually-hidden">Experience</h2><div class="experience-list" id="experience-list" aria-label="Experience"></div>'],
+    'case-study': ['case-detail-section', 'case-study-content', '<div class="case-detail" id="case-detail"></div>']
+  }[next];
+  main.className = config[0]; main.id = config[1]; main.innerHTML = config[2];
+  return main;
+}
+function renderPage(next, fresh = false) {
+  page = next;
+  document.body.dataset.page = next;
+  if (next === 'case-study') sharedHeader.remove();
+  else if (!sharedHeader.isConnected) document.querySelector('main').before(sharedHeader);
+  const key = routeKey();
+  let main = pageViews.get(key);
+  const newView = !main || fresh;
+  if (newView) { main = fresh ? makePage(next) : pageViews.size === 0 ? initialMain : makePage(next); pageViews.set(key, main); }
+  if (document.querySelector('main') !== main) document.querySelector('main').replaceWith(main);
+  renderHeaderAndFooter();
+  if (newView) {
+    if (next === 'selected-work') renderProjects();
+    if (next === 'case-studies') renderCaseStudies();
+    if (next === 'experience') renderExperience();
+    if (next === 'case-study') renderCaseStudyDetails();
+  }
+  if (next !== 'case-study') {
+    document.title = next === 'selected-work' ? 'Ehsan Masoomi — Senior AI Product Designer' : (next === 'case-studies' ? 'Case Studies' : 'Experience') + ' — Ehsan Masoomi';
+    document.querySelector('meta[name="description"]').content = next === 'selected-work' ? 'Ehsan Masoomi — Senior AI Product Designer.' : document.title;
+  } else if (!newView) renderCaseStudyDetails();
+  const skip = document.querySelector('.skip-link');
+  skip.href = '#' + main.id; skip.textContent = 'Skip to main content';
+  updateTheme();
+  animateTypography(main);
+  return main;
+}
+let currentRoute = routeKey();
+renderPage(page);
+animateTypography(sharedHeader);
+function navigate(url, push = true) {
+  const next = routeFor(url);
+  if (!next || (push && url.href === location.href && next === page)) return;
+  scrollPositions.set(currentRoute, scrollY);
+  if (push) history.pushState({}, '', url.href);
+  const main = renderPage(next);
+  currentRoute = routeKey(url);
+  window.scrollTo({ top: push ? 0 : scrollPositions.get(currentRoute) || 0, behavior: 'instant' });
+  main.focus({ preventScroll: true });
+}
+document.addEventListener('click', event => {
+  const link = event.target.closest('a[href]');
+  if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.target || link.hasAttribute('download')) return;
+  const url = new URL(link.href, location.href);
+  if (url.origin !== location.origin || !routeFor(url) || (url.pathname === location.pathname && url.search === location.search && url.hash)) return;
+  event.preventDefault(); navigate(url);
+});
+window.addEventListener('popstate', () => navigate(new URL(location.href), false));
+history.scrollRestoration = 'manual';
+// Revalidate in the background; the build embeds content for an immediate first render.
+(async () => {
+  try {
+    const response = await fetch(new URL('./data/portfolio.json', import.meta.url), { cache: 'no-cache', signal: AbortSignal.timeout(8000) });
+    if (!response.ok) return;
+    const latest = normalizeContent(await response.json());
+    if (latest && JSON.stringify(latest) !== JSON.stringify(contentOverride)) {
+      contentOverride = latest; pageViews.clear(); renderPage(page, true);
+    }
+  } catch { /* The embedded portfolio works offline or with a slow content request. */ }
+})();
 
 window.addEventListener("storage", (event) => {
   if (event.key === "ehsan-portfolio-theme") {

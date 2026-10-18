@@ -8,7 +8,8 @@ const read = (path) => readFile(new URL('../build/' + path, import.meta.url), 'u
 
 test('public deployment contains the actual portfolio, content, and CV', async () => {
   assert.equal((await read('site/CNAME')).trim(), 'ehsandesigns.com');
-  assert.equal(JSON.parse(await read('site/data/portfolio.json')).projects.length, 20);
+  const source = JSON.parse(await readFile(new URL('../data/portfolio.json', import.meta.url), 'utf8'));
+  assert.deepEqual(JSON.parse(await read('site/data/portfolio.json')), source);
   await access(new URL('../build/site/assets/Ehsan-Masoomi-CV-EN.pdf', import.meta.url));
   assert.match(await read('site/case-study/index.html'), /<base href="\.\.\/"/);
 });

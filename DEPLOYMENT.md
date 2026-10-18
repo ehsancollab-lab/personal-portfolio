@@ -9,7 +9,7 @@ Cloudflare stores encrypted configuration secrets and a small D1 table for persi
 
 Repository: `ehsancollab-lab/personal-portfolio`.
 
-1. GitHub Free requires a **public repository** for Pages. The existing repository is private. Its visibility must be changed by its owner, or the owner must have an eligible GitHub paid plan. Do not change visibility without the owner's approval.
+1. GitHub Free requires a **public repository** for Pages. This repository is already public with the owner’s approval. A private fork needs an eligible paid plan.
 2. Open repository **Settings → Pages → Build and deployment → Source → GitHub Actions**.
 3. Set **Custom domain** to `ehsandesigns.com`. Verify ownership using the TXT record GitHub provides in the account's Pages settings.
 4. Open **Actions → Publish portfolio to GitHub Pages → Run workflow** if no deployment is already running.

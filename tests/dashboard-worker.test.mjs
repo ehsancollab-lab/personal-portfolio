@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { pbkdf2Sync, createHash } from 'node:crypto';
-import { readFile } from 'node:fs/promises';
+import { portfolioFixture } from './fixtures/portfolio.mjs';
 import { createSession, verifySession, verifyPassword, handleRequest, normalizePublishedContent, extractUploads, writeContent } from '../server/dashboard-worker.mjs';
 
-const seed = JSON.parse(await readFile(new URL('../data/portfolio.json', import.meta.url), 'utf8'));
+const seed = portfolioFixture();
 const secret = 'test-only-session-signing-secret-32-characters';
 const salt = Buffer.alloc(16, 7);
 const password = 'test-only-password';

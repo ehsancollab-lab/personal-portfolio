@@ -20,6 +20,8 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: '24'
+      - name: Install dependencies
+        run: npm ci
       - name: Check dashboard security and content publishing
         run: npm test
       - name: Build public portfolio
