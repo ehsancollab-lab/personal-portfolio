@@ -188,11 +188,11 @@ h1,h2,p { margin-block-start: 0; }
 .mini-button.delete:hover { border-color: var(--red); background: var(--red-soft); color: var(--red); }
 .mini-button.icon-only { min-width: 27px; padding-inline: 5px; font-size: 13px; }
 .file-input-hidden { position: fixed; inset-inline-start: -10000px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
-.project-tile { position: relative; overflow: hidden; aspect-ratio: 2760 / 1921; border: 1px solid var(--border); border-radius: 11px; background: var(--surface-soft); cursor: grab; touch-action: manipulation; transition: opacity 130ms ease, border-color 130ms ease, box-shadow 130ms ease; }
+.project-tile { position: relative; isolation: isolate; overflow: hidden; aspect-ratio: 2760 / 1921; border: 1px solid var(--border); border-radius: 11px; background: var(--surface-soft); cursor: grab; touch-action: manipulation; transition: opacity 130ms ease, border-color 130ms ease, box-shadow 130ms ease; }
 .project-tile:active { cursor: grabbing; }
-.project-tile > img { display: block; width: 100%; height: 100%; object-fit: contain; }
-.project-tile::before { position: absolute; inset: 0; background: rgba(16, 18, 24, .38); content: ""; opacity: 0; pointer-events: none; transition: opacity 140ms ease; }
-.project-tile-actions { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 8px; opacity: 0; pointer-events: none; transition: opacity 140ms ease; }
+.project-tile > img { position: relative; z-index: 0; display: block; width: 100%; height: 100%; object-fit: contain; }
+.project-tile::before { position: absolute; z-index: 1; inset: 0; background: rgba(16, 18, 24, .38); content: ""; opacity: 0; pointer-events: none; transition: opacity 140ms ease; }
+.project-tile-actions { position: absolute; z-index: 2; inset: 0; display: flex; align-items: center; justify-content: center; gap: 8px; opacity: 0; pointer-events: none; transition: opacity 140ms ease; }
 .project-action-button { min-height: 32px; padding: 6px 12px; border: 1px solid rgba(255, 255, 255, .72); border-radius: 999px; background: #ffffff; color: #27272a; box-shadow: 0 2px 9px rgba(0, 0, 0, .12); font-size: 10px; font-weight: 600; pointer-events: auto; }
 .project-action-button:hover { background: #f0f0f2; }
 .project-action-button.is-delete { border-color: rgba(255, 255, 255, .5); background: var(--red); color: #ffffff; }
@@ -203,6 +203,9 @@ h1,h2,p { margin-block-start: 0; }
 .project-tile.drop-before { box-shadow: inset 0 3px var(--accent); }
 .project-tile.drop-after { box-shadow: inset 0 -3px var(--accent); }
 .project-tile:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+.project-tile[draggable="false"] { cursor: default; }
+.content-wrap button:disabled, .content-wrap input:disabled, .content-wrap textarea:disabled, .content-wrap select:disabled { cursor: not-allowed; }
+.content-wrap button:disabled { opacity: .6; }
 .empty-state.is-projects-empty { min-height: 260px; }
 .empty-state { display: grid; min-height: 320px; place-content: center; justify-items: center; padding: 28px; border: 1px dashed var(--border); border-radius: 11px; background: color-mix(in srgb, var(--surface) 62%, transparent); text-align: center; }
 .empty-icon { display: grid; width: 46px; height: 46px; place-items: center; margin-block-end: 10px; border-radius: 13px; background: var(--surface-soft); color: var(--faint); font-size: 23px; }

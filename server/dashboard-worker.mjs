@@ -206,34 +206,57 @@ export async function extractUploads(content) {
   }
   return { content: output, uploads };
 }
+function githubContentToken(env) {
+  const token = typeof env.GITHUB_CONTENT_TOKEN === 'string' ? env.GITHUB_CONTENT_TOKEN.trim() : '';
+  if (!token) throw new HttpError(503, 'publishing_not_configured');
+  if (/[^\x21-\x7e]/.test(token)) throw new HttpError(502, 'github_token_invalid');
+  return token;
+}
 function repoBase(env) {
   const owner = env.GITHUB_OWNER || 'ehsancollab-lab';
   const repo = env.GITHUB_REPO || 'personal-portfolio';
-  if (!/^[\w.-]+$/.test(owner) || !/^[\w.-]+$/.test(repo) || !env.GITHUB_CONTENT_TOKEN) throw new HttpError(503, 'publishing_not_configured');
+  if (!/^[\w.-]+$/.test(owner) || !/^[\w.-]+$/.test(repo)) throw new HttpError(503, 'publishing_not_configured');
   return `https://api.github.com/repos/${owner}/${repo}`;
 }
 async function github(env, path, method = 'GET', body) {
-  const response = await fetch(repoBase(env) + path, {
-    method, redirect: 'error', signal: AbortSignal.timeout(15000),
-    headers: {
-      'Accept': 'application/vnd.github+json', 'Authorization': `Bearer ${env.GITHUB_CONTENT_TOKEN}`,
-      'X-GitHub-Api-Version': '2022-11-28', 'User-Agent': 'Ehsan-Portfolio-Dashboard',
-      ...(body ? { 'Content-Type': 'application/json' } : {})
-    },
-    ...(body ? { body: JSON.stringify(body) } : {})
-  });
-  if (!response.ok) {
-    if (response.status === 409 || response.status === 422) throw new HttpError(409, 'content_conflict');
-    throw new HttpError(502, 'github_unavailable');
+  const token = githubContentToken(env);
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
+  try {
+    const response = await fetch(repoBase(env) + path, {
+      // Never forward the repository credential to a redirected origin.
+      method, redirect: 'manual', signal: controller.signal,
+      headers: {
+        'Accept': 'application/vnd.github+json', 'Authorization': `Bearer ${token}`,
+        'X-GitHub-Api-Version': '2022-11-28', 'User-Agent': 'Ehsan-Portfolio-Dashboard',
+        ...(body ? { 'Content-Type': 'application/json' } : {})
+      },
+      ...(body ? { body: JSON.stringify(body) } : {})
+    });
+    if (!response.ok) {
+      if (response.status >= 300 && response.status < 400) throw new HttpError(502, 'github_redirect_not_allowed');
+      if (response.status === 401) throw new HttpError(502, 'github_token_invalid');
+      if (response.status === 429 || response.headers.get('x-ratelimit-remaining') === '0') throw new HttpError(503, 'github_rate_limited');
+      if (response.status === 403) throw new HttpError(502, 'github_access_denied');
+      if (response.status === 404) throw new HttpError(502, 'github_content_not_found');
+      if (response.status === 409 || response.status === 422) throw new HttpError(409, 'content_conflict');
+      throw new HttpError(502, 'github_unavailable');
+    }
+    try { return await response.json(); }
+    catch { throw new HttpError(502, 'github_invalid_response'); }
+  } catch (error) {
+    if (error instanceof HttpError) throw error;
+    throw new HttpError(controller.signal.aborted ? 504 : 502, controller.signal.aborted ? 'github_timeout' : 'github_connection_failed');
+  } finally {
+    clearTimeout(timeout);
   }
-  return response.json();
 }
 function branch(env) { return env.GITHUB_BRANCH || 'main'; }
 async function readContent(env, ref = branch(env)) {
   const file = await github(env, `/contents/${CONTENT_PATH}?ref=${encodeURIComponent(ref)}`);
-  if (!/^[a-f0-9]{40}$/.test(file.sha)) throw new HttpError(502, 'invalid_stored_content');
+  if (!file || !/^[a-f0-9]{40}$/.test(file.sha)) throw new HttpError(502, 'invalid_stored_content');
   const blob = file.encoding === 'base64' ? file : await github(env, `/git/blobs/${file.sha}`);
-  if (blob.encoding !== 'base64' || typeof blob.content !== 'string') throw new HttpError(502, 'invalid_stored_content');
+  if (!blob || blob.encoding !== 'base64' || typeof blob.content !== 'string') throw new HttpError(502, 'invalid_stored_content');
   let parsed;
   try { parsed = JSON.parse(decoder.decode(decode64(blob.content.replace(/\s/g, '')))); }
   catch { throw new HttpError(502, 'invalid_stored_content'); }
@@ -321,6 +344,13 @@ export async function handleRequest(request, env) {
     if (path === '/admin.html') return secure(Response.redirect(url.origin + '/', 303));
     return secure(await env.ASSETS.fetch(request));
   } catch (error) {
+    if (!(error instanceof HttpError)) {
+      // Log only the exception type and call sites, never messages or environment values.
+      console.error('Unexpected dashboard error', {
+        type: error?.name || 'Error',
+        frames: typeof error?.stack === 'string' ? error.stack.split('\n').slice(1, 5).join('\n') : ''
+      });
+    }
     return secure(json({ error: error instanceof HttpError ? error.code : 'temporarily_unavailable' }, error instanceof HttpError ? error.status : 503));
   }
 }

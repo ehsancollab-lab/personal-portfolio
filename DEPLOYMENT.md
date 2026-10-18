@@ -77,6 +77,8 @@ Check the actual domain over HTTPS from the user's Iranian mobile and fixed-line
 
 ## 4. Content and recovery
 
+The dashboard stays navigable and shows card hover previews while loading. If GitHub content cannot be loaded, editing controls are explicitly disabled and the status bar provides the connection error and **Retry loading**. A preview is not a saved change. Check that `GITHUB_CONTENT_TOKEN` is an encrypted production secret with access to the configured repository and Contents read/write. API errors distinguish rejected credentials, missing content, rate limits, and connection timeouts without exposing secrets.
+
 Edits are automatically saved to GitHub after a short debounce. New images become deduplicated files under `assets/uploads/` and the content JSON stores their paths. A single atomic Git tree/commit includes the image files and content change. Non-fast-forward branch updates are rejected; another editor's work is never force-overwritten. After an error, the browser retains a local recovery draft and the dashboard offers retry, backup export, and loading the latest published content.
 
 The supplied Figma content is seeded in `data/portfolio.json`; no project results were invented for this migration. Edits made in the previous browser-only dashboard exist only on that old origin/device. Export them before migration and import that JSON through the dashboard's backup controls to preserve them. Authentication and shared storage are new server features; the old Sites dashboard does not provide them.

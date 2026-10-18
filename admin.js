@@ -37,6 +37,7 @@ let changeNumber = 0;
 let saving = false;
 let loaded = false;
 let conflicted = false;
+let loadingContent = false;
 
 function id() { return globalThis.crypto?.randomUUID?.() || 'item-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8); }
 function deepCopy(value) { return JSON.parse(JSON.stringify(value)); }
@@ -123,18 +124,58 @@ function saveData(messageKey = 'allSavedToast') {
   return true;
 }
 
+function updateContentAvailability() {
+  const content = document.querySelector('.content-wrap');
+  content.dataset.contentState = loaded ? 'ready' : loadingContent ? 'loading' : 'unavailable';
+  content.setAttribute('aria-busy', String(loadingContent));
+  // A failed connection must not suppress card hover or page navigation.
+  content.querySelectorAll('button, input, textarea, select').forEach((control) => { control.disabled = !loaded; });
+  content.querySelectorAll('.project-tile').forEach((card) => { card.draggable = loaded; });
+  document.querySelector('#restore-backup').disabled = !loaded;
+}
+function contentErrorMessage(code, status, operation = 'load') {
+  const messages = {
+    publishing_not_configured: 'GitHub publishing is not configured. Set GITHUB_CONTENT_TOKEN in Cloudflare Production secrets.',
+    github_token_invalid: 'GitHub rejected the content token. Update GITHUB_CONTENT_TOKEN in Cloudflare Production secrets.',
+    github_access_denied: 'GitHub access was denied. Allow this repository and Contents: Read and write on the content token.',
+    github_content_not_found: 'Portfolio content was not found. Check the configured GitHub repository and branch.',
+    github_rate_limited: 'GitHub temporarily limited requests. Wait a minute, then retry.',
+    github_connection_failed: 'The server could not connect to GitHub. Retry loading your content.',
+    github_timeout: 'The connection to GitHub timed out. Retry loading your content.',
+    github_redirect_not_allowed: 'GitHub redirected the repository request. Check the configured repository name.',
+    github_invalid_response: 'GitHub returned an unreadable response. Retry loading your content.',
+    github_unavailable: 'GitHub could not be reached. Retry loading your content.',
+    invalid_stored_content: 'The stored portfolio content could not be read. Retry or check the repository content file.',
+    invalid_content: 'The stored portfolio content has an unsupported format.',
+    invalid_image: 'A portfolio image has an unsupported format.'
+  };
+  return messages[code] || (operation === 'save'
+    ? `Could not confirm saving${status ? ` (HTTP ${status})` : ''}.`
+    : `Could not load your published content${status ? ` (HTTP ${status})` : ''}. Editing is paused; retry loading.`);
+}
 function publishingStatus(state, message) {
   document.querySelector('.publishing-bar').dataset.state = state;
   document.querySelector('#publishing-status').textContent = message;
   document.querySelector('#retry-publish').hidden = state !== 'error';
+  document.querySelector('#retry-publish').textContent = loaded ? 'Retry saving' : 'Retry loading';
   document.querySelector('#reload-content').hidden = state !== 'conflict';
 }
 async function loadPublishedData() {
+  if (loadingContent) return;
+  loadingContent = true;
+  updateContentAvailability();
   publishingStatus('loading', 'Loading your content…');
   try {
-    const response = await fetch('/api/content', { credentials: 'same-origin', cache: 'no-store' });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 25000);
+    let response;
+    try { response = await fetch('/api/content', { credentials: 'same-origin', cache: 'no-store', signal: controller.signal }); }
+    finally { clearTimeout(timeout); }
     if (response.status === 401) { location.replace('/login'); return; }
-    if (!response.ok) throw new Error('load');
+    if (!response.ok) {
+      const result = await response.json().catch(() => ({}));
+      throw new Error(contentErrorMessage(result.error, response.status));
+    }
     const result = await response.json();
     const normalized = normalizeData(result.content);
     if (!normalized || !/^[a-f0-9]{40}$/.test(result.revision)) throw new Error('content');
@@ -150,14 +191,23 @@ async function loadPublishedData() {
       }
     } catch { /* A malformed draft never replaces published content. */ }
     loaded = true;
-    document.querySelector('.content-wrap').inert = false;
     renderSection();
     renderDashboardFooterLinks();
     updateCounts();
     publishingStatus('saved', 'Saved to GitHub');
     if (restored) saveData();
     else if (storage.getItem(RECOVERY_KEY)) publishingStatus('saved', 'A previous draft is available in Download backup.');
-  } catch { publishingStatus('error', 'Could not load content. Your published site is still available.'); }
+  } catch (error) {
+    const message = error?.name === 'AbortError'
+      ? 'Loading timed out. Retry loading your published content.'
+      : error?.message === 'content' ? contentErrorMessage('invalid_stored_content')
+      : error instanceof TypeError ? 'Could not connect. Check your connection, then retry loading.'
+      : error?.message || contentErrorMessage();
+    publishingStatus('error', `${message} Preview only until the published content loads.`);
+  } finally {
+    loadingContent = false;
+    updateContentAvailability();
+  }
 }
 async function publishData() {
   clearTimeout(saveTimer);
@@ -180,7 +230,10 @@ async function publishData() {
       publishingStatus('conflict', 'Content changed elsewhere. Download your backup, then load the latest content.');
       return;
     }
-    if (!response.ok) throw new Error('save');
+    if (!response.ok) {
+      const result = await response.json().catch(() => ({}));
+      throw new Error(contentErrorMessage(result.error, response.status, 'save'));
+    }
     const result = await response.json();
     const normalized = normalizeData(result.content);
     if (!normalized || !/^[a-f0-9]{40}$/.test(result.revision)) throw new Error('content');
@@ -194,7 +247,10 @@ async function publishData() {
       storage.setItem(DRAFT_KEY, JSON.stringify({ revision: serverRevision, content: data }));
       saveTimer = setTimeout(publishData, 700);
     }
-  } catch { publishingStatus('error', 'Could not confirm saving. Your draft is kept on this device. Retry saving.'); }
+  } catch (error) {
+    const detail = error instanceof TypeError ? 'Could not connect to save your changes.' : error?.message === 'content' ? 'The save response could not be read.' : error?.message || 'Could not confirm saving.';
+    publishingStatus('error', `${detail} Your draft is kept on this device. Retry saving.`);
+  }
   finally { saving = false; }
 }
 function t(key) { return uiText[key] || key; }
@@ -296,6 +352,7 @@ function makeButton(text, classes, action, idValue, title = '') {
   button.textContent = text;
   button.dataset.action = action;
   button.dataset.itemId = idValue;
+  button.disabled = !loaded;
   if (title) { button.title = title; button.setAttribute('aria-label', title); }
   return button;
 }
@@ -303,7 +360,7 @@ function renderProjectTile(item, index) {
   const card = document.createElement('article');
   card.className = 'project-tile';
   card.dataset.itemId = item.id;
-  card.draggable = true;
+  card.draggable = loaded;
   card.tabIndex = 0;
   card.setAttribute('role', 'listitem');
   card.setAttribute('aria-label', `${t('imageItem')} ${index + 1}. ${t('imageOrder')}`);
@@ -458,6 +515,7 @@ function adminAssetPath(name) {
 let projectPickerAction = null;
 let draggedProjectId = '';
 function openProjectPicker(action, itemId = '') {
+  if (!loaded) { showToast('Load your published content before editing. Use Retry loading above.'); return; }
   projectPickerAction = { action, itemId };
   const input = document.querySelector('#project-image-input');
   input.value = '';
@@ -537,6 +595,7 @@ async function handleProjectImagePick(event) {
   }
 }
 function reorderProject(draggedId, targetId, afterTarget = false) {
+  if (!loaded) return;
   const fromIndex = data.projects.findIndex((project) => project.id === draggedId);
   const targetIndex = data.projects.findIndex((project) => project.id === targetId);
   if (fromIndex < 0 || targetIndex < 0 || fromIndex === targetIndex) return;
@@ -658,6 +717,7 @@ function handleItemSave(event) {
   renderItems();
 }
 function handleCardAction(event) {
+  if (!loaded) return;
   const button = event.target.closest('[data-action]');
   if (!button) return;
   const { action, itemId } = button.dataset;
@@ -762,10 +822,10 @@ function saveProfile(event) {
 }
 function renderSection() {
   updateHeadings();
-  if (activeSection === 'overview') { updateCounts(); return; }
-  if (activeSection === 'profile') { renderProfile(); return; }
-  if (activeSection === 'settings') return;
-  renderItems();
+  if (activeSection === 'overview') updateCounts();
+  else if (activeSection === 'profile') renderProfile();
+  else if (activeSection !== 'settings') renderItems();
+  updateContentAvailability();
 }
 function setSection(section) {
   activeSection = section;
@@ -776,6 +836,7 @@ function setSection(section) {
   document.querySelector('#mobile-menu')?.setAttribute('aria-expanded', 'false');
 }
 function addNew() {
+  if (!loaded) { showToast('Load your published content before editing. Use Retry loading above.'); return; }
   const section = activeSection === 'overview' ? 'caseStudies' : activeSection;
   if (section === 'profile' || section === 'settings' || section === 'overview') return;
   if (section === 'projects') { openProjectPicker('add'); return; }
@@ -848,7 +909,7 @@ document.querySelector('#empty-action').addEventListener('click', addNew);
 const itemsGrid = document.querySelector('#items-grid');
 itemsGrid.addEventListener('click', handleCardAction);
 itemsGrid.addEventListener('dragstart', (event) => {
-  if (activeSection !== 'projects') return;
+  if (!loaded || activeSection !== 'projects') { event.preventDefault(); return; }
   const card = event.target.closest('.project-tile');
   if (!card) return;
   draggedProjectId = card.dataset.itemId;
