@@ -3,7 +3,6 @@ import { caseStudyAssets, defaultCaseStudies, defaultExperience } from "./case-c
 
 const root = document.documentElement;
 const page = document.body.dataset.page || "selected-work";
-const contentStorageKey = "ehsan-portfolio-cms-v1";
 const projectAssets = [...projects];
 
 const safeStorage = {
@@ -49,6 +48,10 @@ function validImageDataUrl(value) {
   return typeof value === "string" && value.length <= 900000 && /^data:image\/(?:png|jpeg|webp|gif|avif);base64,[A-Za-z0-9+/]+={0,2}$/.test(value);
 }
 
+function validUploadedImage(value) {
+  return typeof value === 'string' && /^uploads\/[a-f0-9]{64}\.(?:png|jpg|webp|gif|avif)$/.test(value);
+}
+
 function normalizeContent(candidate) {
   if (!candidate || ![1, 2, 3].includes(candidate.version) || !Array.isArray(candidate.projects) || !Array.isArray(candidate.caseStudies) || !Array.isArray(candidate.experience) || !Array.isArray(candidate.contactLinks)) return null;
   const defaults = defaultContent();
@@ -56,7 +59,7 @@ function normalizeContent(candidate) {
     id: String(item.id || ""),
     ...Object.fromEntries(fields.map((field) => [field, text(item[field])])),
     href: validHref(item.href) ? String(item.href || "") : "",
-    image: [...projectAssets, ...caseStudyAssets].includes(item.image) || validImageDataUrl(item.image) ? String(item.image) : "",
+    image: [...projectAssets, ...caseStudyAssets].includes(item.image) || validImageDataUrl(item.image) || validUploadedImage(item.image) ? String(item.image) : "",
     visible: item.visible !== false,
   });
   const caseStudies = candidate.caseStudies.map((item) => normalizeItem(item, ["title", "summary", "body"]));
@@ -70,7 +73,7 @@ function normalizeContent(candidate) {
     },
     projects: candidate.projects.map((item, index) => ({
       id: String(item.id || String(index + 1)),
-      image: projectAssets.includes(item.image) || validImageDataUrl(item.image) ? String(item.image) : projectAssets[index % projectAssets.length],
+      image: projectAssets.includes(item.image) || validImageDataUrl(item.image) || validUploadedImage(item.image) ? String(item.image) : projectAssets[index % projectAssets.length],
       title: text(item.title),
       href: validHref(item.href) ? String(item.href || "") : "",
       visible: item.visible !== false,
@@ -87,12 +90,9 @@ function normalizeContent(candidate) {
 
 let contentOverride = null;
 try {
-  const saved = safeStorage.get(contentStorageKey);
-  if (saved) {
-    contentOverride = normalizeContent(JSON.parse(saved));
-    if (contentOverride) safeStorage.set(contentStorageKey, JSON.stringify(contentOverride));
-  }
-} catch { /* Ignore malformed local drafts and use the supplied content. */ }
+  const response = await fetch(new URL('./data/portfolio.json', import.meta.url), { cache: 'no-cache' });
+  if (response.ok) contentOverride = normalizeContent(await response.json());
+} catch { /* The supplied portfolio remains available if the content request fails. */ }
 
 let theme = safeStorage.get("ehsan-portfolio-theme") === "dark" ? "dark" : "light";
 
@@ -126,7 +126,13 @@ function renderBio() {
   if (!bio) return;
   const managedBio = contentOverride?.profile?.bio;
   if (managedBio != null) {
-    bio.textContent = text(managedBio);
+    const value = text(managedBio);
+    const names = Object.entries(copy.companyNames);
+    const pattern = new RegExp('(' + names.map(([, name]) => name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')', 'g');
+    bio.replaceChildren(...value.split(pattern).map((part) => {
+      const found = names.find(([, name]) => name === part);
+      return found ? externalAnchor(companyLinks[found[0]], part) : document.createTextNode(part);
+    }));
     return;
   }
   const nodes = copy.bioSegments.map((segment) => {
@@ -140,6 +146,7 @@ function renderBio() {
 function assetPath(name) {
   const asset = String(name || "");
   if (validImageDataUrl(asset)) return asset;
+  if (validUploadedImage(asset)) return './assets/' + asset;
   if (projectAssets.includes(asset)) return "./assets/projects/" + encodeURIComponent(asset);
   if (caseStudyAssets.includes(asset)) return "./assets/case-studies/" + encodeURIComponent(asset);
   return "";
@@ -177,7 +184,7 @@ function renderProjects() {
   const grid = document.querySelector("#project-grid");
   const managed = contentOverride?.projects;
   const items = managed
-    ? managed.filter((item) => item.visible !== false && (projectAssets.includes(item.image) || validImageDataUrl(item.image)))
+    ? managed.filter((item) => item.visible !== false && (projectAssets.includes(item.image) || validImageDataUrl(item.image) || validUploadedImage(item.image)))
     : projects.map((image, index) => ({ id: String(index), image, visible: true }));
   grid.setAttribute("role", "list");
   grid.replaceChildren(...items.map(createProjectCard));
@@ -478,16 +485,6 @@ if (page === "case-study") renderCaseStudyDetails();
 updateTheme();
 
 window.addEventListener("storage", (event) => {
-  if (event.key === contentStorageKey) {
-    try {
-      contentOverride = event.newValue ? normalizeContent(JSON.parse(event.newValue)) : null;
-      renderHeaderAndFooter();
-      if (page === "selected-work") renderProjects();
-      if (page === "case-studies") renderCaseStudies();
-      if (page === "experience") renderExperience();
-      if (page === "case-study") renderCaseStudyDetails();
-    } catch { /* Keep the last rendered content if another tab writes invalid data. */ }
-  }
   if (event.key === "ehsan-portfolio-theme") {
     theme = event.newValue === "dark" ? "dark" : "light";
     updateTheme();

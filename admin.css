@@ -333,6 +333,13 @@ h1,h2,p { margin-block-start: 0; }
 @media (hover: none) {
   .project-tile::before,.project-tile-actions { opacity: 1; }
 }
+
+.publishing-bar { width: min(960px, calc(100% - 48px)); margin: 32px auto -48px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; color: #666; font-size: 12px; line-height: 1.6; }
+.publishing-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
+.publishing-actions button, .publishing-actions a { padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.publishing-bar[data-state="error"], .publishing-bar[data-state="conflict"] { color: #a92936; }
+.publishing-actions button:focus-visible, .publishing-actions a:focus-visible { outline: 2px solid #5571dc; outline-offset: 4px; }
+@media (max-width: 680px) { .publishing-bar { width: calc(100% - 36px); margin-top: 24px; margin-bottom: -40px; } .publishing-actions { gap: 12px; } }
 @media (prefers-reduced-motion: reduce) {
   *,*::before,*::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
