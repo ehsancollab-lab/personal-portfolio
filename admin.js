@@ -21,7 +21,7 @@ const storage = (() => {
   }
 })();
 const uiText = {
-    skip: 'Skip to dashboard content', workspace: 'Portfolio workspace', manage: 'Manage content', overview: 'Overview', selectedWork: 'Selected Work', caseStudies: 'Case Studies', experience: 'Experience', profileContact: 'Profile & contact', viewPortfolio: 'View portfolio', designerRole: 'Senior AI Product Designer', allChangesSaved: 'All changes saved', contentManagement: 'CONTENT MANAGEMENT', overviewSubtitle: 'Manage your portfolio content in one place.', previewSite: 'Preview site', addNew: 'Add new', localStorageTitle: 'Saved in this browser', localStorageCopy: 'Edits stay on this device. Export a JSON backup to move them; publishing to all visitors needs a database and admin access.', projectImages: 'project images', draftEntries: 'draft entries', workEntries: 'work entries', contentSections: 'Content sections', contentSectionsHint: 'Choose a section to review or edit.', workspaceStatus: 'Workspace status', workspaceStatusHint: 'A quick view of your content setup.', draft: 'Draft', englishContent: 'English-only content', themeSupport: 'Light and dark themes', ready: 'Ready', publicSections: 'Case Studies and Experience pages', connected: 'Connected', sharedPublishing: 'Shared publishing', backendNeeded: 'Backend needed', onlyYouCanSee: 'Only your browser has these edits', nextSteps: 'Manage your public portfolio content', nextStepsCopy: 'Edit case study cards and full article details, or update the roles and responsibilities shown on the Experience page.', manageCaseStudies: 'Manage Case Studies', allItems: 'All items', published: 'Visible', searchContent: 'Search content', nothingHere: 'Nothing here yet', emptyCopy: 'Create your first item. You can add or change the text later.', addFirst: 'Add your first item', backupTitle: 'Backup and transfer', backupCopy: 'Export your current content to a JSON file, or restore a previous backup.', exportJson: 'Export JSON', importJson: 'Import JSON', appearanceTitle: 'Appearance', appearanceCopy: 'Choose the color theme.', switchTheme: 'Switch theme', resetTitle: 'Reset local edits', resetCopy: 'Restore the starting content from the supplied portfolio files. This clears saved edits in this browser.', reset: 'Reset content', footerNote: 'Portfolio content workspace', cancel: 'Cancel', saveChanges: 'Save changes', selectedWorkTitle: 'Selected Work', selectedWorkSubtitle: 'Manage the 20 supplied images and their display settings.', caseStudiesSubtitle: 'Edit case study cards and full article details for the public portfolio.', experienceSubtitle: 'Edit roles, dates, and responsibilities shown on the Experience page.', profileSubtitle: 'Update the introduction and contact links shown on your portfolio.', settingsSubtitle: 'Manage backups and dashboard preferences.', allSavedToast: 'Changes saved in this browser.', savedToast: 'Saved in this browser. Open the portfolio pages here to preview the changes.', deleteConfirm: 'Delete this item? This cannot be undone in this browser.', resetConfirm: 'Clear local edits and restore the starting portfolio data?', importConfirm: 'Replace the current local content with this backup?', invalidJson: 'This JSON file is not a valid portfolio backup.', exported: 'JSON backup downloaded.', imported: 'Backup imported.', resetDone: 'Starting content restored.', searchPlaceholder: 'Search by title or text', imageItem: 'Project image', untitledProject: 'Untitled work', untitledCase: 'Untitled case study', untitledExperience: 'Untitled role', noContent: 'Content not added', edit: 'Edit', delete: 'Delete', up: 'Move up', down: 'Move down', visible: 'Visible on portfolio', hidden: 'Hidden from portfolio', draftBadge: 'Draft', image: 'Image', title: 'Title', link: 'External link (optional)', summary: 'Summary', details: 'Full case study content', caseDetailsHint: 'Use ## for section headings, - for bullets, and ![Caption](image-name.png) for screenshots. Available screenshots appear in the image menu.', role: 'Role', company: 'Company', dates: 'Dates', description: 'Description', heading: 'Heading', body: 'Body text', chooseImage: 'Choose an image', noLink: 'No link added', optional: 'Optional', untitled: 'Untitled', item: 'item', items: 'items', addItem: 'Add item', newProject: 'Add project image', newCase: 'New case study', newExperience: 'New experience', editProject: 'Edit project image', editCase: 'Edit case study', editExperience: 'Edit experience', caseKicker: 'CASE STUDY', workKicker: 'SELECTED WORK', experienceKicker: 'EXPERIENCE', profileKicker: 'PROFILE', statusVisible: 'Visible', contactLabel: 'Label', destination: 'URL / email', contactsTitle: 'Contact links', contactsCopy: 'Keep the existing destinations or replace them with your own links.', addContact: 'Add contact link', saveProfile: 'Save profile', greeting: 'Greeting', biography: 'Biography', contactPrompt: 'Contact prompt', imageOrder: 'Order follows the portfolio list. Use arrows to rearrange.', noImageAvailable: 'No supplied project image is available.', badLink: 'Use a valid https, mailto, tel, or relative link.', localOnly: 'Saved in this browser only', dataImported: 'Backup restored', unexpectedError: 'Something went wrong. Please try again.'
+    skip: 'Skip to dashboard content', workspace: 'Portfolio workspace', manage: 'Manage content', overview: 'Overview', selectedWork: 'Selected Work', caseStudies: 'Case Studies', experience: 'Experience', profileContact: 'Profile & contact', viewPortfolio: 'View portfolio', designerRole: 'Senior AI Product Designer', allChangesSaved: 'All changes saved', contentManagement: 'CONTENT MANAGEMENT', overviewSubtitle: 'Manage your portfolio content in one place.', previewSite: 'Preview site', addNew: 'Add New', localStorageTitle: 'Saved in this browser', localStorageCopy: 'Edits stay on this device. Export a JSON backup to move them; publishing to all visitors needs a database and admin access.', projectImages: 'project images', draftEntries: 'draft entries', workEntries: 'work entries', contentSections: 'Content sections', contentSectionsHint: 'Choose a section to review or edit.', workspaceStatus: 'Workspace status', workspaceStatusHint: 'A quick view of your content setup.', draft: 'Draft', englishContent: 'English-only content', themeSupport: 'Light and dark themes', ready: 'Ready', publicSections: 'Case Studies and Experience pages', connected: 'Connected', sharedPublishing: 'Shared publishing', backendNeeded: 'Backend needed', onlyYouCanSee: 'Only your browser has these edits', nextSteps: 'Manage your public portfolio content', nextStepsCopy: 'Edit case study cards and full article details, or update the roles and responsibilities shown on the Experience page.', manageCaseStudies: 'Manage Case Studies', allItems: 'All items', published: 'Visible', searchContent: 'Search content', nothingHere: 'Nothing here yet', emptyCopy: 'Create your first item. You can add or change the text later.', addFirst: 'Add your first item', backupTitle: 'Backup and transfer', backupCopy: 'Export your current content to a JSON file, or restore a previous backup.', exportJson: 'Export JSON', importJson: 'Import JSON', appearanceTitle: 'Appearance', appearanceCopy: 'Choose the color theme.', switchTheme: 'Switch theme', resetTitle: 'Reset local edits', resetCopy: 'Restore the starting content from the supplied portfolio files. This clears saved edits in this browser.', reset: 'Reset content', footerNote: 'Portfolio content workspace', cancel: 'Cancel', saveChanges: 'Save changes', selectedWorkTitle: 'Selected Work', selectedWorkSubtitle: 'Add, replace, delete, and drag images to set their order.', caseStudiesSubtitle: 'Edit case study cards and full article details for the public portfolio.', experienceSubtitle: 'Edit roles, dates, and responsibilities shown on the Experience page.', profileSubtitle: 'Update the introduction and contact links shown on your portfolio.', settingsSubtitle: 'Manage backups and dashboard preferences.', allSavedToast: 'Changes saved in this browser.', savedToast: 'Saved in this browser. Open the portfolio pages here to preview the changes.', deleteConfirm: 'Delete this item? This cannot be undone in this browser.', resetConfirm: 'Clear local edits and restore the starting portfolio data?', importConfirm: 'Replace the current local content with this backup?', invalidJson: 'This JSON file is not a valid portfolio backup.', exported: 'JSON backup downloaded.', imported: 'Backup imported.', resetDone: 'Starting content restored.', searchPlaceholder: 'Search by title or text', imageItem: 'Project image', untitledProject: 'Untitled work', untitledCase: 'Untitled case study', untitledExperience: 'Untitled role', noContent: 'Content not added', edit: 'Edit', delete: 'Delete', up: 'Move up', down: 'Move down', visible: 'Visible on portfolio', hidden: 'Hidden from portfolio', draftBadge: 'Draft', image: 'Image', title: 'Title', link: 'External link (optional)', summary: 'Summary', details: 'Full case study content', caseDetailsHint: 'Use ## for section headings, - for bullets, and ![Caption](image-name.png) for screenshots. Available screenshots appear in the image menu.', role: 'Role', company: 'Company', dates: 'Dates', description: 'Description', heading: 'Heading', body: 'Body text', chooseImage: 'Choose an image', noLink: 'No link added', optional: 'Optional', untitled: 'Untitled', item: 'item', items: 'items', addItem: 'Add item', newProject: 'Add project image', newCase: 'New case study', newExperience: 'New experience', editProject: 'Edit project image', editCase: 'Edit case study', editExperience: 'Edit experience', caseKicker: 'CASE STUDY', workKicker: 'SELECTED WORK', experienceKicker: 'EXPERIENCE', profileKicker: 'PROFILE', statusVisible: 'Visible', contactLabel: 'Label', destination: 'URL / email', contactsTitle: 'Contact links', contactsCopy: 'Keep the existing destinations or replace them with your own links.', addContact: 'Add contact link', saveProfile: 'Save profile', greeting: 'Greeting', biography: 'Biography', contactPrompt: 'Contact prompt', imageOrder: 'Drag and drop to reorder images.', noImageAvailable: 'No supplied project image is available.', noWorkImages: 'No work images yet.', replace: 'Replace', fileTypeError: 'Choose an image file.', uploadFailed: 'This image could not be read. Choose another image file.', storageError: 'This browser could not save the image. Try a smaller image or clear some browser storage.', badLink: 'Use a valid https, mailto, tel, or relative link.', localOnly: 'Saved in this browser only', dataImported: 'Backup restored', unexpectedError: 'Something went wrong. Please try again.'
   };
 
 let theme = storage.getItem(THEME_KEY) === 'dark' ? 'dark' : 'light';
@@ -59,13 +59,17 @@ function validHref(value) {
   if (!href) return true;
   return /^(https:\/\/|mailto:|tel:|\/|\.\/|#)/i.test(href) && !/^\/\//.test(href);
 }
+function validImageDataUrl(value) {
+  return typeof value === 'string' && value.length <= 900000 && /^data:image\/(?:png|jpeg|webp|gif|avif);base64,[A-Za-z0-9+/]+={0,2}$/.test(value);
+}
+function isProjectImage(value) { return imageNames.includes(value) || validImageDataUrl(value); }
 function normalizeData(candidate) {
   if (!candidate || ![1, 2, 3].includes(candidate.version) || !Array.isArray(candidate.projects) || !Array.isArray(candidate.caseStudies) || !Array.isArray(candidate.experience) || !Array.isArray(candidate.contactLinks)) return null;
   const base = initialData();
   const text = (value) => typeof value === 'string' ? value : String(value?.en || '');
   const safeProject = (item, index) => ({
     id: String(item.id || id()),
-    image: imageNames.includes(item.image) ? item.image : imageNames[index % imageNames.length],
+    image: isProjectImage(item.image) ? item.image : imageNames[index % imageNames.length],
     title: text(item.title),
     href: validHref(item.href) ? String(item.href || '') : '',
     visible: item.visible !== false
@@ -74,7 +78,7 @@ function normalizeData(candidate) {
     const normalized = { id: String(item.id || id()) };
     for (const field of fields) normalized[field] = text(item[field]);
     normalized.href = validHref(item.href) ? String(item.href || '') : '';
-    normalized.image = [...imageNames, ...caseStudyAssets].includes(item.image) ? item.image : '';
+    normalized.image = [...imageNames, ...caseStudyAssets].includes(item.image) || validImageDataUrl(item.image) ? item.image : '';
     normalized.visible = item.visible !== false;
     return normalized;
   };
@@ -113,7 +117,7 @@ function saveData(messageKey = 'allSavedToast') {
   try {
     storage.setItem(CONTENT_KEY, JSON.stringify(data));
     storage.setItem(THEME_KEY, theme);
-  } catch { showToast(uiText.unexpectedError); return false; }
+  } catch { showToast(uiText.storageError); return false; }
   updateCounts();
   showToast(uiText[messageKey] || uiText.allSavedToast);
   return true;
@@ -166,10 +170,12 @@ function updateHeadings() {
   primary.hidden = !canCreate;
   if (canCreate) primary.querySelector('span:last-child').textContent = t('addNew');
   document.querySelector('#overview-panel').hidden = activeSection !== 'overview';
-  document.querySelector('#editor-panel').hidden = !['projects', 'caseStudies', 'experience'].includes(activeSection);
+  const editor = document.querySelector('#editor-panel');
+  editor.hidden = !['projects', 'caseStudies', 'experience'].includes(activeSection);
+  editor.classList.toggle('is-projects', activeSection === 'projects');
   document.querySelector('#profile-editor').hidden = activeSection !== 'profile';
   document.querySelector('#settings-panel').hidden = activeSection !== 'settings';
-  document.querySelector('#filter-tabs').hidden = !['projects', 'caseStudies', 'experience'].includes(activeSection);
+  document.querySelector('#filter-tabs').hidden = !['caseStudies', 'experience'].includes(activeSection);
   document.querySelector('#item-search').value = '';
 }
 function currentItems() { return activeSection === 'projects' ? data.projects : data[activeSection] || []; }
@@ -196,24 +202,65 @@ function makeButton(text, classes, action, idValue, title = '') {
   if (title) { button.title = title; button.setAttribute('aria-label', title); }
   return button;
 }
-function renderItems() {
+function renderProjectTile(item, index) {
+  const card = document.createElement('article');
+  card.className = 'project-tile';
+  card.dataset.itemId = item.id;
+  card.draggable = true;
+  card.tabIndex = 0;
+  card.setAttribute('role', 'listitem');
+  card.setAttribute('aria-label', `${t('imageItem')} ${index + 1}. ${t('imageOrder')}`);
+  card.setAttribute('aria-keyshortcuts', 'Alt+ArrowUp Alt+ArrowDown');
+
+  const image = document.createElement('img');
+  image.src = adminAssetPath(item.image);
+  image.alt = '';
+  image.loading = 'lazy';
+  image.draggable = false;
+  card.append(image);
+
+  const actions = document.createElement('div');
+  actions.className = 'project-tile-actions';
+  actions.append(makeButton(t('replace'), 'project-action-button', 'replace', item.id));
+  actions.append(makeButton(t('delete'), 'project-action-button is-delete', 'delete', item.id));
+  card.append(actions);
+  return card;
+}
+function renderItems(focusProjectId = '') {
   const host = document.querySelector('#items-grid');
   const empty = document.querySelector('#empty-state');
   const items = currentItems();
+  const isProjects = activeSection === 'projects';
   const query = document.querySelector('#item-search').value.trim().toLocaleLowerCase();
   const filtered = items.map((item, index) => ({ item, index })).filter(({ item }) => {
     const hasVisibility = ['projects', 'caseStudies', 'experience'].includes(activeSection);
-    const visibleMatch = !hasVisibility || activeFilter === 'all' || (activeFilter === 'published' ? item.visible !== false : item.visible === false);
-    const text = JSON.stringify(item).toLocaleLowerCase();
-    return visibleMatch && (!query || text.includes(query));
+    const visibleMatch = !hasVisibility || isProjects || activeFilter === 'all' || (activeFilter === 'published' ? item.visible !== false : item.visible === false);
+    if (!visibleMatch || !query) return visibleMatch;
+    return !isProjects && JSON.stringify(item).toLocaleLowerCase().includes(query);
   });
   host.replaceChildren();
+  host.classList.toggle('project-gallery', isProjects);
+  host.setAttribute('role', 'list');
+  host.setAttribute('aria-label', isProjects ? t('selectedWork') : t('contentSections'));
   empty.hidden = filtered.length !== 0;
+  empty.classList.toggle('is-projects-empty', isProjects);
   if (filtered.length === 0) {
-    document.querySelector('#empty-action').querySelector('span:last-child').textContent = items.length ? t('addItem') : t('addFirst');
+    const heading = empty.querySelector('h2');
+    const copy = empty.querySelector('p');
+    const actionText = document.querySelector('#empty-action').querySelector('span:last-child');
+    heading.textContent = isProjects && items.length === 0 ? t('noWorkImages') : t('nothingHere');
+    copy.hidden = isProjects;
+    actionText.textContent = isProjects ? t('addNew') : items.length ? t('addItem') : t('addFirst');
+    document.querySelector('#empty-action').hidden = !isProjects && items.length > 0;
     return;
   }
+  document.querySelector('#empty-action').hidden = false;
+  empty.querySelector('p').hidden = false;
   filtered.forEach(({ item, index }) => {
+    if (isProjects) {
+      host.append(renderProjectTile(item, index));
+      return;
+    }
     const card = document.createElement('article');
     card.className = 'content-item';
     const thumb = document.createElement('div');
@@ -250,15 +297,12 @@ function renderItems() {
     const actions = document.createElement('div');
     actions.className = 'item-actions';
     actions.append(makeButton(t('edit'), 'mini-button', 'edit', item.id));
-    if (activeSection === 'projects') {
-      actions.append(makeButton('↑', 'mini-button icon-only', 'up', item.id, t('up')));
-      actions.append(makeButton('↓', 'mini-button icon-only', 'down', item.id, t('down')));
-    }
     actions.append(makeButton(t('delete'), 'mini-button delete', 'delete', item.id));
     body.append(topline, meta, actions);
     card.append(thumb, body);
     host.append(card);
   });
+  if (focusProjectId) host.querySelector(`[data-item-id="${CSS.escape(focusProjectId)}"]`)?.focus();
 }
 function field(labelText, value, opts = {}) {
   const wrapper = document.createElement('label');
@@ -308,9 +352,113 @@ function textGroup(fieldKey, value, options = {}) {
   });
 }
 function adminAssetPath(name) {
+  if (validImageDataUrl(name)) return name;
   if (imageNames.includes(name)) return './assets/projects/' + encodeURIComponent(name);
   if (caseStudyAssets.includes(name)) return './assets/case-studies/' + encodeURIComponent(name);
   return '';
+}
+let projectPickerAction = null;
+let draggedProjectId = '';
+function openProjectPicker(action, itemId = '') {
+  projectPickerAction = { action, itemId };
+  const input = document.querySelector('#project-image-input');
+  input.value = '';
+  input.click();
+}
+async function imageFileToDataUrl(file) {
+  if (!file?.type?.startsWith('image/')) throw new Error('file-type');
+  let bitmap;
+  if ('createImageBitmap' in window) {
+    bitmap = await createImageBitmap(file);
+  } else {
+    const objectUrl = URL.createObjectURL(file);
+    try {
+      bitmap = await new Promise((resolve, reject) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.onerror = reject;
+        image.src = objectUrl;
+      });
+    } finally {
+      URL.revokeObjectURL(objectUrl);
+    }
+  }
+  const sourceWidth = bitmap.width || bitmap.naturalWidth;
+  const sourceHeight = bitmap.height || bitmap.naturalHeight;
+  if (!sourceWidth || !sourceHeight) throw new Error('image-decode');
+  let edge = Math.min(1600, Math.max(sourceWidth, sourceHeight));
+  let quality = 0.84;
+  let blob;
+  while (true) {
+    const scale = Math.min(1, edge / Math.max(sourceWidth, sourceHeight));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.max(1, Math.round(sourceWidth * scale));
+    canvas.height = Math.max(1, Math.round(sourceHeight * scale));
+    const context = canvas.getContext('2d');
+    if (!context) throw new Error('canvas');
+    context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/webp', quality));
+    if (!blob) throw new Error('image-encode');
+    if (blob.size <= 280 * 1024 || edge <= 900) break;
+    edge = Math.max(900, Math.round(edge * 0.8));
+    quality = Math.max(0.68, quality - 0.05);
+  }
+  bitmap.close?.();
+  const dataUrl = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+  if (!validImageDataUrl(dataUrl)) throw new Error('image-encode');
+  return dataUrl;
+}
+async function handleProjectImagePick(event) {
+  const file = event.target.files?.[0];
+  const request = projectPickerAction;
+  projectPickerAction = null;
+  if (!file || !request) return;
+  try {
+    const image = await imageFileToDataUrl(file);
+    const previousProjects = data.projects;
+    let changedId = request.itemId;
+    if (request.action === 'add') {
+      changedId = id();
+      data.projects = [{ id: changedId, image, title: '', href: '', visible: true }, ...data.projects];
+    } else {
+      const index = data.projects.findIndex((project) => project.id === request.itemId);
+      if (index < 0) return;
+      data.projects = data.projects.map((project, currentIndex) => currentIndex === index ? { ...project, image } : project);
+    }
+    if (!saveData('savedToast')) data.projects = previousProjects;
+    renderItems(changedId);
+  } catch (error) {
+    showToast(error?.message === 'file-type' ? t('fileTypeError') : t('uploadFailed'));
+  } finally {
+    event.target.value = '';
+  }
+}
+function reorderProject(draggedId, targetId, afterTarget = false) {
+  const fromIndex = data.projects.findIndex((project) => project.id === draggedId);
+  const targetIndex = data.projects.findIndex((project) => project.id === targetId);
+  if (fromIndex < 0 || targetIndex < 0 || fromIndex === targetIndex) return;
+  const previousProjects = data.projects;
+  const nextProjects = [...data.projects];
+  const [moved] = nextProjects.splice(fromIndex, 1);
+  let insertionIndex = targetIndex + (afterTarget ? 1 : 0);
+  if (fromIndex < insertionIndex) insertionIndex -= 1;
+  nextProjects.splice(insertionIndex, 0, moved);
+  data.projects = nextProjects;
+  if (!saveData()) data.projects = previousProjects;
+  renderItems(draggedId);
+}
+function projectDropAfter(event, target) {
+  const dragged = itemsGrid.querySelector(`[data-item-id="${CSS.escape(draggedProjectId)}"]`);
+  if (!dragged) return false;
+  const fromBounds = dragged.getBoundingClientRect();
+  const toBounds = target.getBoundingClientRect();
+  const sameRow = Math.abs(fromBounds.top - toBounds.top) < Math.min(fromBounds.height, toBounds.height) / 2;
+  return sameRow ? event.clientX > toBounds.left + toBounds.width / 2 : event.clientY > toBounds.top + toBounds.height / 2;
 }
 function imageOptions(includeCaseAssets = false) {
   const projectOptions = imageNames.map((filename, index) => ({ value: filename, label: t('imageItem') + ' ' + new Intl.NumberFormat('en').format(index + 1) }));
@@ -418,6 +566,16 @@ function handleCardAction(event) {
   const items = currentItems();
   const index = items.findIndex((item) => item.id === itemId);
   if (index < 0) return;
+  if (activeSection === 'projects') {
+    if (action === 'replace') openProjectPicker('replace', itemId);
+    if (action === 'delete') {
+      const previousProjects = data.projects;
+      data.projects = data.projects.filter((item) => item.id !== itemId);
+      if (!saveData()) data.projects = previousProjects;
+      renderItems();
+    }
+    return;
+  }
   if (action === 'edit') { openEditor(activeSection, items[index]); return; }
   if (action === 'delete') {
     if (!window.confirm(t('deleteConfirm'))) return;
@@ -522,7 +680,7 @@ function setSection(section) {
 function addNew() {
   const section = activeSection === 'overview' ? 'caseStudies' : activeSection;
   if (section === 'profile' || section === 'settings' || section === 'overview') return;
-  if (section === 'projects' && !imageNames.length) { showToast(t('noImageAvailable')); return; }
+  if (section === 'projects') { openProjectPicker('add'); return; }
   openEditor(section);
 }
 function exportData() {
@@ -558,8 +716,52 @@ function resetData() {
 document.querySelectorAll('[data-section]').forEach((button) => button.addEventListener('click', () => setSection(button.dataset.section)));
 document.querySelector('#primary-action').addEventListener('click', addNew);
 document.querySelector('#empty-action').addEventListener('click', addNew);
-document.querySelector('#items-grid').addEventListener('click', handleCardAction);
+const itemsGrid = document.querySelector('#items-grid');
+itemsGrid.addEventListener('click', handleCardAction);
+itemsGrid.addEventListener('dragstart', (event) => {
+  if (activeSection !== 'projects') return;
+  const card = event.target.closest('.project-tile');
+  if (!card) return;
+  draggedProjectId = card.dataset.itemId;
+  card.classList.add('is-dragging');
+  if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', draggedProjectId);
+  }
+});
+itemsGrid.addEventListener('dragover', (event) => {
+  if (activeSection !== 'projects' || !draggedProjectId) return;
+  const card = event.target.closest('.project-tile');
+  if (!card || card.dataset.itemId === draggedProjectId) return;
+  event.preventDefault();
+  const after = projectDropAfter(event, card);
+  itemsGrid.querySelectorAll('.project-tile').forEach((tile) => tile.classList.remove('drop-before', 'drop-after'));
+  card.classList.add(after ? 'drop-after' : 'drop-before');
+});
+itemsGrid.addEventListener('drop', (event) => {
+  if (activeSection !== 'projects' || !draggedProjectId) return;
+  const card = event.target.closest('.project-tile');
+  if (!card || card.dataset.itemId === draggedProjectId) return;
+  event.preventDefault();
+  reorderProject(draggedProjectId, card.dataset.itemId, projectDropAfter(event, card));
+  draggedProjectId = '';
+});
+itemsGrid.addEventListener('dragend', () => {
+  draggedProjectId = '';
+  itemsGrid.querySelectorAll('.project-tile').forEach((tile) => tile.classList.remove('is-dragging', 'drop-before', 'drop-after'));
+});
+itemsGrid.addEventListener('keydown', (event) => {
+  if (activeSection !== 'projects' || !event.altKey || !['ArrowUp', 'ArrowDown'].includes(event.key)) return;
+  const card = event.target.closest('.project-tile');
+  if (!card) return;
+  const index = data.projects.findIndex((item) => item.id === card.dataset.itemId);
+  const target = data.projects[index + (event.key === 'ArrowUp' ? -1 : 1)];
+  if (!target) return;
+  event.preventDefault();
+  reorderProject(card.dataset.itemId, target.id, event.key === 'ArrowDown');
+});
 document.querySelector('#item-form').addEventListener('submit', handleItemSave);
+document.querySelector('#project-image-input').addEventListener('change', handleProjectImagePick);
 document.querySelector('#item-search').addEventListener('input', renderItems);
 document.querySelector('#filter-tabs').addEventListener('click', (event) => {
   const filter = event.target.closest('[data-filter]');

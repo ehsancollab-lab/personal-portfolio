@@ -45,6 +45,10 @@ function validHref(value) {
   return /^(https:\/\/|mailto:|tel:|\/|\.\/|#)/i.test(href) && !/^\/\//.test(href);
 }
 
+function validImageDataUrl(value) {
+  return typeof value === "string" && value.length <= 900000 && /^data:image\/(?:png|jpeg|webp|gif|avif);base64,[A-Za-z0-9+/]+={0,2}$/.test(value);
+}
+
 function normalizeContent(candidate) {
   if (!candidate || ![1, 2, 3].includes(candidate.version) || !Array.isArray(candidate.projects) || !Array.isArray(candidate.caseStudies) || !Array.isArray(candidate.experience) || !Array.isArray(candidate.contactLinks)) return null;
   const defaults = defaultContent();
@@ -52,7 +56,7 @@ function normalizeContent(candidate) {
     id: String(item.id || ""),
     ...Object.fromEntries(fields.map((field) => [field, text(item[field])])),
     href: validHref(item.href) ? String(item.href || "") : "",
-    image: [...projectAssets, ...caseStudyAssets].includes(item.image) ? String(item.image) : "",
+    image: [...projectAssets, ...caseStudyAssets].includes(item.image) || validImageDataUrl(item.image) ? String(item.image) : "",
     visible: item.visible !== false,
   });
   const caseStudies = candidate.caseStudies.map((item) => normalizeItem(item, ["title", "summary", "body"]));
@@ -66,7 +70,7 @@ function normalizeContent(candidate) {
     },
     projects: candidate.projects.map((item, index) => ({
       id: String(item.id || String(index + 1)),
-      image: projectAssets.includes(item.image) ? String(item.image) : projectAssets[index % projectAssets.length],
+      image: projectAssets.includes(item.image) || validImageDataUrl(item.image) ? String(item.image) : projectAssets[index % projectAssets.length],
       title: text(item.title),
       href: validHref(item.href) ? String(item.href || "") : "",
       visible: item.visible !== false,
@@ -135,6 +139,7 @@ function renderBio() {
 
 function assetPath(name) {
   const asset = String(name || "");
+  if (validImageDataUrl(asset)) return asset;
   if (projectAssets.includes(asset)) return "./assets/projects/" + encodeURIComponent(asset);
   if (caseStudyAssets.includes(asset)) return "./assets/case-studies/" + encodeURIComponent(asset);
   return "";
@@ -172,7 +177,7 @@ function renderProjects() {
   const grid = document.querySelector("#project-grid");
   const managed = contentOverride?.projects;
   const items = managed
-    ? managed.filter((item) => item.visible !== false && projectAssets.includes(item.image))
+    ? managed.filter((item) => item.visible !== false && (projectAssets.includes(item.image) || validImageDataUrl(item.image)))
     : projects.map((image, index) => ({ id: String(index), image, visible: true }));
   grid.setAttribute("role", "list");
   grid.replaceChildren(...items.map(createProjectCard));
