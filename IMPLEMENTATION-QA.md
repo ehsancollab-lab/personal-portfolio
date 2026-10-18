@@ -16,7 +16,7 @@ Date: 2026-10-18.
 
 `npm test`: 27 server, story schema and build checks.
 
-`npm run test:browser`: 9 Chromium scenarios:
+`npm run test:browser`: 13 Chromium scenarios:
 
 1. Section switching without additional document requests, cached header/view identity, detail navigation and back/forward.
 2. Responsive image selection, local fonts, saved dark theme/icons, typography animation, reduced motion and layouts at 1440/390/320px.
@@ -27,12 +27,18 @@ Date: 2026-10-18.
 7. Clipboard text paste, italic, quote, lists, undo/redo, divider and code block.
 8. Clipboard image paste, video embed, cover selection and mobile composer geometry.
 9. Touch access to Edit/Delete without hover.
+10. Smooth 4% public card image zoom and title color `#2255FF`, with stable card geometry and keyboard focus.
+11. Uniform light detail-page background `#FDFDFD` on direct entry and client navigation, including correct restoration when leaving the detail view.
+12. Replacing an existing article image and cover, clearing obsolete responsive candidates, and preserving the replacement and caption after saving/reopening.
+13. Repeated replacement of a library image in a new story, with captions retained and no overlapping text-formatting bubble.
+
+The replacement regression was reproduced before the fix: the `src` changed while the browser kept displaying the old `srcset` candidate. Text tools could also overlap image tools during repeated replacement. Responsive attributes are now cleared when using a raw replacement, the text bubble appears only for actual text selections, and saving waits for image preparation. Opening the link editor hides the text bubble, and floating text tools stay below the composer panels.
 
 The browser checks run against a local HTTPS dashboard with the actual authentication/content worker and an in-memory GitHub adapter. They do not create stories or commits in the live portfolio. Screenshot checks cover the supplied card layout, light/dark states and mobile/editor views. Figma access was unavailable; the owner approved continuing from the supplied PNG references.
 
 ## Image measurement
 
-For the final 32 local image assets, including the owner’s latest upload: 33,053,076 original bytes versus 826,938 bytes for the generated 960px variants, a 97.5% reduction. This compares image bytes at a specified display resolution, not total deployment size or production network latency. Responsive selection chooses larger variants on high-density screens.
+For the initial composer release’s 32 local image assets: 33,053,076 original bytes versus 826,938 bytes for the generated 960px variants, a 97.5% reduction. This compares image bytes at a specified display resolution, not total deployment size or production network latency. Responsive selection chooses larger variants on high-density screens.
 
 The three section switches in the local browser used a single document request for the entire session. Timing depends on the device and browser; the measured behavior is view replacement without document navigation.
 

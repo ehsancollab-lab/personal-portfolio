@@ -26,6 +26,10 @@
   --focus: #a5b6ff;
 }
 
+:root[data-page="case-study"]:not([data-theme="dark"]) {
+  --page-bg: #fdfdfd;
+}
+
 * { box-sizing: border-box; }
 
 html {
@@ -338,10 +342,8 @@ button { font: inherit; }
 .case-detail-section {
   width: 100%;
   padding: 56px 24px 0;
-  background: #fdfdfd;
+  background: var(--page-bg);
 }
-
-:root[data-theme="dark"] .case-detail-section { background: var(--page-bg); }
 
 .case-detail {
   display: flex;

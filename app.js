@@ -366,7 +366,7 @@ function updateTheme() {
     }
     toggle.title = dark ? "Switch to light theme" : "Switch to dark theme";
   });
-  document.querySelector('meta[name="theme-color"]').content = dark ? "#131315" : "#ffffff";
+  document.querySelector('meta[name="theme-color"]').content = dark ? "#131315" : page === "case-study" ? "#fdfdfd" : "#ffffff";
   safeStorage.set("ehsan-portfolio-theme", theme);
 }
 
@@ -399,6 +399,7 @@ function makePage(next) {
 }
 function renderPage(next, fresh = false) {
   page = next;
+  root.dataset.page = next;
   document.body.dataset.page = next;
   if (next === 'case-study') sharedHeader.remove();
   else if (!sharedHeader.isConnected) document.querySelector('main').before(sharedHeader);

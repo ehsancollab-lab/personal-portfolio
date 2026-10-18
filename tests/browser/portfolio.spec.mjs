@@ -125,6 +125,7 @@ test('write, format, link, insert an image with caption/alt/width, save draft an
   await expect(story.locator('strong')).toContainText('careful');
   await selectText(page, 'useful outcome');
   await page.getByRole('button', { name: 'Add or edit link (Ctrl+K)', exact: true }).click();
+  await expect(page.locator('.story-format-menu')).not.toBeVisible();
   await page.getByLabel('Link URL', { exact: true }).fill('https://example.com/research');
   await page.getByRole('button', { name: 'Apply', exact: true }).click();
   await expect(story.locator('a')).toHaveAttribute('href', 'https://example.com/research');

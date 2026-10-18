@@ -1,4 +1,4 @@
-import { Editor, Node, mergeAttributes } from '@tiptap/core';
+import { Editor, Node, mergeAttributes, isTextSelection } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
@@ -36,6 +36,7 @@ export function openCaseEditor({ item, isNew, resolveImage, imageOptions = [], i
   let pendingImages = 0;
   let timer;
   let editor;
+  let textBubble;
   let selectedRange;
   let insertAt;
   let imageTarget = 'body';
@@ -62,6 +63,7 @@ export function openCaseEditor({ item, isNew, resolveImage, imageOptions = [], i
   const canvas = node('div', 'story-writing-canvas');
   const title = node('textarea', 'story-title'); title.placeholder = 'Title'; title.setAttribute('aria-label', 'Case study title'); title.rows = 1; title.maxLength = 500; title.value = model.title || '';
   const editorHost = node('div', 'story-editor-content');
+  editorHost.setAttribute('aria-busy', 'false');
   const previewHost = node('div', 'story-preview case-article-body'); previewHost.hidden = true;
   canvas.append(title, editorHost, previewHost);
   const footer = node('p', 'story-word-count');
@@ -153,7 +155,7 @@ export function openCaseEditor({ item, isNew, resolveImage, imageOptions = [], i
     } catch { addBlock.hidden = true; }
   }
   function updateTools() {
-    undo.disabled = !editor.can().undo(); redo.disabled = !editor.can().redo();
+    undo.disabled = busy || !editor.can().undo(); redo.disabled = busy || !editor.can().redo();
     for (const { button, active } of formatButtons) {
       const selected = active === 'heading2' ? editor.isActive('heading', { level: 2 }) : active === 'heading3' ? editor.isActive('heading', { level: 3 }) : editor.isActive(active);
       button.setAttribute('aria-pressed', String(selected));
@@ -177,7 +179,7 @@ export function openCaseEditor({ item, isNew, resolveImage, imageOptions = [], i
         }
         const alt = node('input', 'story-image-alt'); alt.type = 'text'; alt.placeholder = 'Describe this image'; alt.setAttribute('aria-label', 'Image alt text'); alt.maxLength = 1000; alt.hidden = true;
         const altButton = node('button', 'story-alt-button', 'Alt text'); altButton.type = 'button'; altButton.addEventListener('click', () => { alt.hidden = !alt.hidden; if (!alt.hidden) alt.focus(); });
-        const replace = iconButton('image', 'Replace image'); replace.addEventListener('click', () => { replacingImage = getPos(); imageTarget = 'body'; fileInput.multiple = false; fileInput.click(); });
+        const replace = iconButton('image', 'Replace image'); replace.addEventListener('click', () => { replacingImage = getPos; imageTarget = 'body'; fileInput.multiple = false; fileInput.click(); });
         const remove = iconButton('trash-2', 'Delete image'); remove.addEventListener('click', () => editor.chain().focus().setNodeSelection(getPos()).deleteSelection().run());
         controls.append(altButton, replace, remove);
         figure.append(controls, image, caption, alt);
@@ -196,7 +198,13 @@ export function openCaseEditor({ item, isNew, resolveImage, imageOptions = [], i
   } });
   editor = new Editor({
     element: editorHost,
-    extensions: [StarterKit.configure({ heading: { levels: [2, 3, 4] } }), StoryImage.configure({ allowBase64: true }), Video, Link.configure({ openOnClick: false, autolink: true, validate: safeStoryLink }), Placeholder.configure({ placeholder: 'Tell your story…' }), BubbleMenu.configure({ element: bubble, tippyOptions: { duration: 100, appendTo: () => dialog } })],
+    extensions: [StarterKit.configure({ heading: { levels: [2, 3, 4] } }), StoryImage.configure({ allowBase64: true }), Video, Link.configure({ openOnClick: false, autolink: true, validate: safeStoryLink }), Placeholder.configure({ placeholder: 'Tell your story…' }), BubbleMenu.configure({
+      element: bubble,
+      updateDelay: 0,
+      // Image selections have their own controls; a text bubble would cover Replace.
+      shouldShow: ({ editor, view, state, from, to }) => linkPanel.hidden && isTextSelection(state.selection) && !state.selection.empty && Boolean(state.doc.textBetween(from, to).trim()) && editor.isEditable && (view.hasFocus() || bubble.contains(document.activeElement)),
+      tippyOptions: { duration: [100, 0], zIndex: 10, appendTo: () => dialog, onCreate: instance => { textBubble = instance; } }
+    })],
     content: model.document || markdownDocument(model.body),
     editorProps: {
       attributes: { 'aria-label': 'Case study story', role: 'textbox', 'aria-multiline': 'true', spellcheck: 'true' },
@@ -209,7 +217,7 @@ export function openCaseEditor({ item, isNew, resolveImage, imageOptions = [], i
   function openLink() {
     selectedRange = { from: editor.state.selection.from, to: editor.state.selection.to };
     linkField.input.value = editor.getAttributes('link').href || '';
-    linkPanel.hidden = false; linkField.input.focus();
+    linkPanel.hidden = false; textBubble?.hide(); linkField.input.focus();
   }
   linkPanel.addEventListener('submit', event => { event.preventDefault(); const value = linkField.input.value.trim(); if (!safeStoryLink(value)) { linkField.input.setCustomValidity('Enter a valid https, email, or relative link.'); linkField.input.reportValidity(); return; } editor.chain().focus().setTextSelection(selectedRange).extendMarkRange('link').setLink({ href: value }).run(); linkPanel.hidden = true; });
   linkField.input.addEventListener('input', () => linkField.input.setCustomValidity(''));
@@ -232,17 +240,32 @@ export function openCaseEditor({ item, isNew, resolveImage, imageOptions = [], i
   function setCover(src) { model.image = src; responsiveImage(coverImage, resolveImage(src), { eager: true, sizes: '320px' }); coverImage.hidden = false; coverButton.textContent = 'Replace cover'; localSave(); }
   async function insertFiles(files) {
     if (busy) return;
+    const target = imageTarget;
+    const replacement = replacingImage;
+    imageTarget = 'body';
+    replacingImage = null;
     pendingImages++;
+    editorHost.setAttribute('aria-busy', 'true');
+    publish.disabled = saveDraft.disabled = panelSave.disabled = true;
     try {
       draftStatus.textContent = 'Preparing image…';
       const images = [];
-      for (const file of files.slice(0, imageTarget === 'cover' || replacingImage !== null ? 1 : 20)) images.push(await imageFileToDataUrl(file));
-      if (imageTarget === 'cover') setCover(images[0]);
-      else if (replacingImage !== null) { editor.chain().focus().setNodeSelection(replacingImage).updateAttributes('image', { src: images[0] }).run(); replacingImage = null; }
+      for (const file of files.slice(0, target === 'cover' || replacement !== null ? 1 : 20)) images.push(await imageFileToDataUrl(file));
+      if (target === 'cover') setCover(images[0]);
+      else if (replacement !== null) {
+        const position = replacement();
+        if (!Number.isInteger(position) || editor.state.doc.nodeAt(position)?.type.name !== 'image') { notify('The image you were replacing is no longer in this story.', true); return; }
+        editor.chain().focus().setNodeSelection(position).updateAttributes('image', { src: images[0] }).run();
+      }
       else insertionContent([...images.flatMap(src => [{ type: 'image', attrs: { src, alt: '', caption: '', layout: 'normal' } }, { type: 'paragraph' }])]);
       if (!model.image && images.length) setCover(images[0]);
     } catch { notify('This image could not be read. Choose a PNG, JPEG, WebP, or GIF image.', true); }
-    finally { pendingImages--; imageTarget = 'body'; localSave(); }
+    finally {
+      pendingImages--;
+      editorHost.setAttribute('aria-busy', String(pendingImages > 0));
+      publish.disabled = saveDraft.disabled = panelSave.disabled = busy || pendingImages > 0;
+      localSave();
+    }
   }
   fileInput.addEventListener('cancel', () => { imageTarget = 'body'; replacingImage = null; });
   fileInput.addEventListener('change', () => { const files = [...fileInput.files]; fileInput.value = ''; if (files.length) void insertFiles(files); });
