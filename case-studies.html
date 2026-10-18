@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Selected product design case studies by Ehsan Masoomi." />
+    <meta name="theme-color" content="#ffffff" />
+    <title>Case Studies — Ehsan Masoomi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body data-page="case-studies">
+    <a class="skip-link" href="#case-studies-content">Skip to main content</a>
+
+    <header class="site-header" id="top">
+      <div class="header-top">
+        <a class="avatar-mark" href="./index.html" aria-label="Ehsan Masoomi">
+          <img src="./assets/figma/profile.png" width="40" height="40" alt="" />
+        </a>
+        <div class="display-controls" aria-label="Display settings">
+          <a class="cv-link" id="cv-link" href="./assets/Ehsan-Masoomi-CV-EN.pdf" download="Ehsan-Masoomi-CV-EN.pdf">
+            <img src="./assets/figma/download-cv.svg" width="20" height="20" alt="" />
+            <span id="cv-label">Download CV</span>
+          </a>
+          <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <img src="./assets/figma/theme-toggle.svg" width="32" height="32" alt="" />
+          </button>
+        </div>
+      </div>
+
+      <section class="profile-intro" aria-labelledby="greeting">
+        <h1 id="greeting">Hi, I’m Ehsan 👋🏻</h1>
+        <p class="bio" id="bio"></p>
+      </section>
+
+      <section class="contact-block" aria-labelledby="contact-prompt">
+        <p class="contact-prompt" id="contact-prompt">Feel free to reach out to me through any of the channels below.</p>
+        <nav class="contact-links" id="header-contact-links" aria-label="Contact links"></nav>
+      </section>
+
+      <nav class="primary-nav" aria-label="Portfolio sections">
+        <a class="nav-tab" href="./index.html#selected-work" data-page-link="selected-work">Selected Work</a>
+        <a class="nav-tab" href="./case-studies.html" data-page-link="case-studies">Case Studies</a>
+        <a class="nav-tab" href="./experience.html" data-page-link="experience">Experience</a>
+      </nav>
+    </header>
+
+    <main class="case-studies-section" id="case-studies-content" tabindex="-1">
+      <h2 class="visually-hidden">Case Studies</h2>
+      <div class="case-studies-list" id="case-studies-list" aria-label="Case studies"></div>
+    </main>
+
+    <footer class="site-footer">
+      <p class="copyright"><span>© </span><span id="copyright-year">2026</span><span> Ehsan Masoomi</span></p>
+      <nav class="contact-links footer-links" id="footer-contact-links" aria-label="Contact links"></nav>
+    </footer>
+  </body>
+</html>
+

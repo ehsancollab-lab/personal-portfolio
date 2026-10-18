@@ -1,4 +1,5 @@
 import { contactLinks, copy, projects } from './content.js';
+import { caseStudyAssets, defaultCaseStudies, defaultExperience } from './case-content.js';
 
 const CONTENT_KEY = 'ehsan-portfolio-cms-v1';
 const THEME_KEY = 'ehsan-portfolio-theme';
@@ -20,10 +21,9 @@ const storage = (() => {
   }
 })();
 const uiText = {
-    skip: 'Skip to dashboard content', workspace: 'Portfolio workspace', manage: 'Manage content', overview: 'Overview', selectedWork: 'Selected Work', caseStudies: 'Case Studies', experience: 'Experience', about: 'About me', profileContact: 'Profile & contact', viewPortfolio: 'View portfolio', designerRole: 'Senior AI Product Designer', allChangesSaved: 'All changes saved', contentManagement: 'CONTENT MANAGEMENT', overviewSubtitle: 'Manage your portfolio content in one place.', previewSite: 'Preview site', addNew: 'Add new', localStorageTitle: 'Saved in this browser', localStorageCopy: 'Edits stay on this device. Export a JSON backup to move them; publishing to all visitors needs a database and admin access.', projectImages: 'project images', draftEntries: 'draft entries', workEntries: 'work entries', contentSections: 'Content sections', contentSectionsHint: 'Choose a section to review or edit.', workspaceStatus: 'Workspace status', workspaceStatusHint: 'A quick view of your content setup.', draft: 'Draft', englishContent: 'English-only content', themeSupport: 'Light and dark themes', ready: 'Ready', publicSections: 'Case Studies, Experience, About pages', awaitingDesign: 'Awaiting design', sharedPublishing: 'Shared publishing', backendNeeded: 'Backend needed', onlyYouCanSee: 'Only your browser has these edits', aboutDraft: 'Draft content', nextSteps: 'Your content, ready for the next design handoff', nextStepsCopy: 'Case Studies, Experience, and About entries can be drafted here without inventing project outcomes. They can be connected to their public layouts when those designs are ready.', manageCaseStudies: 'Manage Case Studies', allItems: 'All items', published: 'Visible', searchContent: 'Search content', nothingHere: 'Nothing here yet', emptyCopy: 'Create your first item. You can add or change the text later.', addFirst: 'Add your first item', backupTitle: 'Backup and transfer', backupCopy: 'Export your current content to a JSON file, or restore a previous backup.', exportJson: 'Export JSON', importJson: 'Import JSON', appearanceTitle: 'Appearance', appearanceCopy: 'Choose the color theme.', switchTheme: 'Switch theme', resetTitle: 'Reset local edits', resetCopy: 'Restore the starting content from the supplied portfolio files. This clears saved edits in this browser.', reset: 'Reset content', footerNote: 'Portfolio content workspace', cancel: 'Cancel', saveChanges: 'Save changes', selectedWorkTitle: 'Selected Work', selectedWorkSubtitle: 'Manage the 20 supplied images and their display settings.', caseStudiesSubtitle: 'Write and organize case studies for the future public layout.', experienceSubtitle: 'Record roles and details from your actual work history.', aboutSubtitle: 'Draft the About page in content blocks.', profileSubtitle: 'Update the introduction and contact links shown on your portfolio.', settingsSubtitle: 'Manage backups and dashboard preferences.', allSavedToast: 'Changes saved in this browser.', savedToast: 'Saved. Open the portfolio preview in this browser to see Selected Work updates.', deleteConfirm: 'Delete this item? This cannot be undone in this browser.', resetConfirm: 'Clear local edits and restore the starting portfolio data?', importConfirm: 'Replace the current local content with this backup?', invalidJson: 'This JSON file is not a valid portfolio backup.', exported: 'JSON backup downloaded.', imported: 'Backup imported.', resetDone: 'Starting content restored.', searchPlaceholder: 'Search by title or text', imageItem: 'Project image', untitledProject: 'Untitled work', untitledCase: 'Untitled case study', untitledExperience: 'Untitled role', untitledAbout: 'Untitled section', noContent: 'Content not added', edit: 'Edit', delete: 'Delete', up: 'Move up', down: 'Move down', visible: 'Visible on portfolio', hidden: 'Hidden from portfolio', draftBadge: 'Draft', image: 'Image', title: 'Title', link: 'External link (optional)', summary: 'Summary', details: 'Details', role: 'Role', company: 'Company', dates: 'Dates', description: 'Description', heading: 'Heading', body: 'Body text', chooseImage: 'Choose an image', noLink: 'No link added', optional: 'Optional', untitled: 'Untitled', item: 'item', items: 'items', addItem: 'Add item', newProject: 'Add project image', newCase: 'New case study', newExperience: 'New experience', newAbout: 'New About block', editProject: 'Edit project image', editCase: 'Edit case study', editExperience: 'Edit experience', editAbout: 'Edit About block', caseKicker: 'CASE STUDY', workKicker: 'SELECTED WORK', experienceKicker: 'EXPERIENCE', aboutKicker: 'ABOUT', profileKicker: 'PROFILE', statusVisible: 'Visible', contactLabel: 'Label', destination: 'URL / email', contactsTitle: 'Contact links', contactsCopy: 'Keep the existing destinations or replace them with your own links.', addContact: 'Add contact link', saveProfile: 'Save profile', greeting: 'Greeting', biography: 'Biography', contactPrompt: 'Contact prompt', imageOrder: 'Order follows the portfolio list. Use arrows to rearrange.', noImageAvailable: 'No supplied project image is available.', badLink: 'Use a valid https, mailto, tel, or relative link.', localOnly: 'Saved in this browser only', dataImported: 'Backup restored', unexpectedError: 'Something went wrong. Please try again.'
+    skip: 'Skip to dashboard content', workspace: 'Portfolio workspace', manage: 'Manage content', overview: 'Overview', selectedWork: 'Selected Work', caseStudies: 'Case Studies', experience: 'Experience', profileContact: 'Profile & contact', viewPortfolio: 'View portfolio', designerRole: 'Senior AI Product Designer', allChangesSaved: 'All changes saved', contentManagement: 'CONTENT MANAGEMENT', overviewSubtitle: 'Manage your portfolio content in one place.', previewSite: 'Preview site', addNew: 'Add new', localStorageTitle: 'Saved in this browser', localStorageCopy: 'Edits stay on this device. Export a JSON backup to move them; publishing to all visitors needs a database and admin access.', projectImages: 'project images', draftEntries: 'draft entries', workEntries: 'work entries', contentSections: 'Content sections', contentSectionsHint: 'Choose a section to review or edit.', workspaceStatus: 'Workspace status', workspaceStatusHint: 'A quick view of your content setup.', draft: 'Draft', englishContent: 'English-only content', themeSupport: 'Light and dark themes', ready: 'Ready', publicSections: 'Case Studies and Experience pages', connected: 'Connected', sharedPublishing: 'Shared publishing', backendNeeded: 'Backend needed', onlyYouCanSee: 'Only your browser has these edits', nextSteps: 'Manage your public portfolio content', nextStepsCopy: 'Edit case study cards and full article details, or update the roles and responsibilities shown on the Experience page.', manageCaseStudies: 'Manage Case Studies', allItems: 'All items', published: 'Visible', searchContent: 'Search content', nothingHere: 'Nothing here yet', emptyCopy: 'Create your first item. You can add or change the text later.', addFirst: 'Add your first item', backupTitle: 'Backup and transfer', backupCopy: 'Export your current content to a JSON file, or restore a previous backup.', exportJson: 'Export JSON', importJson: 'Import JSON', appearanceTitle: 'Appearance', appearanceCopy: 'Choose the color theme.', switchTheme: 'Switch theme', resetTitle: 'Reset local edits', resetCopy: 'Restore the starting content from the supplied portfolio files. This clears saved edits in this browser.', reset: 'Reset content', footerNote: 'Portfolio content workspace', cancel: 'Cancel', saveChanges: 'Save changes', selectedWorkTitle: 'Selected Work', selectedWorkSubtitle: 'Manage the 20 supplied images and their display settings.', caseStudiesSubtitle: 'Edit case study cards and full article details for the public portfolio.', experienceSubtitle: 'Edit roles, dates, and responsibilities shown on the Experience page.', profileSubtitle: 'Update the introduction and contact links shown on your portfolio.', settingsSubtitle: 'Manage backups and dashboard preferences.', allSavedToast: 'Changes saved in this browser.', savedToast: 'Saved in this browser. Open the portfolio pages here to preview the changes.', deleteConfirm: 'Delete this item? This cannot be undone in this browser.', resetConfirm: 'Clear local edits and restore the starting portfolio data?', importConfirm: 'Replace the current local content with this backup?', invalidJson: 'This JSON file is not a valid portfolio backup.', exported: 'JSON backup downloaded.', imported: 'Backup imported.', resetDone: 'Starting content restored.', searchPlaceholder: 'Search by title or text', imageItem: 'Project image', untitledProject: 'Untitled work', untitledCase: 'Untitled case study', untitledExperience: 'Untitled role', noContent: 'Content not added', edit: 'Edit', delete: 'Delete', up: 'Move up', down: 'Move down', visible: 'Visible on portfolio', hidden: 'Hidden from portfolio', draftBadge: 'Draft', image: 'Image', title: 'Title', link: 'External link (optional)', summary: 'Summary', details: 'Full case study content', caseDetailsHint: 'Use ## for section headings, - for bullets, and ![Caption](image-name.png) for screenshots. Available screenshots appear in the image menu.', role: 'Role', company: 'Company', dates: 'Dates', description: 'Description', heading: 'Heading', body: 'Body text', chooseImage: 'Choose an image', noLink: 'No link added', optional: 'Optional', untitled: 'Untitled', item: 'item', items: 'items', addItem: 'Add item', newProject: 'Add project image', newCase: 'New case study', newExperience: 'New experience', editProject: 'Edit project image', editCase: 'Edit case study', editExperience: 'Edit experience', caseKicker: 'CASE STUDY', workKicker: 'SELECTED WORK', experienceKicker: 'EXPERIENCE', profileKicker: 'PROFILE', statusVisible: 'Visible', contactLabel: 'Label', destination: 'URL / email', contactsTitle: 'Contact links', contactsCopy: 'Keep the existing destinations or replace them with your own links.', addContact: 'Add contact link', saveProfile: 'Save profile', greeting: 'Greeting', biography: 'Biography', contactPrompt: 'Contact prompt', imageOrder: 'Order follows the portfolio list. Use arrows to rearrange.', noImageAvailable: 'No supplied project image is available.', badLink: 'Use a valid https, mailto, tel, or relative link.', localOnly: 'Saved in this browser only', dataImported: 'Backup restored', unexpectedError: 'Something went wrong. Please try again.'
   };
 
-storage.removeItem('ehsan-portfolio-language');
 let theme = storage.getItem(THEME_KEY) === 'dark' ? 'dark' : 'light';
 let data = loadData();
 let activeSection = 'overview';
@@ -38,16 +38,15 @@ function flattenBio() {
 }
 function initialData() {
   return {
-    version: 2,
+    version: 3,
     profile: {
       greeting: copy.greeting,
       bio: flattenBio(),
       contactPrompt: copy.contactPrompt
     },
     projects: projects.map((image, index) => ({ id: 'project-' + (index + 1), image, title: '', href: '', visible: true })),
-    caseStudies: [],
-    experience: [],
-    about: [],
+    caseStudies: deepCopy(defaultCaseStudies),
+    experience: deepCopy(defaultExperience),
     contactLinks: contactLinks.map(({ key, href }) => ({
       id: key,
       label: copy.links[key],
@@ -61,7 +60,7 @@ function validHref(value) {
   return /^(https:\/\/|mailto:|tel:|\/|\.\/|#)/i.test(href) && !/^\/\//.test(href);
 }
 function normalizeData(candidate) {
-  if (!candidate || ![1, 2].includes(candidate.version) || !Array.isArray(candidate.projects) || !Array.isArray(candidate.caseStudies) || !Array.isArray(candidate.experience) || !Array.isArray(candidate.about) || !Array.isArray(candidate.contactLinks)) return null;
+  if (!candidate || ![1, 2, 3].includes(candidate.version) || !Array.isArray(candidate.projects) || !Array.isArray(candidate.caseStudies) || !Array.isArray(candidate.experience) || !Array.isArray(candidate.contactLinks)) return null;
   const base = initialData();
   const text = (value) => typeof value === 'string' ? value : String(value?.en || '');
   const safeProject = (item, index) => ({
@@ -75,7 +74,8 @@ function normalizeData(candidate) {
     const normalized = { id: String(item.id || id()) };
     for (const field of fields) normalized[field] = text(item[field]);
     normalized.href = validHref(item.href) ? String(item.href || '') : '';
-    normalized.image = imageNames.includes(item.image) ? item.image : '';
+    normalized.image = [...imageNames, ...caseStudyAssets].includes(item.image) ? item.image : '';
+    normalized.visible = item.visible !== false;
     return normalized;
   };
   const contacts = candidate.contactLinks.map((item) => ({
@@ -84,16 +84,15 @@ function normalizeData(candidate) {
     href: validHref(item.href) ? String(item.href || '') : ''
   }));
   return {
-    version: 2,
+    version: 3,
     profile: {
       greeting: candidate.profile?.greeting == null ? base.profile.greeting : text(candidate.profile.greeting),
       bio: candidate.profile?.bio == null ? base.profile.bio : text(candidate.profile.bio),
       contactPrompt: candidate.profile?.contactPrompt == null ? base.profile.contactPrompt : text(candidate.profile.contactPrompt)
     },
     projects: candidate.projects.map(safeProject),
-    caseStudies: candidate.caseStudies.map((item) => safeItem(item, ['title', 'summary', 'body'])),
-    experience: candidate.experience.map((item) => safeItem(item, ['role', 'company', 'dates', 'description'])),
-    about: candidate.about.map((item) => safeItem(item, ['title', 'body'])),
+    caseStudies: candidate.version < 3 && candidate.caseStudies.length === 0 ? deepCopy(base.caseStudies) : candidate.caseStudies.map((item) => safeItem(item, ['title', 'summary', 'body'])),
+    experience: candidate.version < 3 && candidate.experience.length === 0 ? deepCopy(base.experience) : candidate.experience.map((item) => safeItem(item, ['role', 'company', 'dates', 'description'])),
     contactLinks: contacts
   };
 }
@@ -113,7 +112,6 @@ function loadData() {
 function saveData(messageKey = 'allSavedToast') {
   try {
     storage.setItem(CONTENT_KEY, JSON.stringify(data));
-    storage.removeItem('ehsan-portfolio-language');
     storage.setItem(THEME_KEY, theme);
   } catch { showToast(uiText.unexpectedError); return false; }
   updateCounts();
@@ -153,25 +151,25 @@ function showToast(text) {
   toastTimer = setTimeout(() => toast.classList.remove('is-visible'), 2600);
 }
 function sectionLabel(section) {
-  return ({ overview: 'overview', projects: 'selectedWork', caseStudies: 'caseStudies', experience: 'experience', about: 'about', profile: 'profileContact', settings: 'appearanceTitle' })[section] || 'overview';
+  return ({ overview: 'overview', projects: 'selectedWork', caseStudies: 'caseStudies', experience: 'experience', profile: 'profileContact', settings: 'appearanceTitle' })[section] || 'overview';
 }
 function updateHeadings() {
   const key = sectionLabel(activeSection);
   const title = activeSection === 'projects' ? t('selectedWorkTitle') : t(key);
   document.querySelector('#page-title').textContent = title;
   document.querySelector('#breadcrumb-current').textContent = title;
-  const subtitleKey = ({ overview: 'overviewSubtitle', projects: 'selectedWorkSubtitle', caseStudies: 'caseStudiesSubtitle', experience: 'experienceSubtitle', about: 'aboutSubtitle', profile: 'profileSubtitle', settings: 'settingsSubtitle' })[activeSection];
+  const subtitleKey = ({ overview: 'overviewSubtitle', projects: 'selectedWorkSubtitle', caseStudies: 'caseStudiesSubtitle', experience: 'experienceSubtitle', profile: 'profileSubtitle', settings: 'settingsSubtitle' })[activeSection];
   document.querySelector('#page-subtitle').textContent = t(subtitleKey);
   document.querySelectorAll('.side-link').forEach((button) => button.classList.toggle('is-active', button.dataset.section === activeSection));
   const primary = document.querySelector('#primary-action');
-  const canCreate = ['projects', 'caseStudies', 'experience', 'about'].includes(activeSection);
+  const canCreate = ['projects', 'caseStudies', 'experience'].includes(activeSection);
   primary.hidden = !canCreate;
   if (canCreate) primary.querySelector('span:last-child').textContent = t('addNew');
   document.querySelector('#overview-panel').hidden = activeSection !== 'overview';
-  document.querySelector('#editor-panel').hidden = !['projects', 'caseStudies', 'experience', 'about'].includes(activeSection);
+  document.querySelector('#editor-panel').hidden = !['projects', 'caseStudies', 'experience'].includes(activeSection);
   document.querySelector('#profile-editor').hidden = activeSection !== 'profile';
   document.querySelector('#settings-panel').hidden = activeSection !== 'settings';
-  document.querySelector('#filter-tabs').hidden = activeSection !== 'projects';
+  document.querySelector('#filter-tabs').hidden = !['projects', 'caseStudies', 'experience'].includes(activeSection);
   document.querySelector('#item-search').value = '';
 }
 function currentItems() { return activeSection === 'projects' ? data.projects : data[activeSection] || []; }
@@ -179,7 +177,7 @@ function displayTitle(item, index) {
   const val = item.title || item.role || '';
   if (val.trim()) return val;
   if (activeSection === 'projects') return t('imageItem') + ' ' + new Intl.NumberFormat('en').format(index + 1);
-  return t(({ caseStudies: 'untitledCase', experience: 'untitledExperience', about: 'untitledAbout' })[activeSection] || 'untitled');
+  return t(({ caseStudies: 'untitledCase', experience: 'untitledExperience' })[activeSection] || 'untitled');
 }
 function displayMeta(item) {
   const fields = activeSection === 'projects' ? ['title'] : activeSection === 'caseStudies' ? ['summary'] : activeSection === 'experience' ? ['company', 'dates'] : ['body'];
@@ -204,7 +202,8 @@ function renderItems() {
   const items = currentItems();
   const query = document.querySelector('#item-search').value.trim().toLocaleLowerCase();
   const filtered = items.map((item, index) => ({ item, index })).filter(({ item }) => {
-    const visibleMatch = activeSection !== 'projects' || activeFilter === 'all' || (activeFilter === 'published' ? item.visible : !item.visible);
+    const hasVisibility = ['projects', 'caseStudies', 'experience'].includes(activeSection);
+    const visibleMatch = !hasVisibility || activeFilter === 'all' || (activeFilter === 'published' ? item.visible !== false : item.visible === false);
     const text = JSON.stringify(item).toLocaleLowerCase();
     return visibleMatch && (!query || text.includes(query));
   });
@@ -219,16 +218,17 @@ function renderItems() {
     card.className = 'content-item';
     const thumb = document.createElement('div');
     thumb.className = 'item-thumb';
-    if (item.image && imageNames.includes(item.image)) {
+    const src = item.image && adminAssetPath(item.image);
+    if (src) {
       const img = document.createElement('img');
-      img.src = './assets/projects/' + encodeURIComponent(item.image);
+      img.src = src;
       img.alt = '';
       img.loading = 'lazy';
       thumb.append(img);
     } else {
       const placeholder = document.createElement('span');
       placeholder.className = 'item-placeholder';
-      placeholder.textContent = activeSection === 'experience' ? '◷' : activeSection === 'about' ? '◉' : '▤';
+      placeholder.textContent = activeSection === 'experience' ? '◷' : '▤';
       thumb.append(placeholder);
     }
     const body = document.createElement('div');
@@ -240,7 +240,7 @@ function renderItems() {
     title.textContent = displayTitle(item, index);
     topline.append(title);
     const badge = document.createElement('span');
-    const isVisible = activeSection === 'projects' && item.visible;
+    const isVisible = ['projects', 'caseStudies', 'experience'].includes(activeSection) && item.visible !== false;
     badge.className = 'item-status ' + (isVisible ? 'is-published' : 'is-draft');
     badge.textContent = isVisible ? t('statusVisible') : t('draftBadge');
     topline.append(badge);
@@ -302,8 +302,23 @@ function textGroup(fieldKey, value, options = {}) {
   return field(t(labelKey), value, {
     multiline: options.multiline,
     full: true,
-    name: fieldKey
+    name: fieldKey,
+    hint: options.hint,
+    rows: options.rows
   });
+}
+function adminAssetPath(name) {
+  if (imageNames.includes(name)) return './assets/projects/' + encodeURIComponent(name);
+  if (caseStudyAssets.includes(name)) return './assets/case-studies/' + encodeURIComponent(name);
+  return '';
+}
+function imageOptions(includeCaseAssets = false) {
+  const projectOptions = imageNames.map((filename, index) => ({ value: filename, label: t('imageItem') + ' ' + new Intl.NumberFormat('en').format(index + 1) }));
+  if (!includeCaseAssets) return projectOptions;
+  return [
+    ...projectOptions,
+    ...caseStudyAssets.map((filename) => ({ value: filename, label: 'Case study — ' + filename })),
+  ];
 }
 function checkbox(labelText, checked, name) {
   const label = document.createElement('label');
@@ -320,23 +335,23 @@ function checkbox(labelText, checked, name) {
 function itemDefaults(section, item) {
   const base = item ? deepCopy(item) : { id: id() };
   if (section === 'projects') return { ...base, image: base.image || imageNames.find((img) => !data.projects.some((project) => project.image === img)) || imageNames[0], title: base.title || '', href: base.href || '', visible: base.visible !== false };
-  if (section === 'caseStudies') return { ...base, title: base.title || '', summary: base.summary || '', body: base.body || '', href: base.href || '', image: base.image || '' };
-  if (section === 'experience') return { ...base, role: base.role || '', company: base.company || '', dates: base.dates || '', description: base.description || '', href: base.href || '', image: base.image || '' };
-  return { ...base, title: base.title || '', body: base.body || '', href: base.href || '', image: base.image || '' };
+  if (section === 'caseStudies') return { ...base, title: base.title || '', summary: base.summary || '', body: base.body || '', href: base.href || '', image: base.image || '', visible: base.visible !== false };
+  if (section === 'experience') return { ...base, role: base.role || '', company: base.company || '', dates: base.dates || '', description: base.description || '', href: base.href || '', image: base.image || '', visible: base.visible !== false };
+  return base;
 }
 function typeCopy(section, edit) {
-  return t((edit ? 'edit' : 'new') + ({ projects: 'Project', caseStudies: 'Case', experience: 'Experience', about: 'About' })[section]);
+  return t((edit ? 'edit' : 'new') + ({ projects: 'Project', caseStudies: 'Case', experience: 'Experience' })[section]);
 }
 function openEditor(section, item = null) {
   const dialog = document.querySelector('#editor-dialog');
   const form = document.querySelector('#item-form');
   const model = itemDefaults(section, item);
   editing = { section, itemId: item?.id || model.id, isNew: !item };
-  document.querySelector('#dialog-kicker').textContent = t(({ projects: 'workKicker', caseStudies: 'caseKicker', experience: 'experienceKicker', about: 'aboutKicker' })[section]);
+  document.querySelector('#dialog-kicker').textContent = t(({ projects: 'workKicker', caseStudies: 'caseKicker', experience: 'experienceKicker' })[section]);
   document.querySelector('#dialog-title').textContent = typeCopy(section, Boolean(item));
   form.replaceChildren();
   if (section === 'projects') {
-    const selectOptions = imageNames.map((filename, index) => ({ value: filename, label: t('imageItem') + ' ' + new Intl.NumberFormat('en').format(index + 1) }));
+    const selectOptions = imageOptions();
     form.append(field(t('image'), model.image, { select: selectOptions, name: 'image' }));
     form.append(textGroup('title', model.title));
     form.append(field(t('link'), model.href, { name: 'href', placeholder: 'https://…' }));
@@ -344,19 +359,17 @@ function openEditor(section, item = null) {
   } else if (section === 'caseStudies') {
     form.append(textGroup('title', model.title));
     form.append(textGroup('summary', model.summary, { multiline: true }));
-    form.append(textGroup('details', model.body, { multiline: true }));
+    form.append(textGroup('details', model.body, { multiline: true, rows: 20, hint: t('caseDetailsHint') }));
     form.append(field(t('link'), model.href, { name: 'href', placeholder: 'https://…' }));
-    form.append(field(t('image'), model.image, { select: [{ value: '', label: t('optional') }, ...imageNames.map((filename, index) => ({ value: filename, label: t('imageItem') + ' ' + new Intl.NumberFormat('en').format(index + 1) }))], name: 'image' }));
+    form.append(field(t('image'), model.image, { select: [{ value: '', label: t('optional') }, ...imageOptions(true)], name: 'image' }));
+    form.append(checkbox(t('visible'), model.visible, 'visible'));
   } else if (section === 'experience') {
     form.append(textGroup('role', model.role));
     form.append(textGroup('company', model.company));
     form.append(textGroup('dates', model.dates));
     form.append(textGroup('description', model.description, { multiline: true }));
     form.append(field(t('link'), model.href, { name: 'href', placeholder: 'https://…' }));
-  } else {
-    form.append(textGroup('heading', model.title));
-    form.append(textGroup('body', model.body, { multiline: true }));
-    form.append(field(t('image'), model.image, { select: [{ value: '', label: t('optional') }, ...imageNames.map((filename, index) => ({ value: filename, label: t('imageItem') + ' ' + new Intl.NumberFormat('en').format(index + 1) }))], name: 'image' }));
+    form.append(checkbox(t('visible'), model.visible, 'visible'));
   }
   if (dialog.open) dialog.close();
   dialog.showModal();
@@ -381,16 +394,14 @@ function handleItemSave(event) {
     model.body = readGroup(form, 'details');
     model.href = form.elements.namedItem('href').value.trim();
     model.image = form.elements.namedItem('image').value;
+    model.visible = form.elements.namedItem('visible').checked;
   } else if (section === 'experience') {
     model.role = readGroup(form, 'role');
     model.company = readGroup(form, 'company');
     model.dates = readGroup(form, 'dates');
     model.description = readGroup(form, 'description');
     model.href = form.elements.namedItem('href').value.trim();
-  } else {
-    model.title = readGroup(form, 'heading');
-    model.body = readGroup(form, 'body');
-    model.image = form.elements.namedItem('image').value;
+    model.visible = form.elements.namedItem('visible').checked;
   }
   if (!validHref(model.href)) { showToast(t('badLink')); return; }
   if (isNew) data[section].push(model);
@@ -502,6 +513,8 @@ function renderSection() {
 }
 function setSection(section) {
   activeSection = section;
+  activeFilter = 'all';
+  document.querySelectorAll('.filter-tab').forEach((tab) => tab.classList.toggle('is-active', tab.dataset.filter === 'all'));
   renderSection();
   document.querySelector('#sidebar').classList.remove('is-open');
   document.querySelector('#mobile-menu').setAttribute('aria-expanded', 'false');

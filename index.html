@@ -15,12 +15,12 @@
     <link rel="stylesheet" href="./styles.css" />
     <script type="module" src="./app.js"></script>
   </head>
-  <body>
+  <body data-page="selected-work">
     <a class="skip-link" href="#selected-work">Skip to selected work</a>
 
     <header class="site-header" id="top">
       <div class="header-top">
-        <a class="avatar-mark" href="#top" aria-label="Ehsan Masoomi">
+        <a class="avatar-mark" href="./index.html" aria-label="Ehsan Masoomi">
           <img src="./assets/figma/profile.png" width="40" height="40" alt="" />
         </a>
         <div class="display-controls" aria-label="Display settings">
@@ -47,10 +47,9 @@
       </section>
 
       <nav class="primary-nav" aria-label="Portfolio sections">
-        <a class="nav-tab is-current" href="#selected-work" aria-current="page">Selected Work</a>
-        <button class="nav-tab planned-tab" type="button" aria-disabled="true" id="case-studies-tab">Case Studies</button>
-        <button class="nav-tab planned-tab" type="button" aria-disabled="true" id="experience-tab">Experience</button>
-        <button class="nav-tab planned-tab" type="button" aria-disabled="true" id="about-tab">About me</button>
+        <a class="nav-tab" href="./index.html#selected-work" data-page-link="selected-work">Selected Work</a>
+        <a class="nav-tab" href="./case-studies.html" data-page-link="case-studies">Case Studies</a>
+        <a class="nav-tab" href="./experience.html" data-page-link="experience">Experience</a>
       </nav>
     </header>
 

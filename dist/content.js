@@ -46,8 +46,6 @@ export const copy = {
     selectedWork: "Selected Work",
     caseStudies: "Case Studies",
     experience: "Experience",
-    about: "About me",
-    comingSoon: "Coming soon",
     projectAlt: "Selected work preview",
     links: { email: "Email", linkedin: "LinkedIn", x: "X (Twitter)", instagram: "Instagram" },
     companyNames: { nibex: "Nibex.io", mors: "MORS", remocapp: "Remocapp" },

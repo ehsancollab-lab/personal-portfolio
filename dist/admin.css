@@ -124,8 +124,6 @@ h1,h2,p { margin-block-start: 0; }
 .work-icon { background: var(--accent-soft); color: var(--accent); }
 .case-icon { background: var(--green-soft); color: var(--green); }
 .experience-icon { background: var(--amber-soft); color: var(--amber); }
-.about-icon { background: #f1eafa; color: #855ca8; }
-:root[data-theme="dark"] .about-icon { background: #352b40; color: #c5a3e4; }
 .stat-card p { margin: 0 0 3px; color: var(--muted); font-size: 10px; }
 .stat-card strong { margin-inline-end: 5px; font-size: 23px; font-weight: 600; letter-spacing: -.04em; line-height: 1; }
 .stat-card small { color: var(--faint); font-size: 9px; }
