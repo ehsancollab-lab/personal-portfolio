@@ -37,4 +37,5 @@ Then open http://localhost:4173.
 - `data/portfolio.json` is the shared published content, loaded by all public visitors.
 - Dashboard writes are authenticated by the Cloudflare worker and committed atomically to GitHub. New image files are stored under `assets/uploads/`; GitHub Pages publishes content changes through the included workflow.
 - Password verification, signed sessions, Origin checks, persistent D1 login limits, and revision conflict checks run on the server. Secrets are configured in Cloudflare and never committed.
+- Simple dashboard setup needs two encrypted production secrets: `ADMIN_PASSWORD` (the chosen password) and `GITHUB_CONTENT_TOKEN` (repository-scoped Contents read/write). The session signing key is derived automatically; no local setup script is required.
 - Browser storage retains unpublished recovery drafts and theme preferences. Earlier browser-only edits must be exported from the old site and imported before migration is complete.

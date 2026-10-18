@@ -69,6 +69,48 @@ export async function verifyPassword(password, encoded) {
   for (let i = 0; i < expectedBytes.length; i++) difference |= actual[i] ^ expectedBytes[i];
   return difference === 0;
 }
+function loginCredential(env) {
+  if (env.ADMIN_PASSWORD !== undefined) {
+    if (typeof env.ADMIN_PASSWORD !== 'string' || env.ADMIN_PASSWORD.length < 10 || env.ADMIN_PASSWORD.length > 256) throw new HttpError(503, 'admin_not_configured');
+    return ['password', env.ADMIN_PASSWORD];
+  }
+  if (typeof env.ADMIN_PASSWORD_HASH !== 'string' || !env.ADMIN_PASSWORD_HASH) throw new HttpError(503, 'admin_not_configured');
+  return ['verifier', env.ADMIN_PASSWORD_HASH];
+}
+async function verifyLoginPassword(password, env) {
+  const [mode, expected] = loginCredential(env);
+  if (mode === 'verifier') return verifyPassword(password, expected);
+  // Compare fixed-length digests without revealing the configured password length.
+  const [actualDigest, expectedDigest] = await Promise.all([
+    crypto.subtle.digest('SHA-256', encoder.encode(password)),
+    crypto.subtle.digest('SHA-256', encoder.encode(expected))
+  ]);
+  const actualBytes = new Uint8Array(actualDigest);
+  const expectedBytes = new Uint8Array(expectedDigest);
+  let difference = 0;
+  for (let i = 0; i < expectedBytes.length; i++) difference |= actualBytes[i] ^ expectedBytes[i];
+  return difference === 0;
+}
+async function sessionSigningSecret(env) {
+  // Retain existing verifier/session configurations for already configured hosts.
+  if (env.ADMIN_PASSWORD === undefined && env.SESSION_SECRET !== undefined) {
+    await hmacKey(env.SESSION_SECRET);
+    return env.SESSION_SECRET;
+  }
+  const credential = loginCredential(env);
+  // The GitHub credential supplies server-only entropy, so a short numeric password
+  // is never sufficient on its own to forge session cookies. No setup script is needed.
+  const rootSecret = env.SESSION_SECRET ?? env.GITHUB_CONTENT_TOKEN;
+  if (typeof rootSecret !== 'string' || rootSecret.length < 32) throw new HttpError(503, 'admin_not_configured');
+  const key = await crypto.subtle.importKey('raw', encoder.encode(rootSecret), 'HKDF', false, ['deriveBits']);
+  const info = JSON.stringify([
+    env.GITHUB_OWNER || 'ehsancollab-lab', env.GITHUB_REPO || 'personal-portfolio', branch(env), credential
+  ]);
+  const bits = await crypto.subtle.deriveBits({
+    name: 'HKDF', hash: 'SHA-256', salt: encoder.encode('portfolio-dashboard-session-v1'), info: encoder.encode(info)
+  }, key, 256);
+  return url64(new Uint8Array(bits));
+}
 function sameOrigin(request) {
   if (request.headers.get('Origin') !== new URL(request.url).origin) throw new HttpError(403, 'origin_not_allowed');
   const type = request.headers.get('Content-Type') || '';
@@ -80,11 +122,11 @@ async function readJson(request, max = MAX_BODY) {
   if (bytes.byteLength > max) throw new HttpError(413, 'request_too_large');
   try { return JSON.parse(decoder.decode(bytes)); } catch { throw new HttpError(400, 'invalid_json'); }
 }
-async function loginAllowed(request, env) {
+async function loginAllowed(request, env, signingSecret) {
   if (!env.AUTH_DB) throw new HttpError(503, 'admin_not_configured');
   const minute = Math.floor(Date.now() / 60000);
   const address = request.headers.get('CF-Connecting-IP') || 'unknown';
-  const digest = new Uint8Array(await crypto.subtle.digest('SHA-256', encoder.encode(env.SESSION_SECRET + address)));
+  const digest = new Uint8Array(await crypto.subtle.digest('SHA-256', encoder.encode(signingSecret + address)));
   const key = `${minute}:${url64(digest)}`;
   await env.AUTH_DB.exec('CREATE TABLE IF NOT EXISTS login_attempts (bucket_key TEXT PRIMARY KEY, attempts INTEGER NOT NULL, expires_at INTEGER NOT NULL)');
   const sql = 'INSERT INTO login_attempts (bucket_key, attempts, expires_at) VALUES (?, 1, ?) ON CONFLICT(bucket_key) DO UPDATE SET attempts = login_attempts.attempts + 1 RETURNING attempts';
@@ -232,18 +274,19 @@ export async function handleRequest(request, env) {
     const path = url.pathname;
     if (request.method === 'POST' && path === '/api/login') {
       sameOrigin(request);
-      await hmacKey(env.SESSION_SECRET);
       const input = await readJson(request, 2048);
       if (!input || typeof input.password !== 'string' || input.password.length < 1 || input.password.length > 256) throw new HttpError(400, 'invalid_request');
-      if (!await loginAllowed(request, env)) return secure(json({ error: 'too_many_attempts' }, 429, { 'Retry-After': '60' }));
-      if (!await verifyPassword(input.password, env.ADMIN_PASSWORD_HASH)) return secure(json({ error: 'incorrect_password' }, 401));
-      return secure(json({ authenticated: true }, 200, { 'Set-Cookie': cookie(await createSession(env.SESSION_SECRET)) }));
+      const signingSecret = await sessionSigningSecret(env);
+      if (!await loginAllowed(request, env, signingSecret)) return secure(json({ error: 'too_many_attempts' }, 429, { 'Retry-After': '60' }));
+      if (!await verifyLoginPassword(input.password, env)) return secure(json({ error: 'incorrect_password' }, 401));
+      return secure(json({ authenticated: true }, 200, { 'Set-Cookie': cookie(await createSession(signingSecret)) }));
     }
     if (request.method === 'POST' && path === '/api/logout') {
       sameOrigin(request);
       return secure(json({ authenticated: false }, 200, { 'Set-Cookie': cookie('', 0) }));
     }
-    const authenticated = await verifySession(requestSession(request), env.SESSION_SECRET);
+    const session = requestSession(request);
+    const authenticated = session ? await verifySession(session, await sessionSigningSecret(env)) : false;
     if (path === '/login' || path === '/login.html') {
       if (!['GET', 'HEAD'].includes(request.method)) throw new HttpError(405, 'method_not_allowed');
       if (authenticated) return secure(Response.redirect(url.origin + '/', 303));
