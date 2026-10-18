@@ -149,6 +149,23 @@
   ],
   "caseStudies": [
     {
+      "id": "ca62503d-1339-4a71-bacd-81a59fb61485",
+      "title": "نازنین زن خوشگملههه",
+      "summary": "",
+      "body": "",
+      "href": "",
+      "image": "",
+      "visible": false,
+      "document": {
+        "type": "doc",
+        "content": [
+          {
+            "type": "paragraph"
+          }
+        ]
+      }
+    },
+    {
       "id": "mohtavachi-content-calendar",
       "title": "From “I Don’t Know What to Post” to an AI-Powered Content Calendar",
       "summary": "MohtavaChi is an Iranian social media management platform designed for small businesses, including Instagram shops, Telegram-based businesses, and online stores. Like Buffer and Hootsuite, it helps users manage, schedule, and publish content across multiple accounts from a single platform.",
