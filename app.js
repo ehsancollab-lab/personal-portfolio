@@ -12,22 +12,63 @@ const safeStorage = {
   set(key, value) {
     try { localStorage.setItem(key, value); } catch { /* Storage may be unavailable in private contexts. */ }
   },
+  remove(key) {
+    try { localStorage.removeItem(key); } catch { /* Storage may be unavailable in private contexts. */ }
+  },
 };
 
 const contentStorageKey = "ehsan-portfolio-cms-v1";
+safeStorage.remove("ehsan-portfolio-language");
+
+function normalizeContent(candidate) {
+  if (!candidate || ![1, 2].includes(candidate.version) || !Array.isArray(candidate.projects) || !Array.isArray(candidate.caseStudies) || !Array.isArray(candidate.experience) || !Array.isArray(candidate.about) || !Array.isArray(candidate.contactLinks)) return null;
+  const text = (value) => typeof value === "string" ? value : String(value?.en || "");
+  const entries = (value) => Array.isArray(value) ? value : [];
+  const normalizeItem = (item, fields) => ({
+    id: String(item.id || ""),
+    ...Object.fromEntries(fields.map((field) => [field, text(item[field])])),
+    href: String(item.href || ""),
+    image: String(item.image || ""),
+  });
+  return {
+    version: 2,
+    profile: {
+      greeting: text(candidate.profile?.greeting),
+      bio: text(candidate.profile?.bio),
+      contactPrompt: text(candidate.profile?.contactPrompt),
+    },
+    projects: entries(candidate.projects).map((item) => ({
+      id: String(item.id || ""),
+      image: String(item.image || ""),
+      title: text(item.title),
+      href: String(item.href || ""),
+      visible: item.visible !== false,
+    })),
+    caseStudies: entries(candidate.caseStudies).map((item) => normalizeItem(item, ["title", "summary", "body"])),
+    experience: entries(candidate.experience).map((item) => normalizeItem(item, ["role", "company", "dates", "description"])),
+    about: entries(candidate.about).map((item) => normalizeItem(item, ["title", "body"])),
+    contactLinks: entries(candidate.contactLinks).map((item) => ({
+      id: String(item.id || ""),
+      label: text(item.label),
+      href: String(item.href || ""),
+    })),
+  };
+}
+
 let contentOverride = null;
 try {
   const storedContent = safeStorage.get(contentStorageKey);
-  if (storedContent) contentOverride = JSON.parse(storedContent);
+  if (storedContent) {
+    contentOverride = normalizeContent(JSON.parse(storedContent));
+    if (contentOverride) safeStorage.set(contentStorageKey, JSON.stringify(contentOverride));
+  }
 } catch { /* Ignore malformed browser-local draft data and use the supplied content. */ }
 
-const languageParam = new URLSearchParams(window.location.search).get("lang");
-const savedLanguage = safeStorage.get("ehsan-portfolio-language");
-const browserLanguage = navigator.language?.toLowerCase().startsWith("fa") ? "fa" : "en";
-let language = ["fa", "en"].includes(languageParam)
-  ? languageParam
-  : (["fa", "en"].includes(savedLanguage) ? savedLanguage : browserLanguage);
 let theme = safeStorage.get("ehsan-portfolio-theme") === "dark" ? "dark" : "light";
+
+function english(value) {
+  return typeof value === "string" ? value : String(value?.en || "");
+}
 
 function externalAnchor(href, text) {
   const anchor = document.createElement("a");
@@ -41,21 +82,29 @@ function externalAnchor(href, text) {
   return anchor;
 }
 
-function renderLinks(target, labels) {
+function renderLinks(target) {
   const managedLinks = Array.isArray(contentOverride?.contactLinks) ? contentOverride.contactLinks : null;
   const links = managedLinks
-    ? managedLinks.map(({ href, label }) => ({ href, label: label?.[language] || label?.en || "" })).filter(({ label, href }) => label && href)
-    : contactLinks.map(({ key, href }) => ({ href, label: labels[key] }));
+    ? managedLinks
+      .map(({ href, label }) => ({ href, label: english(label) }))
+      .filter(({ label, href }) => label && href)
+    : contactLinks.map(({ key, href }) => ({ href, label: copy.links[key] }));
   target.replaceChildren(...links.map(({ href, label }) => externalAnchor(href, label)));
 }
 
-function renderBio(strings) {
-  const managedBio = contentOverride?.profile?.bio?.[language];
-  const originalBio = strings.bioSegments.map((segment) => segment.text !== undefined ? segment.text : strings.companyNames[segment.link]).join("");
+function renderBio() {
+  const strings = copy;
+  const originalBio = strings.bioSegments
+    .map((segment) => segment.text !== undefined ? segment.text : strings.companyNames[segment.link])
+    .join("");
+  const hasManagedBio = contentOverride?.profile && Object.prototype.hasOwnProperty.call(contentOverride.profile, "bio");
+  const managedBio = hasManagedBio ? english(contentOverride.profile.bio) : undefined;
+
   if (managedBio !== undefined && managedBio !== originalBio) {
     bio.textContent = managedBio;
     return;
   }
+
   const nodes = strings.bioSegments.map((segment) => {
     if (segment.text !== undefined) return document.createTextNode(segment.text);
     const key = segment.link;
@@ -64,20 +113,19 @@ function renderBio(strings) {
   bio.replaceChildren(...nodes);
 }
 
-function renderProjects(strings) {
-  const number = new Intl.NumberFormat(language);
+function renderProjects() {
   const managedProjects = Array.isArray(contentOverride?.projects)
     ? contentOverride.projects.filter((project) => project.visible !== false && projects.includes(project.image))
-    : projects.map((image, index) => ({ image, title: {}, visible: true, id: String(index) }));
+    : projects.map((image, index) => ({ image, title: "", visible: true, id: String(index) }));
+
   const cards = managedProjects.map((project, index) => {
-    const filename = project.image;
     const figure = document.createElement("figure");
     figure.className = "project-card";
     figure.setAttribute("role", "listitem");
 
     const image = document.createElement("img");
-    image.src = `./assets/projects/${encodeURIComponent(filename)}`;
-    image.alt = project.title?.[language]?.trim() || `${strings.projectAlt} ${number.format(index + 1)}`;
+    image.src = "./assets/projects/" + encodeURIComponent(project.image);
+    image.alt = english(project.title).trim() || copy.projectAlt + " " + (index + 1);
     image.width = 2760;
     image.height = 1921;
     image.decoding = "async";
@@ -104,58 +152,44 @@ function renderProjects(strings) {
     }
     return figure;
   });
+
   projectGrid.setAttribute("role", "list");
   projectGrid.replaceChildren(...cards);
 }
 
-function applyLanguage(nextLanguage) {
-  language = nextLanguage;
-  const strings = copy[language];
-  const isPersian = language === "fa";
+function renderPortfolio() {
+  root.lang = "en";
+  root.dir = "ltr";
+  document.title = copy.title;
+  document.querySelector('meta[name="description"]').content = copy.description;
+  const managedProfile = contentOverride?.profile || {};
+  document.querySelector("#greeting").textContent = Object.prototype.hasOwnProperty.call(managedProfile, "greeting") ? english(managedProfile.greeting) : copy.greeting;
+  document.querySelector("#contact-prompt").textContent = Object.prototype.hasOwnProperty.call(managedProfile, "contactPrompt") ? english(managedProfile.contactPrompt) : copy.contactPrompt;
 
-  root.lang = language;
-  root.dir = isPersian ? "rtl" : "ltr";
-  document.title = strings.title;
-  document.querySelector('meta[name="description"]').content = strings.description;
-  document.querySelector('[data-i18n="skipLink"]').textContent = strings.skipLink;
-  document.querySelector("#greeting").textContent = contentOverride?.profile?.greeting?.[language] ?? strings.greeting;
-  document.querySelector("#contact-prompt").textContent = contentOverride?.profile?.contactPrompt?.[language] ?? strings.contactPrompt;
-  document.querySelector("#cv-label").textContent = strings.downloadCv;
-  document.querySelector("#case-studies-tab").textContent = strings.caseStudies;
-  document.querySelector("#experience-tab").textContent = strings.experience;
-  document.querySelector("#about-tab").textContent = strings.about;
-  document.querySelector("#case-studies-tab").setAttribute("aria-label", `${strings.caseStudies} — ${strings.comingSoon}`);
-  document.querySelector("#experience-tab").setAttribute("aria-label", `${strings.experience} — ${strings.comingSoon}`);
-  document.querySelector("#about-tab").setAttribute("aria-label", `${strings.about} — ${strings.comingSoon}`);
-  document.querySelectorAll('[data-i18n="selectedWork"]').forEach((element) => {
-    element.textContent = strings.selectedWork;
-  });
-  document.querySelector(".contact-block").setAttribute("aria-label", isPersian ? "راه‌های تماس" : "Contact information");
-  document.querySelector(".display-controls").setAttribute("aria-label", isPersian ? "تنظیمات نمایش" : "Display settings");
-  document.querySelector(".primary-nav").setAttribute("aria-label", isPersian ? "بخش‌های پرتفولیو" : "Portfolio sections");
-  document.querySelector(".work-section").setAttribute("aria-label", strings.selectedWork);
-  document.querySelector("#header-contact-links").setAttribute("aria-label", isPersian ? "راه‌های تماس" : "Contact links");
-  document.querySelector("#footer-contact-links").setAttribute("aria-label", isPersian ? "راه‌های تماس" : "Contact links");
+  const ariaLabels = {
+    ".contact-block": "Contact information",
+    ".display-controls": "Display settings",
+    ".primary-nav": "Portfolio sections",
+    "#header-contact-links": "Contact links",
+    "#footer-contact-links": "Contact links",
+    ".work-section": "Selected Work",
+  };
+  for (const [selector, label] of Object.entries(ariaLabels)) {
+    document.querySelector(selector).setAttribute("aria-label", label);
+  }
 
-  renderBio(strings);
-  renderLinks(document.querySelector("#header-contact-links"), strings.links);
-  renderLinks(document.querySelector("#footer-contact-links"), strings.links);
-  renderProjects(strings);
-  safeStorage.set("ehsan-portfolio-language", language);
-  updateThemeControl();
+  renderBio();
+  renderLinks(document.querySelector("#header-contact-links"));
+  renderLinks(document.querySelector("#footer-contact-links"));
+  renderProjects();
 }
 
 function updateThemeControl() {
   const isDark = theme === "dark";
-  const strings = copy[language];
   root.dataset.theme = theme;
   themeToggle.setAttribute("aria-pressed", String(isDark));
-  themeToggle.setAttribute("aria-label", language === "fa"
-    ? (isDark ? "تغییر به تم روشن" : "تغییر به تم تاریک")
-    : (isDark ? "Switch to light theme" : "Switch to dark theme"));
-  themeToggle.title = language === "fa"
-    ? (isDark ? "تغییر به تم روشن" : "تغییر به تم تاریک")
-    : (isDark ? "Switch to light theme" : "Switch to dark theme");
+  themeToggle.setAttribute("aria-label", isDark ? "Switch to light theme" : "Switch to dark theme");
+  themeToggle.title = isDark ? "Switch to light theme" : "Switch to dark theme";
   document.querySelector('meta[name="theme-color"]').content = isDark ? "#131315" : "#ffffff";
   safeStorage.set("ehsan-portfolio-theme", theme);
 }
@@ -170,12 +204,13 @@ document.querySelectorAll('.planned-tab[aria-disabled="true"]').forEach((tab) =>
 });
 
 document.querySelector("#copyright-year").textContent = String(new Date().getFullYear());
-applyLanguage(language);
+renderPortfolio();
+updateThemeControl();
 
 window.addEventListener("storage", (event) => {
   if (event.key !== contentStorageKey) return;
   try {
     contentOverride = event.newValue ? JSON.parse(event.newValue) : null;
-    applyLanguage(language);
+    renderPortfolio();
   } catch { /* Keep the last rendered content if a different tab writes invalid JSON. */ }
 });

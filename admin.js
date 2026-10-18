@@ -1,7 +1,6 @@
-import { companyLinks, contactLinks, copy, projects } from './content.js';
+import { contactLinks, copy, projects } from './content.js';
 
 const CONTENT_KEY = 'ehsan-portfolio-cms-v1';
-const LANG_KEY = 'ehsan-portfolio-language';
 const THEME_KEY = 'ehsan-portfolio-theme';
 const noticeKey = 'ehsan-dashboard-notice-dismissed';
 const imageNames = [...projects];
@@ -21,16 +20,10 @@ const storage = (() => {
   }
 })();
 const uiText = {
-  en: {
-    skip: 'Skip to dashboard content', workspace: 'Portfolio workspace', manage: 'Manage content', overview: 'Overview', selectedWork: 'Selected Work', caseStudies: 'Case Studies', experience: 'Experience', about: 'About me', profileContact: 'Profile & contact', viewPortfolio: 'View portfolio', designerRole: 'Senior AI Product Designer', allChangesSaved: 'All changes saved', contentManagement: 'CONTENT MANAGEMENT', overviewSubtitle: 'Manage your portfolio content in one place.', previewSite: 'Preview site', addNew: 'Add new', localStorageTitle: 'Saved in this browser', localStorageCopy: 'Edits stay on this device. Export a JSON backup to move them; publishing to all visitors needs a database and admin access.', projectImages: 'project images', draftEntries: 'draft entries', workEntries: 'work entries', contentSections: 'Content sections', contentSectionsHint: 'Choose a section to review or edit.', workspaceStatus: 'Workspace status', workspaceStatusHint: 'A quick view of your content setup.', draft: 'Draft', bilingualContent: 'English and Persian fields', themeSupport: 'Light and dark themes', ready: 'Ready', publicSections: 'Case Studies, Experience, About pages', awaitingDesign: 'Awaiting design', sharedPublishing: 'Shared publishing', backendNeeded: 'Backend needed', onlyYouCanSee: 'Only your browser has these edits', aboutDraft: 'Draft content', nextSteps: 'Your content, ready for the next design handoff', nextStepsCopy: 'Case Studies, Experience, and About entries can be drafted here without inventing project outcomes. They can be connected to their public layouts when those designs are ready.', manageCaseStudies: 'Manage Case Studies', allItems: 'All items', published: 'Visible', searchContent: 'Search content', nothingHere: 'Nothing here yet', emptyCopy: 'Create your first item. You can add or change the text later.', addFirst: 'Add your first item', backupTitle: 'Backup and transfer', backupCopy: 'Export your current content to a JSON file, or restore a previous backup.', exportJson: 'Export JSON', importJson: 'Import JSON', appearanceTitle: 'Appearance', appearanceCopy: 'Choose the dashboard language and color theme.', switchLanguage: 'Switch language', switchTheme: 'Switch theme', resetTitle: 'Reset local edits', resetCopy: 'Restore the starting content from the supplied portfolio files. This clears saved edits in this browser.', reset: 'Reset content', footerNote: 'Portfolio content workspace', cancel: 'Cancel', saveChanges: 'Save changes', selectedWorkTitle: 'Selected Work', selectedWorkSubtitle: 'Manage the 20 supplied images and their display settings.', caseStudiesSubtitle: 'Write and organize case studies for the future public layout.', experienceSubtitle: 'Record roles and details from your actual work history.', aboutSubtitle: 'Draft the About page in content blocks.', profileSubtitle: 'Update the introduction and contact links shown on your portfolio.', settingsSubtitle: 'Manage backups and dashboard preferences.', allSavedToast: 'Changes saved in this browser.', savedToast: 'Saved. Open the portfolio preview in this browser to see Selected Work updates.', deleteConfirm: 'Delete this item? This cannot be undone in this browser.', resetConfirm: 'Clear local edits and restore the starting portfolio data?', importConfirm: 'Replace the current local content with this backup?', invalidJson: 'This JSON file is not a valid portfolio backup.', exported: 'JSON backup downloaded.', imported: 'Backup imported.', resetDone: 'Starting content restored.', searchPlaceholder: 'Search by title or text', imageItem: 'Project image', untitledProject: 'Untitled work', untitledCase: 'Untitled case study', untitledExperience: 'Untitled role', untitledAbout: 'Untitled section', noContent: 'Content not added', edit: 'Edit', delete: 'Delete', up: 'Move up', down: 'Move down', visible: 'Visible on portfolio', hidden: 'Hidden from portfolio', draftBadge: 'Draft', image: 'Image', title: 'Title', link: 'External link (optional)', summary: 'Summary', details: 'Details', role: 'Role', company: 'Company', dates: 'Dates', description: 'Description', heading: 'Heading', body: 'Body text', chooseImage: 'Choose an image', noLink: 'No link added', english: 'English', persian: 'Persian', optional: 'Optional', untitled: 'Untitled', item: 'item', items: 'items', addItem: 'Add item', newProject: 'Add project image', newCase: 'New case study', newExperience: 'New experience', newAbout: 'New About block', editProject: 'Edit project image', editCase: 'Edit case study', editExperience: 'Edit experience', editAbout: 'Edit About block', caseKicker: 'CASE STUDY', workKicker: 'SELECTED WORK', experienceKicker: 'EXPERIENCE', aboutKicker: 'ABOUT', profileKicker: 'PROFILE', statusVisible: 'Visible', labelEnglish: 'Label (English)', labelPersian: 'Label (Persian)', destination: 'URL / email', contactsTitle: 'Contact links', contactsCopy: 'Keep the existing destinations or replace them with your own links.', addContact: 'Add contact link', saveProfile: 'Save profile', greeting: 'Greeting', biography: 'Biography', contactPrompt: 'Contact prompt', fieldFor: 'Content for', imageOrder: 'Order follows the portfolio list. Use arrows to rearrange.', noImageAvailable: 'No supplied project image is available.', badLink: 'Use a valid https, mailto, tel, or relative link.', localOnly: 'Saved in this browser only', dataImported: 'Backup restored', unexpectedError: 'Something went wrong. Please try again.'
-  },
-  fa: {
-    skip: 'رفتن به محتوای داشبورد', workspace: 'فضای کاری پرتفولیو', manage: 'مدیریت محتوا', overview: 'نمای کلی', selectedWork: 'کارهای منتخب', caseStudies: 'مطالعات موردی', experience: 'سوابق', about: 'دربارهٔ من', profileContact: 'پروفایل و راه‌های تماس', viewPortfolio: 'مشاهدهٔ پرتفولیو', designerRole: 'طراح ارشد محصول هوش مصنوعی', allChangesSaved: 'همهٔ تغییرها ذخیره شده‌اند', contentManagement: 'مدیریت محتوا', overviewSubtitle: 'محتوای پرتفولیو را از یکجا مدیریت کنید.', previewSite: 'پیش‌نمایش سایت', addNew: 'افزودن مورد', localStorageTitle: 'ذخیره در همین مرورگر', localStorageCopy: 'ویرایش‌ها روی همین دستگاه می‌مانند. برای انتقال، خروجی JSON بگیرید؛ انتشار برای همهٔ بازدیدکنندگان به پایگاه داده و دسترسی مدیر نیاز دارد.', projectImages: 'تصویر نمونه‌کار', draftEntries: 'پیش‌نویس', workEntries: 'مورد شغلی', contentSections: 'بخش‌های محتوا', contentSectionsHint: 'برای دیدن یا ویرایش، یک بخش را انتخاب کنید.', workspaceStatus: 'وضعیت فضای کاری', workspaceStatusHint: 'نمایی کوتاه از وضعیت محتوا.', draft: 'پیش‌نویس', bilingualContent: 'فیلدهای فارسی و انگلیسی', themeSupport: 'تم روشن و تاریک', ready: 'آماده', publicSections: 'صفحه‌های مطالعات موردی، سوابق و درباره', awaitingDesign: 'در انتظار طراحی', sharedPublishing: 'انتشار برای همه', backendNeeded: 'نیازمند بک‌اند', onlyYouCanSee: 'این ویرایش‌ها فقط در مرورگر شما هستند', aboutDraft: 'محتوای پیش‌نویس', nextSteps: 'محتوا برای مرحلهٔ بعدی طراحی آماده است', nextStepsCopy: 'می‌توانید مطالعات موردی، سوابق و بخش درباره را بدون ساختن نتیجه برای پروژه‌ها بنویسید. پس از آماده‌شدن طراحی عمومی، این محتوا به صفحه‌ها وصل می‌شود.', manageCaseStudies: 'مدیریت مطالعات موردی', allItems: 'همهٔ موارد', published: 'نمایش‌داده‌شده', searchContent: 'جست‌وجوی محتوا', nothingHere: 'هنوز محتوایی نیست', emptyCopy: 'اولین مورد را اضافه کنید؛ متن را بعداً هم می‌توانید تغییر دهید.', addFirst: 'افزودن اولین مورد', backupTitle: 'پشتیبان‌گیری و انتقال', backupCopy: 'محتوای فعلی را به فایل JSON خروجی بگیرید یا نسخهٔ پشتیبان قبلی را بازیابی کنید.', exportJson: 'خروجی JSON', importJson: 'ورود JSON', appearanceTitle: 'نمایش', appearanceCopy: 'زبان و تم داشبورد را انتخاب کنید.', switchLanguage: 'تغییر زبان', switchTheme: 'تغییر تم', resetTitle: 'پاک‌کردن ویرایش‌ها', resetCopy: 'محتوای اولیهٔ فایل‌های پرتفولیو را بازیابی می‌کند و ویرایش‌های این مرورگر را پاک می‌کند.', reset: 'بازیابی محتوا', footerNote: 'فضای مدیریت محتوای پرتفولیو', cancel: 'انصراف', saveChanges: 'ذخیرهٔ تغییرها', selectedWorkTitle: 'کارهای منتخب', selectedWorkSubtitle: '۲۰ تصویر ارسال‌شده و تنظیمات نمایش آن‌ها را مدیریت کنید.', caseStudiesSubtitle: 'مطالعات موردی را برای طراحی عمومی آینده بنویسید و مرتب کنید.', experienceSubtitle: 'سمت‌ها و جزئیات سابقهٔ واقعی کاری را ثبت کنید.', aboutSubtitle: 'پیش‌نویس صفحهٔ درباره را در چند بخش آماده کنید.', profileSubtitle: 'معرفی و راه‌های تماس نمایش‌داده‌شده در پرتفولیو را ویرایش کنید.', settingsSubtitle: 'پشتیبان‌ها و تنظیمات داشبورد را مدیریت کنید.', allSavedToast: 'تغییرها در همین مرورگر ذخیره شدند.', savedToast: 'ذخیره شد. پیش‌نمایش پرتفولیو را در همین مرورگر باز کنید تا تغییرات کارهای منتخب را ببینید.', deleteConfirm: 'این مورد حذف شود؟ در این مرورگر قابل بازگشت نیست.', resetConfirm: 'ویرایش‌های محلی پاک و محتوای اولیهٔ پرتفولیو بازیابی شود؟', importConfirm: 'محتوای فعلی با این فایل پشتیبان جایگزین شود؟', invalidJson: 'این فایل JSON پشتیبان معتبر پرتفولیو نیست.', exported: 'فایل پشتیبان JSON دانلود شد.', imported: 'فایل پشتیبان وارد شد.', resetDone: 'محتوای اولیه بازیابی شد.', searchPlaceholder: 'جست‌وجو براساس عنوان یا متن', imageItem: 'تصویر نمونه‌کار', untitledProject: 'نمونه‌کار بدون عنوان', untitledCase: 'مطالعهٔ موردی بدون عنوان', untitledExperience: 'سمت بدون عنوان', untitledAbout: 'بخش بدون عنوان', noContent: 'هنوز محتوایی اضافه نشده', edit: 'ویرایش', delete: 'حذف', up: 'انتقال به بالا', down: 'انتقال به پایین', visible: 'نمایش در پرتفولیو', hidden: 'پنهان از پرتفولیو', draftBadge: 'پیش‌نویس', image: 'تصویر', title: 'عنوان', link: 'پیوند بیرونی (اختیاری)', summary: 'خلاصه', details: 'جزئیات', role: 'سمت', company: 'شرکت', dates: 'تاریخ‌ها', description: 'توضیحات', heading: 'سرتیتر', body: 'متن', chooseImage: 'انتخاب تصویر', noLink: 'پیوندی ثبت نشده', english: 'انگلیسی', persian: 'فارسی', optional: 'اختیاری', untitled: 'بدون عنوان', item: 'مورد', items: 'مورد', addItem: 'افزودن مورد', newProject: 'افزودن تصویر نمونه‌کار', newCase: 'مطالعهٔ موردی جدید', newExperience: 'سابقهٔ کاری جدید', newAbout: 'بخش جدید درباره', editProject: 'ویرایش تصویر نمونه‌کار', editCase: 'ویرایش مطالعهٔ موردی', editExperience: 'ویرایش سابقهٔ کاری', editAbout: 'ویرایش بخش درباره', caseKicker: 'مطالعهٔ موردی', workKicker: 'کارهای منتخب', experienceKicker: 'سوابق', aboutKicker: 'درباره', profileKicker: 'پروفایل', statusVisible: 'قابل نمایش', labelEnglish: 'نام (انگلیسی)', labelPersian: 'نام (فارسی)', destination: 'نشانی / ایمیل', contactsTitle: 'راه‌های تماس', contactsCopy: 'نشانی‌های فعلی را نگه دارید یا با پیوندهای خودتان جایگزین کنید.', addContact: 'افزودن راه تماس', saveProfile: 'ذخیرهٔ پروفایل', greeting: 'سلام و معرفی', biography: 'بیوگرافی', contactPrompt: 'متن دعوت به تماس', fieldFor: 'محتوا برای', imageOrder: 'ترتیب این موارد در پرتفولیو اعمال می‌شود. برای جابه‌جایی از فلش‌ها استفاده کنید.', noImageAvailable: 'تصویری از فایل‌های ارسالی باقی نمانده است.', badLink: 'از پیوند معتبر https، mailto، tel یا نشانی نسبی استفاده کنید.', localOnly: 'فقط در همین مرورگر ذخیره شده', dataImported: 'پشتیبان بازیابی شد', unexpectedError: 'مشکلی پیش آمد. دوباره تلاش کنید.'
-  }
-};
+    skip: 'Skip to dashboard content', workspace: 'Portfolio workspace', manage: 'Manage content', overview: 'Overview', selectedWork: 'Selected Work', caseStudies: 'Case Studies', experience: 'Experience', about: 'About me', profileContact: 'Profile & contact', viewPortfolio: 'View portfolio', designerRole: 'Senior AI Product Designer', allChangesSaved: 'All changes saved', contentManagement: 'CONTENT MANAGEMENT', overviewSubtitle: 'Manage your portfolio content in one place.', previewSite: 'Preview site', addNew: 'Add new', localStorageTitle: 'Saved in this browser', localStorageCopy: 'Edits stay on this device. Export a JSON backup to move them; publishing to all visitors needs a database and admin access.', projectImages: 'project images', draftEntries: 'draft entries', workEntries: 'work entries', contentSections: 'Content sections', contentSectionsHint: 'Choose a section to review or edit.', workspaceStatus: 'Workspace status', workspaceStatusHint: 'A quick view of your content setup.', draft: 'Draft', englishContent: 'English-only content', themeSupport: 'Light and dark themes', ready: 'Ready', publicSections: 'Case Studies, Experience, About pages', awaitingDesign: 'Awaiting design', sharedPublishing: 'Shared publishing', backendNeeded: 'Backend needed', onlyYouCanSee: 'Only your browser has these edits', aboutDraft: 'Draft content', nextSteps: 'Your content, ready for the next design handoff', nextStepsCopy: 'Case Studies, Experience, and About entries can be drafted here without inventing project outcomes. They can be connected to their public layouts when those designs are ready.', manageCaseStudies: 'Manage Case Studies', allItems: 'All items', published: 'Visible', searchContent: 'Search content', nothingHere: 'Nothing here yet', emptyCopy: 'Create your first item. You can add or change the text later.', addFirst: 'Add your first item', backupTitle: 'Backup and transfer', backupCopy: 'Export your current content to a JSON file, or restore a previous backup.', exportJson: 'Export JSON', importJson: 'Import JSON', appearanceTitle: 'Appearance', appearanceCopy: 'Choose the color theme.', switchTheme: 'Switch theme', resetTitle: 'Reset local edits', resetCopy: 'Restore the starting content from the supplied portfolio files. This clears saved edits in this browser.', reset: 'Reset content', footerNote: 'Portfolio content workspace', cancel: 'Cancel', saveChanges: 'Save changes', selectedWorkTitle: 'Selected Work', selectedWorkSubtitle: 'Manage the 20 supplied images and their display settings.', caseStudiesSubtitle: 'Write and organize case studies for the future public layout.', experienceSubtitle: 'Record roles and details from your actual work history.', aboutSubtitle: 'Draft the About page in content blocks.', profileSubtitle: 'Update the introduction and contact links shown on your portfolio.', settingsSubtitle: 'Manage backups and dashboard preferences.', allSavedToast: 'Changes saved in this browser.', savedToast: 'Saved. Open the portfolio preview in this browser to see Selected Work updates.', deleteConfirm: 'Delete this item? This cannot be undone in this browser.', resetConfirm: 'Clear local edits and restore the starting portfolio data?', importConfirm: 'Replace the current local content with this backup?', invalidJson: 'This JSON file is not a valid portfolio backup.', exported: 'JSON backup downloaded.', imported: 'Backup imported.', resetDone: 'Starting content restored.', searchPlaceholder: 'Search by title or text', imageItem: 'Project image', untitledProject: 'Untitled work', untitledCase: 'Untitled case study', untitledExperience: 'Untitled role', untitledAbout: 'Untitled section', noContent: 'Content not added', edit: 'Edit', delete: 'Delete', up: 'Move up', down: 'Move down', visible: 'Visible on portfolio', hidden: 'Hidden from portfolio', draftBadge: 'Draft', image: 'Image', title: 'Title', link: 'External link (optional)', summary: 'Summary', details: 'Details', role: 'Role', company: 'Company', dates: 'Dates', description: 'Description', heading: 'Heading', body: 'Body text', chooseImage: 'Choose an image', noLink: 'No link added', optional: 'Optional', untitled: 'Untitled', item: 'item', items: 'items', addItem: 'Add item', newProject: 'Add project image', newCase: 'New case study', newExperience: 'New experience', newAbout: 'New About block', editProject: 'Edit project image', editCase: 'Edit case study', editExperience: 'Edit experience', editAbout: 'Edit About block', caseKicker: 'CASE STUDY', workKicker: 'SELECTED WORK', experienceKicker: 'EXPERIENCE', aboutKicker: 'ABOUT', profileKicker: 'PROFILE', statusVisible: 'Visible', contactLabel: 'Label', destination: 'URL / email', contactsTitle: 'Contact links', contactsCopy: 'Keep the existing destinations or replace them with your own links.', addContact: 'Add contact link', saveProfile: 'Save profile', greeting: 'Greeting', biography: 'Biography', contactPrompt: 'Contact prompt', imageOrder: 'Order follows the portfolio list. Use arrows to rearrange.', noImageAvailable: 'No supplied project image is available.', badLink: 'Use a valid https, mailto, tel, or relative link.', localOnly: 'Saved in this browser only', dataImported: 'Backup restored', unexpectedError: 'Something went wrong. Please try again.'
+  };
 
-let language = storage.getItem(LANG_KEY) || (navigator.language?.toLowerCase().startsWith('fa') ? 'fa' : 'en');
-if (!['en', 'fa'].includes(language)) language = 'en';
+storage.removeItem('ehsan-portfolio-language');
 let theme = storage.getItem(THEME_KEY) === 'dark' ? 'dark' : 'light';
 let data = loadData();
 let activeSection = 'overview';
@@ -40,24 +33,24 @@ let toastTimer = 0;
 
 function id() { return globalThis.crypto?.randomUUID?.() || 'item-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8); }
 function deepCopy(value) { return JSON.parse(JSON.stringify(value)); }
-function flattenBio(lang) {
-  return copy[lang].bioSegments.map((segment) => segment.text !== undefined ? segment.text : copy[lang].companyNames[segment.link]).join('');
+function flattenBio() {
+  return copy.bioSegments.map((segment) => segment.text !== undefined ? segment.text : copy.companyNames[segment.link]).join('');
 }
 function initialData() {
   return {
-    version: 1,
+    version: 2,
     profile: {
-      greeting: { en: copy.en.greeting, fa: copy.fa.greeting },
-      bio: { en: flattenBio('en'), fa: flattenBio('fa') },
-      contactPrompt: { en: copy.en.contactPrompt, fa: copy.fa.contactPrompt }
+      greeting: copy.greeting,
+      bio: flattenBio(),
+      contactPrompt: copy.contactPrompt
     },
-    projects: projects.map((image, index) => ({ id: 'project-' + (index + 1), image, title: { en: '', fa: '' }, href: '', visible: true })),
+    projects: projects.map((image, index) => ({ id: 'project-' + (index + 1), image, title: '', href: '', visible: true })),
     caseStudies: [],
     experience: [],
     about: [],
     contactLinks: contactLinks.map(({ key, href }) => ({
       id: key,
-      label: { en: copy.en.links[key], fa: copy.fa.links[key] },
+      label: copy.links[key],
       href
     }))
   };
@@ -68,34 +61,34 @@ function validHref(value) {
   return /^(https:\/\/|mailto:|tel:|\/|\.\/|#)/i.test(href) && !/^\/\//.test(href);
 }
 function normalizeData(candidate) {
-  if (!candidate || candidate.version !== 1 || !Array.isArray(candidate.projects) || !Array.isArray(candidate.caseStudies) || !Array.isArray(candidate.experience) || !Array.isArray(candidate.about) || !Array.isArray(candidate.contactLinks)) return null;
+  if (!candidate || ![1, 2].includes(candidate.version) || !Array.isArray(candidate.projects) || !Array.isArray(candidate.caseStudies) || !Array.isArray(candidate.experience) || !Array.isArray(candidate.about) || !Array.isArray(candidate.contactLinks)) return null;
   const base = initialData();
-  const trans = (value) => ({ en: String(value?.en || ''), fa: String(value?.fa || '') });
+  const text = (value) => typeof value === 'string' ? value : String(value?.en || '');
   const safeProject = (item, index) => ({
     id: String(item.id || id()),
     image: imageNames.includes(item.image) ? item.image : imageNames[index % imageNames.length],
-    title: trans(item.title),
+    title: text(item.title),
     href: validHref(item.href) ? String(item.href || '') : '',
     visible: item.visible !== false
   });
   const safeItem = (item, fields) => {
     const normalized = { id: String(item.id || id()) };
-    for (const field of fields) normalized[field] = trans(item[field]);
+    for (const field of fields) normalized[field] = text(item[field]);
     normalized.href = validHref(item.href) ? String(item.href || '') : '';
     normalized.image = imageNames.includes(item.image) ? item.image : '';
     return normalized;
   };
   const contacts = candidate.contactLinks.map((item) => ({
     id: String(item.id || id()),
-    label: trans(item.label),
+    label: text(item.label),
     href: validHref(item.href) ? String(item.href || '') : ''
   }));
   return {
-    version: 1,
+    version: 2,
     profile: {
-      greeting: trans(candidate.profile?.greeting || base.profile.greeting),
-      bio: trans(candidate.profile?.bio || base.profile.bio),
-      contactPrompt: trans(candidate.profile?.contactPrompt || base.profile.contactPrompt)
+      greeting: candidate.profile?.greeting == null ? base.profile.greeting : text(candidate.profile.greeting),
+      bio: candidate.profile?.bio == null ? base.profile.bio : text(candidate.profile.bio),
+      contactPrompt: candidate.profile?.contactPrompt == null ? base.profile.contactPrompt : text(candidate.profile.contactPrompt)
     },
     projects: candidate.projects.map(safeProject),
     caseStudies: candidate.caseStudies.map((item) => safeItem(item, ['title', 'summary', 'body'])),
@@ -109,7 +102,10 @@ function loadData() {
     const saved = storage.getItem(CONTENT_KEY);
     if (saved) {
       const normalized = normalizeData(JSON.parse(saved));
-      if (normalized) return normalized;
+      if (normalized) {
+        try { storage.setItem(CONTENT_KEY, JSON.stringify(normalized)); } catch { /* Keep the readable copy if storage is full. */ }
+        return normalized;
+      }
     }
   } catch { /* Use the supplied content when browser storage is unavailable. */ }
   return initialData();
@@ -117,45 +113,36 @@ function loadData() {
 function saveData(messageKey = 'allSavedToast') {
   try {
     storage.setItem(CONTENT_KEY, JSON.stringify(data));
-    storage.setItem(LANG_KEY, language);
+    storage.removeItem('ehsan-portfolio-language');
     storage.setItem(THEME_KEY, theme);
-  } catch { showToast(uiText[language].unexpectedError); return false; }
+  } catch { showToast(uiText.unexpectedError); return false; }
   updateCounts();
-  showToast(uiText[language][messageKey] || uiText[language].allSavedToast);
+  showToast(uiText[messageKey] || uiText.allSavedToast);
   return true;
 }
-function t(key) { return uiText[language][key] || key; }
-function setLanguage(next) {
-  language = next;
-  storage.setItem(LANG_KEY, language);
-  applySettings();
-  renderSection();
-}
+function t(key) { return uiText[key] || key; }
+
 function setTheme(next) {
   theme = next;
   storage.setItem(THEME_KEY, theme);
   applySettings();
 }
 function applySettings() {
-  const fa = language === 'fa';
-  root.lang = language;
-  root.dir = fa ? 'rtl' : 'ltr';
+  root.lang = 'en';
+  root.dir = 'ltr';
   root.dataset.theme = theme;
   document.querySelectorAll('[data-ui]').forEach((node) => {
     const key = node.dataset.ui;
-    if (uiText[language][key]) node.textContent = uiText[language][key];
+    if (uiText[key]) node.textContent = uiText[key];
   });
   document.querySelectorAll('[data-ui-placeholder]').forEach((node) => { node.placeholder = t(node.dataset.uiPlaceholder); });
   document.querySelectorAll('[data-ui-title]').forEach((node) => { node.title = t(node.dataset.uiTitle); });
-  document.querySelector('#language-toggle').setAttribute('aria-label', language === 'fa' ? 'تغییر زبان به انگلیسی' : 'Change language to Persian');
   document.querySelector('#theme-toggle').setAttribute('aria-pressed', String(theme === 'dark'));
-  document.querySelector('#theme-toggle').setAttribute('aria-label', language === 'fa' ? (theme === 'dark' ? 'تغییر به تم روشن' : 'تغییر به تم تاریک') : (theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'));
-  document.querySelector('#mobile-menu').setAttribute('aria-label', language === 'fa' ? 'بازکردن ناوبری' : 'Open navigation');
+  document.querySelector('#theme-toggle').setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+  document.querySelector('#mobile-menu').setAttribute('aria-label', 'Open navigation');
   document.querySelector('meta[name="theme-color"]').content = theme === 'dark' ? '#151517' : '#f7f7f8';
   document.querySelector('#current-year').textContent = String(new Date().getFullYear());
   document.querySelector('#saved-indicator').lastElementChild.textContent = t('allChangesSaved');
-  document.querySelector('#language-toggle').querySelectorAll('span')[0].textContent = language === 'en' ? 'EN' : 'EN';
-  document.querySelector('#language-toggle').querySelectorAll('span')[1].textContent = 'فا';
   updateHeadings();
 }
 function showToast(text) {
@@ -189,14 +176,14 @@ function updateHeadings() {
 }
 function currentItems() { return activeSection === 'projects' ? data.projects : data[activeSection] || []; }
 function displayTitle(item, index) {
-  const val = item.title?.[language] || item.role?.[language] || '';
+  const val = item.title || item.role || '';
   if (val.trim()) return val;
-  if (activeSection === 'projects') return t('imageItem') + ' ' + new Intl.NumberFormat(language).format(index + 1);
+  if (activeSection === 'projects') return t('imageItem') + ' ' + new Intl.NumberFormat('en').format(index + 1);
   return t(({ caseStudies: 'untitledCase', experience: 'untitledExperience', about: 'untitledAbout' })[activeSection] || 'untitled');
 }
 function displayMeta(item) {
   const fields = activeSection === 'projects' ? ['title'] : activeSection === 'caseStudies' ? ['summary'] : activeSection === 'experience' ? ['company', 'dates'] : ['body'];
-  const value = fields.map((field) => item[field]?.[language] || '').filter(Boolean).join(' · ');
+  const value = fields.map((field) => item[field] || '').filter(Boolean).join(' · ');
   if (value) return value;
   if (activeSection === 'projects') return item.href || t('noLink');
   return t('noContent');
@@ -310,20 +297,13 @@ function field(labelText, value, opts = {}) {
   }
   return wrapper;
 }
-function languageGroup(fieldKey, value, options = {}) {
-  const section = document.createElement('section');
-  section.className = 'language-section';
-  const heading = document.createElement('h3');
-  heading.textContent = t('fieldFor') + ' · ' + t(fieldKey);
-  section.append(heading);
-  const grid = document.createElement('div');
-  grid.className = 'form-grid';
-  grid.append(
-    field(t('english'), value?.en, { multiline: options.multiline, full: true, name: fieldKey + '.en' }),
-    field(t('persian'), value?.fa, { multiline: options.multiline, full: true, name: fieldKey + '.fa' })
-  );
-  section.append(grid);
-  return section;
+function textGroup(fieldKey, value, options = {}) {
+  const labelKey = fieldKey === 'heading' ? 'heading' : fieldKey;
+  return field(t(labelKey), value, {
+    multiline: options.multiline,
+    full: true,
+    name: fieldKey
+  });
 }
 function checkbox(labelText, checked, name) {
   const label = document.createElement('label');
@@ -339,11 +319,10 @@ function checkbox(labelText, checked, name) {
 }
 function itemDefaults(section, item) {
   const base = item ? deepCopy(item) : { id: id() };
-  const empty = { en: '', fa: '' };
-  if (section === 'projects') return { ...base, image: base.image || imageNames.find((img) => !data.projects.some((project) => project.image === img)) || imageNames[0], title: base.title || empty, href: base.href || '', visible: base.visible !== false };
-  if (section === 'caseStudies') return { ...base, title: base.title || empty, summary: base.summary || empty, body: base.body || empty, href: base.href || '', image: base.image || '' };
-  if (section === 'experience') return { ...base, role: base.role || empty, company: base.company || empty, dates: base.dates || empty, description: base.description || empty, href: base.href || '', image: base.image || '' };
-  return { ...base, title: base.title || empty, body: base.body || empty, href: base.href || '', image: base.image || '' };
+  if (section === 'projects') return { ...base, image: base.image || imageNames.find((img) => !data.projects.some((project) => project.image === img)) || imageNames[0], title: base.title || '', href: base.href || '', visible: base.visible !== false };
+  if (section === 'caseStudies') return { ...base, title: base.title || '', summary: base.summary || '', body: base.body || '', href: base.href || '', image: base.image || '' };
+  if (section === 'experience') return { ...base, role: base.role || '', company: base.company || '', dates: base.dates || '', description: base.description || '', href: base.href || '', image: base.image || '' };
+  return { ...base, title: base.title || '', body: base.body || '', href: base.href || '', image: base.image || '' };
 }
 function typeCopy(section, edit) {
   return t((edit ? 'edit' : 'new') + ({ projects: 'Project', caseStudies: 'Case', experience: 'Experience', about: 'About' })[section]);
@@ -357,33 +336,33 @@ function openEditor(section, item = null) {
   document.querySelector('#dialog-title').textContent = typeCopy(section, Boolean(item));
   form.replaceChildren();
   if (section === 'projects') {
-    const selectOptions = imageNames.map((filename, index) => ({ value: filename, label: t('imageItem') + ' ' + new Intl.NumberFormat(language).format(index + 1) }));
+    const selectOptions = imageNames.map((filename, index) => ({ value: filename, label: t('imageItem') + ' ' + new Intl.NumberFormat('en').format(index + 1) }));
     form.append(field(t('image'), model.image, { select: selectOptions, name: 'image' }));
-    form.append(languageGroup('title', model.title));
+    form.append(textGroup('title', model.title));
     form.append(field(t('link'), model.href, { name: 'href', placeholder: 'https://…' }));
     form.append(checkbox(t('visible'), model.visible, 'visible'));
   } else if (section === 'caseStudies') {
-    form.append(languageGroup('title', model.title));
-    form.append(languageGroup('summary', model.summary, { multiline: true }));
-    form.append(languageGroup('details', model.body, { multiline: true }));
+    form.append(textGroup('title', model.title));
+    form.append(textGroup('summary', model.summary, { multiline: true }));
+    form.append(textGroup('details', model.body, { multiline: true }));
     form.append(field(t('link'), model.href, { name: 'href', placeholder: 'https://…' }));
-    form.append(field(t('image'), model.image, { select: [{ value: '', label: t('optional') }, ...imageNames.map((filename, index) => ({ value: filename, label: t('imageItem') + ' ' + new Intl.NumberFormat(language).format(index + 1) }))], name: 'image' }));
+    form.append(field(t('image'), model.image, { select: [{ value: '', label: t('optional') }, ...imageNames.map((filename, index) => ({ value: filename, label: t('imageItem') + ' ' + new Intl.NumberFormat('en').format(index + 1) }))], name: 'image' }));
   } else if (section === 'experience') {
-    form.append(languageGroup('role', model.role));
-    form.append(languageGroup('company', model.company));
-    form.append(languageGroup('dates', model.dates));
-    form.append(languageGroup('description', model.description, { multiline: true }));
+    form.append(textGroup('role', model.role));
+    form.append(textGroup('company', model.company));
+    form.append(textGroup('dates', model.dates));
+    form.append(textGroup('description', model.description, { multiline: true }));
     form.append(field(t('link'), model.href, { name: 'href', placeholder: 'https://…' }));
   } else {
-    form.append(languageGroup('heading', model.title));
-    form.append(languageGroup('body', model.body, { multiline: true }));
-    form.append(field(t('image'), model.image, { select: [{ value: '', label: t('optional') }, ...imageNames.map((filename, index) => ({ value: filename, label: t('imageItem') + ' ' + new Intl.NumberFormat(language).format(index + 1) }))], name: 'image' }));
+    form.append(textGroup('heading', model.title));
+    form.append(textGroup('body', model.body, { multiline: true }));
+    form.append(field(t('image'), model.image, { select: [{ value: '', label: t('optional') }, ...imageNames.map((filename, index) => ({ value: filename, label: t('imageItem') + ' ' + new Intl.NumberFormat('en').format(index + 1) }))], name: 'image' }));
   }
   if (dialog.open) dialog.close();
   dialog.showModal();
 }
 function readGroup(form, key) {
-  return { en: form.elements.namedItem(key + '.en')?.value.trim() || '', fa: form.elements.namedItem(key + '.fa')?.value.trim() || '' };
+  return String(form.elements.namedItem(key)?.value || '').trim();
 }
 function handleItemSave(event) {
   event.preventDefault();
@@ -453,10 +432,10 @@ function updateCounts() {
   document.querySelector('#shortcut-cases').textContent = counts.caseStudies + ' ' + t(counts.caseStudies === 1 ? 'item' : 'items');
   document.querySelector('#shortcut-experience').textContent = counts.experience + ' ' + t(counts.experience === 1 ? 'item' : 'items');
 }
-function createProfileField(group, lang, labelText, value, multiline = false) {
-  const controlLabel = field(labelText + ' · ' + t(lang === 'en' ? 'english' : 'persian'), value, { multiline, full: true });
+function createProfileField(group, labelText, value, multiline = false) {
+  const controlLabel = field(labelText, value, { multiline, full: true });
   const input = controlLabel.querySelector('input, textarea');
-  input.dataset.profileKey = group + '.' + lang;
+  input.dataset.profileKey = group;
   return controlLabel;
 }
 function renderProfile() {
@@ -469,9 +448,9 @@ function renderProfile() {
   const introCopy = document.createElement('p'); introCopy.textContent = t('profileSubtitle');
   intro.append(introTitle, introCopy);
   const fields = document.createElement('div'); fields.className = 'form-grid';
-  fields.append(createProfileField('greeting', 'en', t('greeting'), data.profile.greeting.en), createProfileField('greeting', 'fa', t('greeting'), data.profile.greeting.fa));
-  fields.append(createProfileField('bio', 'en', t('biography'), data.profile.bio.en, true), createProfileField('bio', 'fa', t('biography'), data.profile.bio.fa, true));
-  fields.append(createProfileField('contactPrompt', 'en', t('contactPrompt'), data.profile.contactPrompt.en, true), createProfileField('contactPrompt', 'fa', t('contactPrompt'), data.profile.contactPrompt.fa, true));
+  fields.append(createProfileField('greeting', t('greeting'), data.profile.greeting));
+  fields.append(createProfileField('bio', t('biography'), data.profile.bio, true));
+  fields.append(createProfileField('contactPrompt', t('contactPrompt'), data.profile.contactPrompt, true));
   intro.append(fields);
 
   const contactPanel = document.createElement('section');
@@ -479,7 +458,7 @@ function renderProfile() {
   const contactTitle = document.createElement('h2'); contactTitle.textContent = t('contactsTitle');
   const contactCopy = document.createElement('p'); contactCopy.textContent = t('contactsCopy');
   const headings = document.createElement('div'); headings.className = 'contact-headings';
-  for (const text of [t('labelEnglish'), t('destination'), t('labelPersian')]) { const span = document.createElement('span'); span.textContent = text; headings.append(span); }
+  for (const text of [t('contactLabel'), t('destination'), '']) { const span = document.createElement('span'); span.textContent = text; headings.append(span); }
   const list = document.createElement('div'); list.className = 'contacts-list';
   data.contactLinks.forEach((contact, index) => list.append(makeContactRow(contact, index)));
   const contactFoot = document.createElement('div'); contactFoot.className = 'contacts-footer';
@@ -492,26 +471,24 @@ function renderProfile() {
 }
 function makeContactRow(contact, index) {
   const row = document.createElement('div'); row.className = 'contact-editor-row'; row.dataset.contactId = contact.id || id(); row.dataset.contactIndex = String(index);
-  const en = document.createElement('input'); en.value = contact.label?.en || ''; en.placeholder = t('english'); en.dataset.contactField = 'label.en'; en.setAttribute('aria-label', t('labelEnglish'));
+  const label = document.createElement('input'); label.value = typeof contact.label === 'string' ? contact.label : String(contact.label?.en || ''); label.placeholder = t('contactLabel'); label.dataset.contactField = 'label'; label.setAttribute('aria-label', t('contactLabel'));
   const url = document.createElement('input'); url.value = contact.href || ''; url.placeholder = t('destination'); url.dataset.contactField = 'href'; url.setAttribute('aria-label', t('destination'));
-  const fa = document.createElement('input'); fa.value = contact.label?.fa || ''; fa.placeholder = t('persian'); fa.dataset.contactField = 'label.fa'; fa.setAttribute('aria-label', t('labelPersian'));
   const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'contact-remove'; remove.textContent = '×'; remove.dataset.action = 'remove-contact'; remove.dataset.contactIndex = String(index); remove.setAttribute('aria-label', t('delete'));
-  row.append(en, url, fa, remove);
+  row.append(label, url, remove);
   return row;
 }
 function saveProfile(event) {
   event.preventDefault();
   const form = event.currentTarget;
   for (const input of form.querySelectorAll('[data-profile-key]')) {
-    const [key, lang] = input.dataset.profileKey.split('.');
-    data.profile[key][lang] = input.value.trim();
+    data.profile[input.dataset.profileKey] = input.value.trim();
   }
   const rows = [...form.querySelectorAll('.contact-editor-row')];
   const newContacts = rows.map((row) => ({
     id: row.dataset.contactId || id(),
-    label: { en: row.querySelector('[data-contact-field="label.en"]').value.trim(), fa: row.querySelector('[data-contact-field="label.fa"]').value.trim() },
+    label: row.querySelector('[data-contact-field="label"]').value.trim(),
     href: row.querySelector('[data-contact-field="href"]').value.trim()
-  })).filter((contact) => contact.label.en || contact.label.fa || contact.href);
+  })).filter((contact) => contact.label || contact.href);
   if (newContacts.some((contact) => !validHref(contact.href))) { showToast(t('badLink')); return; }
   data.contactLinks = newContacts;
   saveData('savedToast');
@@ -585,7 +562,7 @@ document.querySelector('#profile-editor').addEventListener('click', (event) => {
   if (button.dataset.action === 'add-contact') {
     const form = document.querySelector('#profile-editor form');
     const list = form.querySelector('.contacts-list');
-    const newContact = { id: id(), label: { en: '', fa: '' }, href: '' };
+    const newContact = { id: id(), label: '', href: '' };
     list.append(makeContactRow(newContact, list.children.length));
     return;
   }
@@ -594,8 +571,6 @@ document.querySelector('#profile-editor').addEventListener('click', (event) => {
 document.querySelector('#close-dialog').addEventListener('click', () => document.querySelector('#editor-dialog').close());
 document.querySelector('#cancel-dialog').addEventListener('click', () => document.querySelector('#editor-dialog').close());
 document.querySelector('#editor-dialog').addEventListener('close', () => { editing = null; });
-document.querySelector('#language-toggle').addEventListener('click', () => setLanguage(language === 'en' ? 'fa' : 'en'));
-document.querySelector('#settings-language').addEventListener('click', () => setLanguage(language === 'en' ? 'fa' : 'en'));
 document.querySelector('#theme-toggle').addEventListener('click', () => setTheme(theme === 'light' ? 'dark' : 'light'));
 document.querySelector('#settings-theme').addEventListener('click', () => setTheme(theme === 'light' ? 'dark' : 'light'));
 document.querySelector('#export-button').addEventListener('click', exportData);

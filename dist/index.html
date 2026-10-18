@@ -16,7 +16,7 @@
     <script type="module" src="./app.js"></script>
   </head>
   <body>
-    <a class="skip-link" href="#selected-work" data-i18n="skipLink">Skip to selected work</a>
+    <a class="skip-link" href="#selected-work">Skip to selected work</a>
 
     <header class="site-header" id="top">
       <div class="header-top">
@@ -26,7 +26,7 @@
         <div class="display-controls" aria-label="Display settings">
           <a class="cv-link" id="cv-link" href="./assets/Ehsan-Masoomi-CV-EN.pdf" download="Ehsan-Masoomi-CV-EN.pdf">
             <img src="./assets/figma/download-cv.svg" width="20" height="20" alt="" />
-            <span id="cv-label" data-i18n="downloadCv">Download CV</span>
+            <span id="cv-label">Download CV</span>
           </a>
           <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
             <img src="./assets/figma/theme-toggle.svg" width="32" height="32" alt="" />
@@ -35,19 +35,19 @@
       </div>
 
       <section class="profile-intro" aria-labelledby="greeting">
-        <h1 id="greeting" data-i18n="greeting">Hi, I’m Ehsan 👋🏻</h1>
+        <h1 id="greeting">Hi, I’m Ehsan 👋🏻</h1>
         <p class="bio" id="bio"></p>
       </section>
 
       <section class="contact-block" aria-labelledby="contact-prompt">
-        <p class="contact-prompt" id="contact-prompt" data-i18n="contactPrompt">
+        <p class="contact-prompt" id="contact-prompt">
           Feel free to reach out to me through any of the channels below.
         </p>
         <nav class="contact-links" id="header-contact-links" aria-label="Contact links"></nav>
       </section>
 
       <nav class="primary-nav" aria-label="Portfolio sections">
-        <a class="nav-tab is-current" href="#selected-work" aria-current="page" data-i18n="selectedWork">Selected Work</a>
+        <a class="nav-tab is-current" href="#selected-work" aria-current="page">Selected Work</a>
         <button class="nav-tab planned-tab" type="button" aria-disabled="true" id="case-studies-tab">Case Studies</button>
         <button class="nav-tab planned-tab" type="button" aria-disabled="true" id="experience-tab">Experience</button>
         <button class="nav-tab planned-tab" type="button" aria-disabled="true" id="about-tab">About me</button>
@@ -55,7 +55,7 @@
     </header>
 
     <main class="work-section" id="selected-work" tabindex="-1">
-      <h2 class="visually-hidden" data-i18n="selectedWork">Selected Work</h2>
+      <h2 class="visually-hidden">Selected Work</h2>
       <div class="project-grid" id="project-grid" aria-label="Selected work"></div>
     </main>
 

@@ -37,7 +37,6 @@ export const projects = [
 ];
 
 export const copy = {
-  en: {
     title: "Ehsan Masoomi — Senior AI Product Designer",
     description: "Ehsan Masoomi — Senior AI Product Designer. Selected work across SaaS, fintech, and AI-driven B2C products.",
     skipLink: "Skip to selected work",
@@ -61,30 +60,4 @@ export const copy = {
       { link: "remocapp" },
       { text: "." },
     ],
-  },
-  fa: {
-    title: "احسان معصومی — طراح ارشد محصول هوش مصنوعی",
-    description: "احسان معصومی، طراح ارشد محصول هوش مصنوعی؛ نمونه‌کارهایی در SaaS، فین‌تک و محصولات B2C مبتنی بر هوش مصنوعی.",
-    skipLink: "رفتن به نمونه‌کارهای منتخب",
-    greeting: "سلام، من احسانم 👋🏻",
-    contactPrompt: "برای ارتباط، از راه‌های زیر با من در تماس باشید.",
-    downloadCv: "دانلود رزومه",
-    selectedWork: "کارهای منتخب",
-    caseStudies: "مطالعات موردی",
-    experience: "سوابق",
-    about: "دربارهٔ من",
-    comingSoon: "به‌زودی",
-    projectAlt: "پیش‌نمایش نمونه‌کار",
-    links: { email: "ایمیل", linkedin: "لینکدین", x: "ایکس (توییتر)", instagram: "اینستاگرام" },
-    companyNames: { nibex: "Nibex.io", mors: "MORS", remocapp: "Remocapp" },
-    bioSegments: [
-      { text: "طراح ارشد محصول در حوزهٔ هوش مصنوعی با بیش از ۴ سال تجربهٔ سرتاسری در محصولات دیجیتال، از جمله SaaS، فین‌تک و محصولات B2C مبتنی بر هوش مصنوعی. پیش‌تر مدیر طراحی در " },
-      { link: "nibex" },
-      { text: " بودم و در " },
-      { link: "mors" },
-      { text: " و " },
-      { link: "remocapp" },
-      { text: " هم کار کرده‌ام." },
-    ],
-  },
-};
+  };
