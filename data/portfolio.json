@@ -152,7 +152,7 @@
       "id": "mohtavachi-content-calendar",
       "title": "From “I Don’t Know What to Post” to an AI-Powered Content Calendar",
       "summary": "MohtavaChi is an Iranian social media management platform designed for small businesses, including Instagram shops, Telegram-based businesses, and online stores. Like Buffer and Hootsuite, it helps users manage, schedule, and publish content across multiple accounts from a single platform.",
-      "body": "MohtavaChi is an Iranian social media management platform designed for small businesses, including Instagram shops, Telegram-based businesses, and online stores. Like Buffer and Hootsuite, it helps users manage, schedule, and publish content across multiple accounts from a single platform.\n\n![Main Content Publishing Dashboard](uploads/a58ae472b575a8307c5cc5972a460a143b0433c29dfc5d7cf215034c6ad2ee3b.webp)\n\n\n\nWhile testing the content publishing module planned for the first release, we uncovered a different problem: users didn’t know what to post in the first place. Scheduling and publishing content came later.\n\nThis case study explores how we investigated the problem, evaluated potential solutions, and designed an AI-powered content calendar.\n\n## My Role and the Team\n\nI joined the project as a Product Designer in June 2025 and worked on it until October 2025. My responsibilities included product ideation, user research, UX/UI design, and the design system. I worked closely with the marketing team and other team members to understand content-related needs and inform product decisions.\n\nThe first phase had an approximately five-month timeline, with the goal of preparing the product for the Yalda 2025 campaign.\n\n- Product designer: Ehsan Masoumi\n- Project manager: Mahboubeh Omidi\n\n## Problem Statement\n\nOur target users were small business owners rather than professional social media managers or companies with dedicated content teams. To help them create content, we had built an in-product AI assistant called MohtavaGPT. It offered features such as expanding text, adjusting tone, and correcting spelling and grammar.\n\nOur initial assumption was that MohtavaGPT would help users complete the content creation and publishing flow without major difficulties. We needed to validate that assumption, so we tested the product’s core flow with our target users.\n\nParticipants had relatively little difficulty connecting accounts and setting up their brand information. The problem emerged when we asked them to create a real post. They typically opened the content creation screen, only to pause shortly afterward.\n\nThe issue wasn’t simply that users struggled to write. They also struggled to decide what to create in the first place. We realized that MohtavaGPT could help users write content, but mainly when they already had an idea to work with.\n\n![MohtavaGPT — An AI assistant for writing and refining content.](uploads/68ff31e3d3071d00642c7c425f00a48e0935077742661241833de60babeb0d4d.webp)\n\n## Key Challenges\n\nThe first phase was scheduled to be ready before Azar 1404 (late November 2025). If we couldn’t address users’ uncertainty about what to post, we risked launching without a clear competitive advantage. MohtavaChi could become just another social media scheduling and publishing tool.\n\nThe design and marketing teams were small, and budget and operational constraints prevented us from expanding either team.\n\n## Research\n\n- Initial User Survey: We surveyed more than 90 business owners, primarily online shop owners, to understand their main challenges and needs. We spent approximately two weeks analyzing the responses.\n- Usability Testing and Interviews: We conducted task-based usability testing with 10 participants from our target audience. Each participant worked through two to four scenarios covering the product’s core user flow, from setting up a brand and connecting social media accounts to creating and publishing content.\n- Competitive Benchmarking: I reviewed content publishing flows across six comparable platforms to identify useful interaction patterns and potential usability issues that could inform our design decisions.\n\n## Research Insights\n\n- Six out of ten participants got stuck at the content-writing stage. The remaining four either wrote brief posts or copied content from other sources.\n- Some participants also mentioned copying competitors’ content or using ChatGPT to generate ideas, but these approaches didn’t necessarily help them build a structured content plan.\n- These findings challenged our original assumption: MohtavaGPT could help users improve their writing, but it didn’t address the difficulty of coming up with content ideas among the participants we tested.\n\n## Success Metrics We Planned to Track\n\n- Reduce user drop-off during content creation.\n- Increase adoption of the AI-powered content calendar.\n- Increase the content calendar creation completion rate.\n- Reduce time to first scheduled post.\n- Track usage of the AI-powered calendar among paid subscribers and the frequency of token top-ups. (The feature was available only on paid plans, with additional tokens available for purchase once the included allowance was used.)\n\n## Defining the Solution Criteria\n\nOnce we understood that the participants struggled more with generating ideas than writing content, I began exploring potential solutions. Brainstorming could generate several possible approaches, so I needed a consistent set of criteria to evaluate them.\n\n- Cognitive Load Reduction: The solution should make it easier for users to decide what content to create.\n- Scalability: The solution should support growth in users and product complexity without requiring major redesigns.\n- Competitive Advantage: It should give users a compelling reason to choose MohtavaChi over competing products.\n- Operational Cost: Design, development, and maintenance costs should remain manageable within the team’s available resources.\n- Revenue Potential: The solution should have the potential to create additional value through paid subscriptions.\n\n## Exploring Potential Solutions:\n\nWith no clear in-product solution and limited time before the first release, I wanted to explore multiple approaches rather than settle on the first idea. I used the Crazy 8s ideation exercise to explore alternatives. Four main ideas emerged:\n\n- Video Tutorials: Create an Aparat channel with educational videos to help users learn how to create content.\n- Dedicated Support for Paid Subscribers: Provide personalized content creation support to paid subscribers.\n- Content Idea Library and Templates: Offer a library of content ideas and reusable templates within the content creation flow.\n- AI-Powered Content Assistant: Build an AI-powered assistant to help users generate ideas and prepare content.\n\n## Evaluating the Ideas:\n\nI evaluated the four ideas against the same set of criteria to compare their strengths and trade-offs.\n\n![](evaluation.png)\n\nAfter reviewing the options with the Project Manager and CEO, we selected the AI-powered assistant. We considered it the strongest fit for our product goals and constraints, although it came with higher development and maintenance costs.\n\nDedicated support, on the other hand, would require additional staff as the user base grew. The team believed that the assistant’s scalability, differentiation potential, and ability to support paid subscriptions could justify the higher upfront investment. These trade-offs led us to choose the AI assistant as our design direction.\n\n## From AI Assistant to Smart Content Calendar\n\nWe had decided to explore an AI-powered content assistant. The next challenge was defining how it should work. What capabilities should it offer? How should users interact with it? And what should it generate?\n\nI started by asking: How do social media managers plan and schedule content? To understand their workflow, I spoke with the marketing and content teams. These conversations revealed that content planning typically begins by answering a set of key questions:\n\n- Posting frequency\n- Posting days\n- Posting objectives\n- Content types\n- Post formats\n- Current business challenges\n- Posting times\n\nThe AI assistant needed to guide users through a series of questions and use their answers to generate a suggested content calendar. Rather than generating ideas for individual posts, we wanted to give users a starting point for planning several days or weeks of content.\n\nThis shift from generating individual posts to planning content over time led us to the smart content calendar concept: a content plan that users could review and refine before publishing.\n\n![Starting the Content Calendar Wizard](wizard-start.png)\n\n## Design Challenges:\n\nOnce the overall concept was defined, I encountered two key UX challenges:\n\n- Managing a Large Number of Questions: Generating a content calendar required users to answer multiple questions about their goals, content types, connected accounts, and scheduling preferences. I needed to make this process manageable without overwhelming users or increasing the risk of abandonment.\n- Uncertainty About How to Answer: Questions such as “What are your current business challenges?” could be unclear to users who weren’t sure what information to provide. The interface needed to provide guidance while allowing users to enter their own answers.\n\n## Design Principles:\n\nI used three UX principles to address these challenges.\n\nBreak the Process into Manageable Steps: I used progressive disclosure to break the questions into smaller steps within a wizard, rather than presenting users with one long form.\n\n![Examples of Questions Across the Wizard Steps](wizard-questions.png)\n\nOffer Suggested Answers: Following the recognition rather than recall principle, I provided suggested answers to help users respond without having to come up with everything from scratch.\n\n![Suggested Answer Options](suggested-answers.png)\n\nAllow Custom Answers: To support flexibility and efficiency of use, I allowed users to enter custom answers alongside the suggested options, since businesses have different goals and needs.\n\n![Users Could Enter Answers Tailored to Their Business Needs](custom-answers.png)\n\n## What Happens After Completing the Wizard?\n\nSo far, the flow focused on collecting information from users. But the experience didn’t end when users completed the wizard. I also needed to design how users would review their answers, understand the generation status, and retain control over the resulting posts.\n\nReview Answers Before Generation: After the final wizard step, users could review and edit their answers before starting calendar generation. Because the AI would generate content based on these inputs, giving users a chance to correct them was important.\n\n![Users Could Review and Edit Their Answers Before Generation](review-answers.png)\n\nLet Users Continue While AI Generates Content: Generating multiple posts with AI could take some time. We didn’t want users to remain stuck in the wizard while the content was being generated. After submitting their request, the wizard closed and users returned to the main content publishing dashboard. A toast notification indicated that their posts were being generated in the background.\n\n![A Toast Notification Indicated That Content Generation Was in Progress](generation-toast.png)\n\nKeep Humans in Control of Publishing: Once generation was complete, all AI-generated posts were saved as drafts rather than published automatically. Users could then review, edit, and prepare each post for publication. The goal was to help users get started with content creation while keeping the final publishing decisions in their hands.\n\n![AI-Generated Posts Were Saved as Drafts for Human Review](generated-drafts.png)\n\nThe final experience went beyond a question-based wizard. It guided users from reviewing their inputs to generating a content plan and refining AI-generated drafts before publication.\n\n## Evaluation and Outcomes:\n\nSince I left the company in October 2025, I wasn’t involved in the final testing or post-launch evaluation. As a result, I don’t have post-launch performance data for this feature.\n\nThe evidence available during my involvement came from the initial usability testing, which revealed that participants struggled to decide what content to create. This insight shifted our design direction from helping users write content to helping them decide what to create and plan it.\n\nThis shift in direction was the main outcome of our research and design process. Measuring its impact on adoption, content creation time, and revenue would require post-launch data.\n\n## What I Learned:\n\nThis project taught me that when users struggle with writing content, the underlying problem may start earlier: they may not know what to create in the first place.\n\nI also learned the importance of revisiting our assumptions when usability testing reveals unexpected problems. Challenging our initial assumptions helped us uncover a deeper user need and rethink the value our product could offer.",
+      "body": "MohtavaChi is an Iranian social media management platform designed for small businesses, including Instagram shops, Telegram-based businesses, and online stores. Like Buffer and Hootsuite, it helps users manage, schedule, and publish content across multiple accounts from a single platform.\n\n![Main Content Publishing Dashboard](uploads/291fec8cd9c3d81558c44f914550483dbeefae880386c6777c97a12b808f7155.webp)\n\n\n\nWhile testing the content publishing module planned for the first release, we uncovered a different problem: users didn’t know what to post in the first place. Scheduling and publishing content came later.\n\nThis case study explores how we investigated the problem, evaluated potential solutions, and designed an AI-powered content calendar.\n\n## My Role and the Team\n\nI joined the project as a Product Designer in June 2025 and worked on it until October 2025. My responsibilities included product ideation, user research, UX/UI design, and the design system. I worked closely with the marketing team and other team members to understand content-related needs and inform product decisions.\n\nThe first phase had an approximately five-month timeline, with the goal of preparing the product for the Yalda 2025 campaign.\n\n- Product designer: Ehsan Masoumi\n- Project manager: Mahboubeh Omidi\n\n## Problem Statement\n\nOur target users were small business owners rather than professional social media managers or companies with dedicated content teams. To help them create content, we had built an in-product AI assistant called MohtavaGPT. It offered features such as expanding text, adjusting tone, and correcting spelling and grammar.\n\nOur initial assumption was that MohtavaGPT would help users complete the content creation and publishing flow without major difficulties. We needed to validate that assumption, so we tested the product’s core flow with our target users.\n\nParticipants had relatively little difficulty connecting accounts and setting up their brand information. The problem emerged when we asked them to create a real post. They typically opened the content creation screen, only to pause shortly afterward.\n\nThe issue wasn’t simply that users struggled to write. They also struggled to decide what to create in the first place. We realized that MohtavaGPT could help users write content, but mainly when they already had an idea to work with.\n\n![MohtavaGPT — An AI assistant for writing and refining content.](uploads/6a721fa156f75569df78622ba369eb263cbb31fa45b25ffca09735d7b5ff3c4d.webp)\n\n## Key Challenges\n\nThe first phase was scheduled to be ready before Azar 1404 (late November 2025). If we couldn’t address users’ uncertainty about what to post, we risked launching without a clear competitive advantage. MohtavaChi could become just another social media scheduling and publishing tool.\n\nThe design and marketing teams were small, and budget and operational constraints prevented us from expanding either team.\n\n## Research\n\n- Initial User Survey: We surveyed more than 90 business owners, primarily online shop owners, to understand their main challenges and needs. We spent approximately two weeks analyzing the responses.\n- Usability Testing and Interviews: We conducted task-based usability testing with 10 participants from our target audience. Each participant worked through two to four scenarios covering the product’s core user flow, from setting up a brand and connecting social media accounts to creating and publishing content.\n- Competitive Benchmarking: I reviewed content publishing flows across six comparable platforms to identify useful interaction patterns and potential usability issues that could inform our design decisions.\n\n## Research Insights\n\n- Six out of ten participants got stuck at the content-writing stage. The remaining four either wrote brief posts or copied content from other sources.\n- Some participants also mentioned copying competitors’ content or using ChatGPT to generate ideas, but these approaches didn’t necessarily help them build a structured content plan.\n- These findings challenged our original assumption: MohtavaGPT could help users improve their writing, but it didn’t address the difficulty of coming up with content ideas among the participants we tested.\n\n## Success Metrics We Planned to Track\n\n- Reduce user drop-off during content creation.\n- Increase adoption of the AI-powered content calendar.\n- Increase the content calendar creation completion rate.\n- Reduce time to first scheduled post.\n- Track usage of the AI-powered calendar among paid subscribers and the frequency of token top-ups. (The feature was available only on paid plans, with additional tokens available for purchase once the included allowance was used.)\n\n## Defining the Solution Criteria\n\nOnce we understood that the participants struggled more with generating ideas than writing content, I began exploring potential solutions. Brainstorming could generate several possible approaches, so I needed a consistent set of criteria to evaluate them.\n\n- Cognitive Load Reduction: The solution should make it easier for users to decide what content to create.\n- Scalability: The solution should support growth in users and product complexity without requiring major redesigns.\n- Competitive Advantage: It should give users a compelling reason to choose MohtavaChi over competing products.\n- Operational Cost: Design, development, and maintenance costs should remain manageable within the team’s available resources.\n- Revenue Potential: The solution should have the potential to create additional value through paid subscriptions.\n\n## Exploring Potential Solutions:\n\nWith no clear in-product solution and limited time before the first release, I wanted to explore multiple approaches rather than settle on the first idea. I used the Crazy 8s ideation exercise to explore alternatives. Four main ideas emerged:\n\n- Video Tutorials: Create an Aparat channel with educational videos to help users learn how to create content.\n- Dedicated Support for Paid Subscribers: Provide personalized content creation support to paid subscribers.\n- Content Idea Library and Templates: Offer a library of content ideas and reusable templates within the content creation flow.\n- AI-Powered Content Assistant: Build an AI-powered assistant to help users generate ideas and prepare content.\n\n## Evaluating the Ideas:\n\nI evaluated the four ideas against the same set of criteria to compare their strengths and trade-offs.\n\n![](uploads/d07c172d9824830bc38a35863a86cf2f245d3e911c50576fbe36b65d6d05d50a.webp)\n\nAfter reviewing the options with the Project Manager and CEO, we selected the AI-powered assistant. We considered it the strongest fit for our product goals and constraints, although it came with higher development and maintenance costs.\n\nDedicated support, on the other hand, would require additional staff as the user base grew. The team believed that the assistant’s scalability, differentiation potential, and ability to support paid subscriptions could justify the higher upfront investment. These trade-offs led us to choose the AI assistant as our design direction.\n\n## From AI Assistant to Smart Content Calendar\n\nWe had decided to explore an AI-powered content assistant. The next challenge was defining how it should work. What capabilities should it offer? How should users interact with it? And what should it generate?\n\nI started by asking: How do social media managers plan and schedule content? To understand their workflow, I spoke with the marketing and content teams. These conversations revealed that content planning typically begins by answering a set of key questions:\n\n- Posting frequency\n- Posting days\n- Posting objectives\n- Content types\n- Post formats\n- Current business challenges\n- Posting times\n\nThe AI assistant needed to guide users through a series of questions and use their answers to generate a suggested content calendar. Rather than generating ideas for individual posts, we wanted to give users a starting point for planning several days or weeks of content.\n\nThis shift from generating individual posts to planning content over time led us to the smart content calendar concept: a content plan that users could review and refine before publishing.\n\n![Starting the Content Calendar Wizard](uploads/4968876da0dd07ab112547c05495edc806621000d4e3659c4b77c98f5b71a964.webp)\n\n## Design Challenges:\n\nOnce the overall concept was defined, I encountered two key UX challenges:\n\n- Managing a Large Number of Questions: Generating a content calendar required users to answer multiple questions about their goals, content types, connected accounts, and scheduling preferences. I needed to make this process manageable without overwhelming users or increasing the risk of abandonment.\n- Uncertainty About How to Answer: Questions such as “What are your current business challenges?” could be unclear to users who weren’t sure what information to provide. The interface needed to provide guidance while allowing users to enter their own answers.\n\n## Design Principles:\n\nI used three UX principles to address these challenges.\n\n**Break the Process into Manageable Steps:** I used progressive disclosure to break the questions into smaller steps within a wizard, rather than presenting users with one long form.\n\n![Examples of Questions Across the Wizard Steps](uploads/b0b8c309c91266ddb997f4c3c51fa41e621c34784dd87f4e06a02e2e2e3198d0.webp)\n\n**Offer Suggested Answers:** Following the recognition rather than recall principle, I provided suggested answers to help users respond without having to come up with everything from scratch.\n\n![Suggested Answer Options](uploads/d408ca1fc86c4b51f01dc0f23f4be483a16800d0ab7919c79ef4ac2a1faab3e5.webp)\n\n**Allow Custom Answers:** To support flexibility and efficiency of use, I allowed users to enter custom answers alongside the suggested options, since businesses have different goals and needs.\n\n![Users Could Enter Answers Tailored to Their Business Needs](uploads/2313a5d1e746a526d31c4234564934b95bebcfad984ac2cc095c287600f37f77.webp)\n\n## What Happens After Completing the Wizard?\n\nSo far, the flow focused on collecting information from users. But the experience didn’t end when users completed the wizard. I also needed to design how users would review their answers, understand the generation status, and retain control over the resulting posts.\n\n**Review Answers Before Generation:** After the final wizard step, users could review and edit their answers before starting calendar generation. Because the AI would generate content based on these inputs, giving users a chance to correct them was important.\n\n![Users Could Review and Edit Their Answers Before Generation](uploads/d84ed3c2591007dfeb87cf2ec7c8bb41f4c47b671fb4785d76aebaf12724031c.webp)\n\n**Let Users Continue While AI Generates Content: **Generating multiple posts with AI could take some time. We didn’t want users to remain stuck in the wizard while the content was being generated. After submitting their request, the wizard closed and users returned to the main content publishing dashboard. A toast notification indicated that their posts were being generated in the background.\n\n![A Toast Notification Indicated That Content Generation Was in Progress](uploads/2beb1a5a3c80e21703a9c6102bd0a273c5cba2c356f321991304873e5f9b0a54.webp)\n\n**Keep Humans in Control of Publishing:** Once generation was complete, all AI-generated posts were saved as drafts rather than published automatically. Users could then review, edit, and prepare each post for publication. The goal was to help users get started with content creation while keeping the final publishing decisions in their hands.\n\n![AI-Generated Posts Were Saved as Drafts for Human Review](uploads/9edffc55b2972d023294b1457e0e40690aa3497641395d5eb9cbf7d238ec3a3d.webp)\n\nThe final experience went beyond a question-based wizard. It guided users from reviewing their inputs to generating a content plan and refining AI-generated drafts before publication.\n\n## Evaluation and Outcomes:\n\nSince I left the company in October 2025, I wasn’t involved in the final testing or post-launch evaluation. As a result, I don’t have post-launch performance data for this feature.\n\nThe evidence available during my involvement came from the initial usability testing, which revealed that participants struggled to decide what content to create. This insight shifted our design direction from helping users write content to helping them decide what to create and plan it.\n\nThis shift in direction was the main outcome of our research and design process. Measuring its impact on adoption, content creation time, and revenue would require post-launch data.\n\n## What I Learned:\n\nThis project taught me that when users struggle with writing content, the underlying problem may start earlier: they may not know what to create in the first place.\n\nI also learned the importance of revisiting our assumptions when usability testing reveals unexpected problems. Challenging our initial assumptions helped us uncover a deeper user need and rethink the value our product could offer.",
       "href": "",
       "image": "mohtavachi-cover.png",
       "visible": true,
@@ -171,10 +171,10 @@
           {
             "type": "image",
             "attrs": {
-              "src": "uploads/a58ae472b575a8307c5cc5972a460a143b0433c29dfc5d7cf215034c6ad2ee3b.webp",
+              "src": "uploads/291fec8cd9c3d81558c44f914550483dbeefae880386c6777c97a12b808f7155.webp",
               "alt": "",
               "caption": "Main Content Publishing Dashboard",
-              "layout": "wide"
+              "layout": "full"
             }
           },
           {
@@ -312,7 +312,7 @@
           {
             "type": "image",
             "attrs": {
-              "src": "uploads/68ff31e3d3071d00642c7c425f00a48e0935077742661241833de60babeb0d4d.webp",
+              "src": "uploads/6a721fa156f75569df78622ba369eb263cbb31fa45b25ffca09735d7b5ff3c4d.webp",
               "alt": "MohtavaGPT — An AI assistant for writing and refining content.",
               "caption": "MohtavaGPT — An AI assistant for writing and refining content.",
               "layout": "wide"
@@ -755,7 +755,7 @@
           {
             "type": "image",
             "attrs": {
-              "src": "evaluation.png",
+              "src": "uploads/d07c172d9824830bc38a35863a86cf2f245d3e911c50576fbe36b65d6d05d50a.webp",
               "alt": "",
               "caption": "",
               "layout": "wide"
@@ -933,7 +933,7 @@
           {
             "type": "image",
             "attrs": {
-              "src": "wizard-start.png",
+              "src": "uploads/4968876da0dd07ab112547c05495edc806621000d4e3659c4b77c98f5b71a964.webp",
               "alt": "Starting the Content Calendar Wizard",
               "caption": "Starting the Content Calendar Wizard",
               "layout": "wide"
@@ -1019,14 +1019,23 @@
             "content": [
               {
                 "type": "text",
-                "text": "Break the Process into Manageable Steps: I used progressive disclosure to break the questions into smaller steps within a wizard, rather than presenting users with one long form."
+                "text": "Break the Process into Manageable Steps:",
+                "marks": [
+                  {
+                    "type": "bold"
+                  }
+                ]
+              },
+              {
+                "type": "text",
+                "text": " I used progressive disclosure to break the questions into smaller steps within a wizard, rather than presenting users with one long form."
               }
             ]
           },
           {
             "type": "image",
             "attrs": {
-              "src": "wizard-questions.png",
+              "src": "uploads/b0b8c309c91266ddb997f4c3c51fa41e621c34784dd87f4e06a02e2e2e3198d0.webp",
               "alt": "Examples of Questions Across the Wizard Steps",
               "caption": "Examples of Questions Across the Wizard Steps",
               "layout": "wide"
@@ -1037,14 +1046,23 @@
             "content": [
               {
                 "type": "text",
-                "text": "Offer Suggested Answers: Following the recognition rather than recall principle, I provided suggested answers to help users respond without having to come up with everything from scratch."
+                "text": "Offer Suggested Answers:",
+                "marks": [
+                  {
+                    "type": "bold"
+                  }
+                ]
+              },
+              {
+                "type": "text",
+                "text": " Following the recognition rather than recall principle, I provided suggested answers to help users respond without having to come up with everything from scratch."
               }
             ]
           },
           {
             "type": "image",
             "attrs": {
-              "src": "suggested-answers.png",
+              "src": "uploads/d408ca1fc86c4b51f01dc0f23f4be483a16800d0ab7919c79ef4ac2a1faab3e5.webp",
               "alt": "Suggested Answer Options",
               "caption": "Suggested Answer Options",
               "layout": "wide"
@@ -1055,14 +1073,23 @@
             "content": [
               {
                 "type": "text",
-                "text": "Allow Custom Answers: To support flexibility and efficiency of use, I allowed users to enter custom answers alongside the suggested options, since businesses have different goals and needs."
+                "text": "Allow Custom Answers:",
+                "marks": [
+                  {
+                    "type": "bold"
+                  }
+                ]
+              },
+              {
+                "type": "text",
+                "text": " To support flexibility and efficiency of use, I allowed users to enter custom answers alongside the suggested options, since businesses have different goals and needs."
               }
             ]
           },
           {
             "type": "image",
             "attrs": {
-              "src": "custom-answers.png",
+              "src": "uploads/2313a5d1e746a526d31c4234564934b95bebcfad984ac2cc095c287600f37f77.webp",
               "alt": "Users Could Enter Answers Tailored to Their Business Needs",
               "caption": "Users Could Enter Answers Tailored to Their Business Needs",
               "layout": "wide"
@@ -1094,14 +1121,23 @@
             "content": [
               {
                 "type": "text",
-                "text": "Review Answers Before Generation: After the final wizard step, users could review and edit their answers before starting calendar generation. Because the AI would generate content based on these inputs, giving users a chance to correct them was important."
+                "text": "Review Answers Before Generation:",
+                "marks": [
+                  {
+                    "type": "bold"
+                  }
+                ]
+              },
+              {
+                "type": "text",
+                "text": " After the final wizard step, users could review and edit their answers before starting calendar generation. Because the AI would generate content based on these inputs, giving users a chance to correct them was important."
               }
             ]
           },
           {
             "type": "image",
             "attrs": {
-              "src": "review-answers.png",
+              "src": "uploads/d84ed3c2591007dfeb87cf2ec7c8bb41f4c47b671fb4785d76aebaf12724031c.webp",
               "alt": "Users Could Review and Edit Their Answers Before Generation",
               "caption": "Users Could Review and Edit Their Answers Before Generation",
               "layout": "wide"
@@ -1112,14 +1148,23 @@
             "content": [
               {
                 "type": "text",
-                "text": "Let Users Continue While AI Generates Content: Generating multiple posts with AI could take some time. We didn’t want users to remain stuck in the wizard while the content was being generated. After submitting their request, the wizard closed and users returned to the main content publishing dashboard. A toast notification indicated that their posts were being generated in the background."
+                "text": "Let Users Continue While AI Generates Content: ",
+                "marks": [
+                  {
+                    "type": "bold"
+                  }
+                ]
+              },
+              {
+                "type": "text",
+                "text": "Generating multiple posts with AI could take some time. We didn’t want users to remain stuck in the wizard while the content was being generated. After submitting their request, the wizard closed and users returned to the main content publishing dashboard. A toast notification indicated that their posts were being generated in the background."
               }
             ]
           },
           {
             "type": "image",
             "attrs": {
-              "src": "generation-toast.png",
+              "src": "uploads/2beb1a5a3c80e21703a9c6102bd0a273c5cba2c356f321991304873e5f9b0a54.webp",
               "alt": "A Toast Notification Indicated That Content Generation Was in Progress",
               "caption": "A Toast Notification Indicated That Content Generation Was in Progress",
               "layout": "wide"
@@ -1130,14 +1175,23 @@
             "content": [
               {
                 "type": "text",
-                "text": "Keep Humans in Control of Publishing: Once generation was complete, all AI-generated posts were saved as drafts rather than published automatically. Users could then review, edit, and prepare each post for publication. The goal was to help users get started with content creation while keeping the final publishing decisions in their hands."
+                "text": "Keep Humans in Control of Publishing:",
+                "marks": [
+                  {
+                    "type": "bold"
+                  }
+                ]
+              },
+              {
+                "type": "text",
+                "text": " Once generation was complete, all AI-generated posts were saved as drafts rather than published automatically. Users could then review, edit, and prepare each post for publication. The goal was to help users get started with content creation while keeping the final publishing decisions in their hands."
               }
             ]
           },
           {
             "type": "image",
             "attrs": {
-              "src": "generated-drafts.png",
+              "src": "uploads/9edffc55b2972d023294b1457e0e40690aa3497641395d5eb9cbf7d238ec3a3d.webp",
               "alt": "AI-Generated Posts Were Saved as Drafts for Human Review",
               "caption": "AI-Generated Posts Were Saved as Drafts for Human Review",
               "layout": "wide"
