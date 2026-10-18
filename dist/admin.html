@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#ffffff" />
     <meta name="description" content="Content workspace for Ehsan Masoomi’s portfolio." />
-    <title>Portfolio dashboard — Ehsan Masoomi</title>
+    <title>Ehsan Portfolio Dashboard — Ehsan Masoomi</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -16,7 +16,7 @@
     <a class="skip-link" href="#dashboard-main" data-ui="skip">Skip to dashboard content</a>
 
     <div class="dashboard-layout">
-      <aside class="sidebar" id="sidebar">
+      <aside class="sidebar" id="sidebar" hidden>
         <a class="brand" href="./index.html" aria-label="Ehsan Masoomi portfolio">
           <span class="brand-avatar"><img src="./assets/figma/profile.png" width="36" height="36" alt="" /></span>
           <span class="brand-copy"><strong>EM</strong><small data-ui="workspace">Portfolio workspace</small></span>
@@ -53,7 +53,20 @@
       </aside>
 
       <main class="main-column" id="dashboard-main">
-        <header class="topbar">
+        <header class="dashboard-header">
+          <a class="dashboard-avatar" href="./index.html" aria-label="Ehsan Masoomi portfolio">
+            <img src="./assets/figma/profile.png" width="44" height="44" alt="" />
+          </a>
+          <h1 class="dashboard-title">Ehsan Portfolio Dashboard</h1>
+          <nav class="dashboard-tabs" aria-label="Dashboard sections">
+            <button class="dashboard-tab is-active" type="button" data-section="projects" data-ui="selectedWork">Selected Work</button>
+            <button class="dashboard-tab" type="button" data-section="caseStudies" data-ui="caseStudies">Case Studies</button>
+            <button class="dashboard-tab" type="button" data-section="experience" data-ui="experience">Experience</button>
+            <button class="dashboard-tab" type="button" data-section="profile" data-ui="profileContact">About me</button>
+          </nav>
+        </header>
+
+        <header class="topbar" hidden>
           <button class="mobile-menu" id="mobile-menu" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
           <div class="breadcrumbs"><span data-ui="workspace">Portfolio workspace</span><span class="crumb-sep">/</span><strong id="breadcrumb-current" data-ui="overview">Overview</strong></div>
           <div class="topbar-actions">
@@ -66,17 +79,16 @@
         <div class="content-wrap">
           <div class="page-heading">
             <div>
-              <p class="eyebrow" data-ui="contentManagement">CONTENT MANAGEMENT</p>
-              <h1 id="page-title" data-ui="overview">Overview</h1>
-              <p class="page-subtitle" id="page-subtitle" data-ui="overviewSubtitle">Manage your portfolio content in one place.</p>
+              <p class="eyebrow" data-ui="contentManagement" hidden>CONTENT MANAGEMENT</p>
+              <h2 id="page-title" data-ui="overview">Overview</h2>
+              <p class="page-subtitle" id="page-subtitle" data-ui="overviewSubtitle" hidden>Manage your portfolio content in one place.</p>
             </div>
             <div class="heading-actions">
-              <a class="button button-secondary" href="./index.html" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">↗</span><span data-ui="previewSite">Preview site</span></a>
               <button class="button button-primary" id="primary-action" type="button" hidden><span aria-hidden="true">＋</span><span data-ui="addNew">Add new</span></button>
             </div>
           </div>
 
-          <section class="local-notice" aria-label="Storage information">
+          <section class="local-notice" aria-label="Storage information" hidden>
             <span class="notice-icon" aria-hidden="true">i</span>
             <div><strong data-ui="localStorageTitle">Saved in this browser</strong><p data-ui="localStorageCopy">Edits stay on this device. Export a JSON backup to move them; publishing to all visitors needs a database and admin access.</p></div>
             <button class="notice-dismiss" id="dismiss-notice" type="button" aria-label="Dismiss">×</button>
@@ -136,7 +148,10 @@
             <article class="panel settings-card reset-card"><div><h2 data-ui="resetTitle">Reset local edits</h2><p data-ui="resetCopy">Restore the starting content from the supplied portfolio files. This clears saved edits in this browser.</p></div><button class="button button-danger" id="reset-button" type="button" data-ui="reset">Reset content</button></article>
           </section>
 
-          <footer class="dashboard-footer"><span>© <span id="current-year"></span> Ehsan Masoomi</span><span data-ui="footerNote">Portfolio content workspace</span></footer>
+          <footer class="dashboard-footer">
+            <span>© <span id="current-year"></span> Ehsan Masoomi</span>
+            <nav class="dashboard-footer-links" id="dashboard-footer-links" aria-label="Contact links"></nav>
+          </footer>
         </div>
       </main>
     </div>

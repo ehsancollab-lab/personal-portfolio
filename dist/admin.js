@@ -21,12 +21,12 @@ const storage = (() => {
   }
 })();
 const uiText = {
-    skip: 'Skip to dashboard content', workspace: 'Portfolio workspace', manage: 'Manage content', overview: 'Overview', selectedWork: 'Selected Work', caseStudies: 'Case Studies', experience: 'Experience', profileContact: 'Profile & contact', viewPortfolio: 'View portfolio', designerRole: 'Senior AI Product Designer', allChangesSaved: 'All changes saved', contentManagement: 'CONTENT MANAGEMENT', overviewSubtitle: 'Manage your portfolio content in one place.', previewSite: 'Preview site', addNew: 'Add New', localStorageTitle: 'Saved in this browser', localStorageCopy: 'Edits stay on this device. Export a JSON backup to move them; publishing to all visitors needs a database and admin access.', projectImages: 'project images', draftEntries: 'draft entries', workEntries: 'work entries', contentSections: 'Content sections', contentSectionsHint: 'Choose a section to review or edit.', workspaceStatus: 'Workspace status', workspaceStatusHint: 'A quick view of your content setup.', draft: 'Draft', englishContent: 'English-only content', themeSupport: 'Light and dark themes', ready: 'Ready', publicSections: 'Case Studies and Experience pages', connected: 'Connected', sharedPublishing: 'Shared publishing', backendNeeded: 'Backend needed', onlyYouCanSee: 'Only your browser has these edits', nextSteps: 'Manage your public portfolio content', nextStepsCopy: 'Edit case study cards and full article details, or update the roles and responsibilities shown on the Experience page.', manageCaseStudies: 'Manage Case Studies', allItems: 'All items', published: 'Visible', searchContent: 'Search content', nothingHere: 'Nothing here yet', emptyCopy: 'Create your first item. You can add or change the text later.', addFirst: 'Add your first item', backupTitle: 'Backup and transfer', backupCopy: 'Export your current content to a JSON file, or restore a previous backup.', exportJson: 'Export JSON', importJson: 'Import JSON', appearanceTitle: 'Appearance', appearanceCopy: 'Choose the color theme.', switchTheme: 'Switch theme', resetTitle: 'Reset local edits', resetCopy: 'Restore the starting content from the supplied portfolio files. This clears saved edits in this browser.', reset: 'Reset content', footerNote: 'Portfolio content workspace', cancel: 'Cancel', saveChanges: 'Save changes', selectedWorkTitle: 'Selected Work', selectedWorkSubtitle: 'Add, replace, delete, and drag images to set their order.', caseStudiesSubtitle: 'Edit case study cards and full article details for the public portfolio.', experienceSubtitle: 'Edit roles, dates, and responsibilities shown on the Experience page.', profileSubtitle: 'Update the introduction and contact links shown on your portfolio.', settingsSubtitle: 'Manage backups and dashboard preferences.', allSavedToast: 'Changes saved in this browser.', savedToast: 'Saved in this browser. Open the portfolio pages here to preview the changes.', deleteConfirm: 'Delete this item? This cannot be undone in this browser.', resetConfirm: 'Clear local edits and restore the starting portfolio data?', importConfirm: 'Replace the current local content with this backup?', invalidJson: 'This JSON file is not a valid portfolio backup.', exported: 'JSON backup downloaded.', imported: 'Backup imported.', resetDone: 'Starting content restored.', searchPlaceholder: 'Search by title or text', imageItem: 'Project image', untitledProject: 'Untitled work', untitledCase: 'Untitled case study', untitledExperience: 'Untitled role', noContent: 'Content not added', edit: 'Edit', delete: 'Delete', up: 'Move up', down: 'Move down', visible: 'Visible on portfolio', hidden: 'Hidden from portfolio', draftBadge: 'Draft', image: 'Image', title: 'Title', link: 'External link (optional)', summary: 'Summary', details: 'Full case study content', caseDetailsHint: 'Use ## for section headings, - for bullets, and ![Caption](image-name.png) for screenshots. Available screenshots appear in the image menu.', role: 'Role', company: 'Company', dates: 'Dates', description: 'Description', heading: 'Heading', body: 'Body text', chooseImage: 'Choose an image', noLink: 'No link added', optional: 'Optional', untitled: 'Untitled', item: 'item', items: 'items', addItem: 'Add item', newProject: 'Add project image', newCase: 'New case study', newExperience: 'New experience', editProject: 'Edit project image', editCase: 'Edit case study', editExperience: 'Edit experience', caseKicker: 'CASE STUDY', workKicker: 'SELECTED WORK', experienceKicker: 'EXPERIENCE', profileKicker: 'PROFILE', statusVisible: 'Visible', contactLabel: 'Label', destination: 'URL / email', contactsTitle: 'Contact links', contactsCopy: 'Keep the existing destinations or replace them with your own links.', addContact: 'Add contact link', saveProfile: 'Save profile', greeting: 'Greeting', biography: 'Biography', contactPrompt: 'Contact prompt', imageOrder: 'Drag and drop to reorder images.', noImageAvailable: 'No supplied project image is available.', noWorkImages: 'No work images yet.', replace: 'Replace', fileTypeError: 'Choose an image file.', uploadFailed: 'This image could not be read. Choose another image file.', storageError: 'This browser could not save the image. Try a smaller image or clear some browser storage.', badLink: 'Use a valid https, mailto, tel, or relative link.', localOnly: 'Saved in this browser only', dataImported: 'Backup restored', unexpectedError: 'Something went wrong. Please try again.'
+    skip: 'Skip to dashboard content', workspace: 'Portfolio workspace', manage: 'Manage content', overview: 'Overview', selectedWork: 'Selected Work', caseStudies: 'Case Studies', experience: 'Experience', profileContact: 'About me', viewPortfolio: 'View portfolio', designerRole: 'Senior AI Product Designer', allChangesSaved: 'All changes saved', contentManagement: 'CONTENT MANAGEMENT', overviewSubtitle: 'Manage your portfolio content in one place.', previewSite: 'Preview site', addNew: 'Add New', localStorageTitle: 'Saved in this browser', localStorageCopy: 'Edits stay on this device. Export a JSON backup to move them; publishing to all visitors needs a database and admin access.', projectImages: 'project images', draftEntries: 'draft entries', workEntries: 'work entries', contentSections: 'Content sections', contentSectionsHint: 'Choose a section to review or edit.', workspaceStatus: 'Workspace status', workspaceStatusHint: 'A quick view of your content setup.', draft: 'Draft', englishContent: 'English-only content', themeSupport: 'Light and dark themes', ready: 'Ready', publicSections: 'Case Studies and Experience pages', connected: 'Connected', sharedPublishing: 'Shared publishing', backendNeeded: 'Backend needed', onlyYouCanSee: 'Only your browser has these edits', nextSteps: 'Manage your public portfolio content', nextStepsCopy: 'Edit case study cards and full article details, or update the roles and responsibilities shown on the Experience page.', manageCaseStudies: 'Manage Case Studies', allItems: 'All items', published: 'Visible', searchContent: 'Search content', nothingHere: 'Nothing here yet', emptyCopy: 'Create your first item. You can add or change the text later.', addFirst: 'Add your first item', backupTitle: 'Backup and transfer', backupCopy: 'Export your current content to a JSON file, or restore a previous backup.', exportJson: 'Export JSON', importJson: 'Import JSON', appearanceTitle: 'Appearance', appearanceCopy: 'Choose the color theme.', switchTheme: 'Switch theme', resetTitle: 'Reset local edits', resetCopy: 'Restore the starting content from the supplied portfolio files. This clears saved edits in this browser.', reset: 'Reset content', footerNote: 'Portfolio content workspace', cancel: 'Cancel', saveChanges: 'Save changes', selectedWorkTitle: 'Selected Work', selectedWorkSubtitle: 'Add, replace, delete, and drag images to set their order.', caseStudiesSubtitle: 'Edit case study cards and full article details for the public portfolio.', experienceSubtitle: 'Edit roles, dates, and responsibilities shown on the Experience page.', profileSubtitle: 'Update the introduction and contact links shown on your portfolio.', settingsSubtitle: 'Manage backups and dashboard preferences.', allSavedToast: 'Changes saved in this browser.', savedToast: 'Saved in this browser. Open the portfolio pages here to preview the changes.', deleteConfirm: 'Delete this item? This cannot be undone in this browser.', resetConfirm: 'Clear local edits and restore the starting portfolio data?', importConfirm: 'Replace the current local content with this backup?', invalidJson: 'This JSON file is not a valid portfolio backup.', exported: 'JSON backup downloaded.', imported: 'Backup imported.', resetDone: 'Starting content restored.', searchPlaceholder: 'Search by title or text', imageItem: 'Project image', untitledProject: 'Untitled work', untitledCase: 'Untitled case study', untitledExperience: 'Untitled role', noContent: 'Content not added', edit: 'Edit', delete: 'Delete', up: 'Move up', down: 'Move down', visible: 'Visible on portfolio', hidden: 'Hidden from portfolio', draftBadge: 'Draft', image: 'Image', title: 'Title', link: 'External link (optional)', summary: 'Summary', details: 'Full case study content', caseDetailsHint: 'Use ## for section headings, - for bullets, and ![Caption](image-name.png) for screenshots. Available screenshots appear in the image menu.', role: 'Role', company: 'Company', dates: 'Dates', description: 'Description', heading: 'Heading', body: 'Body text', chooseImage: 'Choose an image', noLink: 'No link added', optional: 'Optional', untitled: 'Untitled', item: 'item', items: 'items', addItem: 'Add item', newProject: 'Add project image', newCase: 'New case study', newExperience: 'New experience', editProject: 'Edit project image', editCase: 'Edit case study', editExperience: 'Edit experience', caseKicker: 'CASE STUDY', workKicker: 'SELECTED WORK', experienceKicker: 'EXPERIENCE', profileKicker: 'PROFILE', statusVisible: 'Visible', contactLabel: 'Label', destination: 'URL / email', contactsTitle: 'Contact links', contactsCopy: 'Keep the existing destinations or replace them with your own links.', addContact: 'Add contact link', saveProfile: 'Save profile', greeting: 'Greeting', biography: 'Biography', contactPrompt: 'Contact prompt', imageOrder: 'Drag and drop to reorder images.', noImageAvailable: 'No supplied project image is available.', noWorkImages: 'No work images yet.', replace: 'Replace', fileTypeError: 'Choose an image file.', uploadFailed: 'This image could not be read. Choose another image file.', storageError: 'This browser could not save the image. Try a smaller image or clear some browser storage.', badLink: 'Use a valid https, mailto, tel, or relative link.', localOnly: 'Saved in this browser only', dataImported: 'Backup restored', unexpectedError: 'Something went wrong. Please try again.'
   };
 
-let theme = storage.getItem(THEME_KEY) === 'dark' ? 'dark' : 'light';
+let theme = 'light';
 let data = loadData();
-let activeSection = 'overview';
+let activeSection = 'projects';
 let activeFilter = 'all';
 let editing = null;
 let toastTimer = 0;
@@ -165,6 +165,11 @@ function updateHeadings() {
   const subtitleKey = ({ overview: 'overviewSubtitle', projects: 'selectedWorkSubtitle', caseStudies: 'caseStudiesSubtitle', experience: 'experienceSubtitle', profile: 'profileSubtitle', settings: 'settingsSubtitle' })[activeSection];
   document.querySelector('#page-subtitle').textContent = t(subtitleKey);
   document.querySelectorAll('.side-link').forEach((button) => button.classList.toggle('is-active', button.dataset.section === activeSection));
+  document.querySelectorAll('.dashboard-tab').forEach((button) => {
+    const selected = button.dataset.section === activeSection;
+    button.classList.toggle('is-active', selected);
+    button.setAttribute('aria-current', selected ? 'page' : 'false');
+  });
   const primary = document.querySelector('#primary-action');
   const canCreate = ['projects', 'caseStudies', 'experience'].includes(activeSection);
   primary.hidden = !canCreate;
@@ -191,6 +196,23 @@ function displayMeta(item) {
   if (value) return value;
   if (activeSection === 'projects') return item.href || t('noLink');
   return t('noContent');
+}
+function renderDashboardFooterLinks() {
+  const nav = document.querySelector('#dashboard-footer-links');
+  if (!nav) return;
+  nav.replaceChildren();
+  data.contactLinks.forEach((contact) => {
+    const href = String(contact.href || '').trim();
+    if (!href || !validHref(href)) return;
+    const link = document.createElement('a');
+    link.href = href;
+    link.textContent = String(contact.label || href);
+    if (/^https:\/\//i.test(href)) {
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+    }
+    nav.append(link);
+  });
 }
 function makeButton(text, classes, action, idValue, title = '') {
   const button = document.createElement('button');
@@ -578,7 +600,6 @@ function handleCardAction(event) {
   }
   if (action === 'edit') { openEditor(activeSection, items[index]); return; }
   if (action === 'delete') {
-    if (!window.confirm(t('deleteConfirm'))) return;
     data[activeSection] = items.filter((item) => item.id !== itemId);
     saveData();
     renderItems();
@@ -600,6 +621,7 @@ function updateCounts() {
   document.querySelector('#shortcut-projects').textContent = counts.projects + ' ' + t(counts.projects === 1 ? 'projectImages' : 'projectImages');
   document.querySelector('#shortcut-cases').textContent = counts.caseStudies + ' ' + t(counts.caseStudies === 1 ? 'item' : 'items');
   document.querySelector('#shortcut-experience').textContent = counts.experience + ' ' + t(counts.experience === 1 ? 'item' : 'items');
+  renderDashboardFooterLinks();
 }
 function createProfileField(group, labelText, value, multiline = false) {
   const controlLabel = field(labelText, value, { multiline, full: true });
@@ -674,8 +696,8 @@ function setSection(section) {
   activeFilter = 'all';
   document.querySelectorAll('.filter-tab').forEach((tab) => tab.classList.toggle('is-active', tab.dataset.filter === 'all'));
   renderSection();
-  document.querySelector('#sidebar').classList.remove('is-open');
-  document.querySelector('#mobile-menu').setAttribute('aria-expanded', 'false');
+  document.querySelector('#sidebar')?.classList.remove('is-open');
+  document.querySelector('#mobile-menu')?.setAttribute('aria-expanded', 'false');
 }
 function addNew() {
   const section = activeSection === 'overview' ? 'caseStudies' : activeSection;
@@ -800,4 +822,5 @@ document.querySelector('#mobile-menu').addEventListener('click', (event) => {
 document.addEventListener('keydown', (event) => { if (event.key === 'Escape') document.querySelector('#sidebar').classList.remove('is-open'); });
 if (storage.getItem(noticeKey) === '1') document.querySelector('.local-notice').hidden = true;
 applySettings();
+renderItems();
 updateCounts();
