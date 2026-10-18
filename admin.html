@@ -66,18 +66,30 @@
           </nav>
         </header>
 
-        <div class="publishing-bar" aria-label="Publishing status">
-          <span id="publishing-status" role="status" aria-live="polite">Loading your content…</span>
-          <div class="publishing-actions">
-            <button type="button" id="retry-publish" hidden>Retry saving</button>
-            <button type="button" id="reload-content" hidden>Load latest</button>
-            <button type="button" id="download-backup">Download backup</button>
-            <button type="button" id="restore-backup">Restore backup</button>
-            <input type="file" id="restore-backup-input" accept="application/json,.json" hidden />
-            <a href="https://ehsandesigns.com/" target="_blank" rel="noopener noreferrer">View site</a>
-            <button type="button" id="sign-out">Sign out</button>
+        <section class="publishing-bar" data-state="loading" aria-label="Content status and tools">
+          <div class="publishing-summary">
+            <span class="publishing-state-icon" aria-hidden="true"></span>
+            <div class="publishing-status-copy">
+              <div id="publishing-status" role="status" aria-live="polite" aria-atomic="true">
+                <strong id="publishing-status-title">Loading content</strong>
+                <span id="publishing-status-detail">Getting the latest version of your portfolio.</span>
+              </div>
+              <div class="publishing-recovery-actions">
+                <button type="button" id="retry-publish" hidden>Retry saving</button>
+                <button type="button" id="reload-content" hidden>Load latest</button>
+              </div>
+            </div>
           </div>
-        </div>
+          <div class="publishing-actions" role="group" aria-label="Content tools">
+            <div class="publishing-backup-actions" role="group" aria-label="Backups">
+              <button class="publishing-action" type="button" id="download-backup"><span class="publishing-icon" data-icon="download" aria-hidden="true"></span>Download backup</button>
+              <button class="publishing-action" type="button" id="restore-backup"><span class="publishing-icon" data-icon="upload" aria-hidden="true"></span>Restore backup</button>
+            </div>
+            <input type="file" id="restore-backup-input" accept="application/json,.json" hidden />
+            <a class="publishing-action publishing-view-site" href="https://ehsandesigns.com/" target="_blank" rel="noopener noreferrer" aria-label="View site (opens in a new tab)">View site<span class="publishing-icon" data-icon="external" aria-hidden="true"></span></a>
+            <button class="publishing-action publishing-sign-out" type="button" id="sign-out"><span class="publishing-icon" data-icon="sign-out" aria-hidden="true"></span>Sign out</button>
+          </div>
+        </section>
 
         <header class="topbar" hidden>
           <button class="mobile-menu" id="mobile-menu" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>

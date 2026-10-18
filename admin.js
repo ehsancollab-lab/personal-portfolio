@@ -154,8 +154,23 @@ function contentErrorMessage(code, status, operation = 'load') {
     : `Could not load your published content${status ? ` (HTTP ${status})` : ''}. Editing is paused; retry loading.`);
 }
 function publishingStatus(state, message) {
+  const titles = {
+    loading: 'Loading content',
+    pending: 'Changes pending',
+    saving: 'Saving changes',
+    saved: 'Saved to GitHub',
+    error: loaded ? 'Changes not saved' : 'Content unavailable',
+    conflict: 'Newer changes found'
+  };
+  let detail = message;
+  if (state === 'loading') detail = 'Getting the latest version of your portfolio.';
+  else if (state === 'pending') detail = 'Preparing to save your latest changes.';
+  else if (state === 'saving') detail = 'Saving your latest changes to GitHub.';
+  else if (state === 'saved' && message === 'Saved to GitHub') detail = 'Content changes save automatically.';
+  else if (state === 'saved' && message.startsWith('Saved to GitHub. ')) detail = message.slice('Saved to GitHub. '.length);
   document.querySelector('.publishing-bar').dataset.state = state;
-  document.querySelector('#publishing-status').textContent = message;
+  document.querySelector('#publishing-status-title').textContent = titles[state] || 'Content status';
+  document.querySelector('#publishing-status-detail').textContent = detail;
   document.querySelector('#retry-publish').hidden = state !== 'error';
   document.querySelector('#retry-publish').textContent = loaded ? 'Retry saving' : 'Retry loading';
   document.querySelector('#reload-content').hidden = state !== 'conflict';
