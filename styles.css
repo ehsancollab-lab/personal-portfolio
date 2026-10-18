@@ -36,7 +36,7 @@ body {
   min-width: 320px;
   background: var(--page-bg);
   color: var(--text);
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: "Inter Variable", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: 15px;
   line-height: 1.65;
   transition: background-color 180ms ease, color 180ms ease;
@@ -211,11 +211,12 @@ button { font: inherit; }
   padding: 6px 12px;
   cursor: pointer;
   line-height: 25px;
-  transition: font-weight 140ms ease;
+  transition: color 140ms ease, background-color 140ms ease;
 }
 
 .nav-tab.is-current { background: var(--control-bg); }
-.nav-tab:hover { font-weight: 500; }
+.nav-tab:hover { color: #111111; }
+:root[data-theme="dark"] .nav-tab:hover { color: #ffffff; }
 
 .work-section {
   max-width: 1536px;
@@ -398,47 +399,65 @@ button { font: inherit; }
 
 .case-detail-section {
   width: 100%;
-  padding: 0 24px 56px;
+  padding: 56px 24px 0;
+  background: #fdfdfd;
 }
 
+:root[data-theme="dark"] .case-detail-section { background: var(--page-bg); }
+
 .case-detail {
-  width: min(1032px, 100%);
+  display: flex;
+  width: min(1536px, 100%);
+  flex-direction: column;
+  gap: 52px;
+  margin-inline: auto;
+  background: var(--page-bg);
+}
+
+.case-detail-toolbar {
+  display: flex;
+  width: min(740px, 100%);
+  align-items: center;
+  justify-content: space-between;
+  gap: 17px;
   margin-inline: auto;
 }
 
 .case-back-link {
-  display: flex;
-  width: min(740px, 100%);
+  display: inline-flex;
+  min-width: 0;
+  flex: 1 1 auto;
   align-items: center;
   gap: 12px;
-  margin: 0 auto 18px;
   color: var(--text);
-  font-size: 15px;
-  line-height: 25px;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 27.2px;
   text-decoration: none;
+  white-space: nowrap;
 }
 
-.case-back-link > span:first-child {
-  display: grid;
-  width: 38px;
+.case-back-icon {
+  display: inline-grid;
+  width: 44px;
   height: 32px;
-  flex: 0 0 38px;
+  flex: 0 0 44px;
   place-items: center;
   border-radius: 999px;
   background: var(--control-bg);
-  font-size: 19px;
-  line-height: 1;
 }
 
+.case-back-icon img { display: block; width: 20px; height: 20px; }
 .case-back-link:hover > span:last-child { text-decoration: underline; text-underline-offset: 3px; }
+.detail-theme-toggle { flex: 0 0 32px; }
 
 .case-detail-title {
   width: min(740px, 100%);
-  margin: 0 auto 32px;
+  margin: 0 auto 52px;
   color: var(--text);
   font-size: clamp(24px, 2.3vw, 29px);
-  font-weight: 500;
-  line-height: 1.4;
+  font-weight: 600;
+  line-height: 37px;
   overflow-wrap: anywhere;
 }
 
@@ -556,8 +575,9 @@ button { font: inherit; }
   .experience-heading { align-items: flex-start; flex-direction: column; gap: 2px; padding-block-end: 8px; }
   .experience-title-line { flex-wrap: wrap; gap: 3px 10px; }
   .experience-title-line h3 { font-size: 19px; }
-  .case-detail-section { padding: 0 20px 44px; }
+  .case-detail-section { padding: 40px 20px 0; }
   .case-detail-title { margin-block-end: 24px; }
+  .case-detail { gap: 36px; }
   .case-article-figure { margin-block: 22px 27px; }
 
   .site-footer {
@@ -587,8 +607,8 @@ button { font: inherit; }
   .experience-company,.experience-dates,.experience-bullets { font-size: 14px; }
   .experience-bullets { padding-inline-start: 20px; line-height: 23px; }
   .case-detail-section { padding-inline: 16px; }
-  .case-back-link { margin-block-end: 14px; }
-  .case-detail-title { font-size: 23px; }
+  .case-back-link { font-size: 16px; }
+  .case-detail-title { font-size: 23px; line-height: 31px; }
   .case-article-body { font-size: 14px; line-height: 23px; }
   .case-article-body > h2 { font-size: 20px; }
   .contact-links { gap: 8px 14px; }

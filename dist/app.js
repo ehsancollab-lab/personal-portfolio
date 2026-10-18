@@ -109,6 +109,7 @@ function externalAnchor(href, label) {
 }
 
 function renderLinks(target) {
+  if (!target) return;
   const managed = contentOverride?.contactLinks;
   const links = managed
     ? managed.map(({ href, label }) => ({ href, label: text(label) })).filter(({ label, href }) => label && href)
@@ -118,6 +119,7 @@ function renderLinks(target) {
 
 function renderBio() {
   const bio = document.querySelector("#bio");
+  if (!bio) return;
   const managedBio = contentOverride?.profile?.bio;
   if (managedBio != null) {
     bio.textContent = text(managedBio);
@@ -361,11 +363,37 @@ function renderCaseStudyDetails() {
   const item = items.find((candidate) => candidate.id === id) || (!id ? items[0] : null);
   host.replaceChildren();
 
+  const toolbar = document.createElement("div");
+  toolbar.className = "case-detail-toolbar";
+
   const back = document.createElement("a");
   back.className = "case-back-link";
   back.href = "./index.html";
-  back.innerHTML = '<span aria-hidden="true">←</span><span>Back to Home</span>';
-  host.append(back);
+  const icon = document.createElement("span");
+  icon.className = "case-back-icon";
+  icon.setAttribute("aria-hidden", "true");
+  const iconImage = document.createElement("img");
+  iconImage.src = "./assets/figma/arrow-left.svg";
+  iconImage.width = 20;
+  iconImage.height = 20;
+  iconImage.alt = "";
+  icon.append(iconImage);
+  const backLabel = document.createElement("span");
+  backLabel.textContent = "Back to Home";
+  back.append(icon, backLabel);
+
+  const themeToggle = document.createElement("button");
+  themeToggle.className = "theme-toggle detail-theme-toggle";
+  themeToggle.type = "button";
+  themeToggle.setAttribute("aria-pressed", "false");
+  const themeIcon = document.createElement("img");
+  themeIcon.src = "./assets/figma/theme-toggle.svg";
+  themeIcon.width = 32;
+  themeIcon.height = 32;
+  themeIcon.alt = "";
+  themeToggle.append(themeIcon);
+  toolbar.append(back, themeToggle);
+  host.append(toolbar);
 
   if (!item) {
     const empty = document.createElement("p");
@@ -397,12 +425,15 @@ function renderCaseStudyDetails() {
 function renderHeaderAndFooter() {
   root.lang = "en";
   root.dir = "ltr";
-  document.querySelector("#greeting").textContent = contentOverride?.profile?.greeting == null ? copy.greeting : text(contentOverride.profile.greeting);
-  document.querySelector("#contact-prompt").textContent = contentOverride?.profile?.contactPrompt == null ? copy.contactPrompt : text(contentOverride.profile.contactPrompt);
+  const greeting = document.querySelector("#greeting");
+  if (greeting) greeting.textContent = contentOverride?.profile?.greeting == null ? copy.greeting : text(contentOverride.profile.greeting);
+  const contactPrompt = document.querySelector("#contact-prompt");
+  if (contactPrompt) contactPrompt.textContent = contentOverride?.profile?.contactPrompt == null ? copy.contactPrompt : text(contentOverride.profile.contactPrompt);
   renderBio();
   renderLinks(document.querySelector("#header-contact-links"));
   renderLinks(document.querySelector("#footer-contact-links"));
-  document.querySelector("#copyright-year").textContent = String(new Date().getFullYear());
+  const copyrightYear = document.querySelector("#copyright-year");
+  if (copyrightYear) copyrightYear.textContent = String(new Date().getFullYear());
 
   const current = page === "case-study" ? "case-studies" : page;
   document.querySelectorAll("[data-page-link]").forEach((link) => {
@@ -411,23 +442,25 @@ function renderHeaderAndFooter() {
     if (selected) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");
   });
-  document.querySelector(".primary-nav").setAttribute("aria-label", "Portfolio sections");
-  document.querySelector(".contact-block").setAttribute("aria-label", "Contact information");
-  document.querySelector(".display-controls").setAttribute("aria-label", "Display settings");
+  document.querySelector(".primary-nav")?.setAttribute("aria-label", "Portfolio sections");
+  document.querySelector(".contact-block")?.setAttribute("aria-label", "Contact information");
+  document.querySelector(".display-controls")?.setAttribute("aria-label", "Display settings");
 }
 
 function updateTheme() {
   const dark = theme === "dark";
   root.dataset.theme = theme;
-  const toggle = document.querySelector("#theme-toggle");
-  toggle.setAttribute("aria-pressed", String(dark));
-  toggle.setAttribute("aria-label", dark ? "Switch to light theme" : "Switch to dark theme");
-  toggle.title = dark ? "Switch to light theme" : "Switch to dark theme";
+  document.querySelectorAll(".theme-toggle").forEach((toggle) => {
+    toggle.setAttribute("aria-pressed", String(dark));
+    toggle.setAttribute("aria-label", dark ? "Switch to light theme" : "Switch to dark theme");
+    toggle.title = dark ? "Switch to light theme" : "Switch to dark theme";
+  });
   document.querySelector('meta[name="theme-color"]').content = dark ? "#131315" : "#ffffff";
   safeStorage.set("ehsan-portfolio-theme", theme);
 }
 
-document.querySelector("#theme-toggle").addEventListener("click", () => {
+document.addEventListener("click", (event) => {
+  if (!event.target.closest(".theme-toggle")) return;
   theme = theme === "light" ? "dark" : "light";
   updateTheme();
 });
