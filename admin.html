@@ -57,7 +57,19 @@
           <a class="dashboard-avatar" href="./index.html" aria-label="Ehsan Masoomi portfolio">
             <img src="./assets/figma/profile.png" width="44" height="44" alt="" />
           </a>
-          <h1 class="dashboard-title">Ehsan Portfolio Dashboard</h1>
+          <div class="dashboard-title-row">
+            <h1 class="dashboard-title">Ehsan Portfolio Dashboard</h1>
+            <div class="dashboard-settings">
+              <button class="dashboard-settings-toggle" id="dashboard-settings-toggle" type="button" aria-label="Dashboard settings" title="Settings" aria-haspopup="menu" aria-expanded="false" aria-controls="dashboard-settings-menu"><span class="publishing-icon" data-icon="settings" aria-hidden="true"></span></button>
+              <div class="dashboard-settings-menu" id="dashboard-settings-menu" role="menu" aria-label="Dashboard settings" hidden>
+                <button class="publishing-action" type="button" id="download-backup" role="menuitem" tabindex="-1"><span class="publishing-icon" data-icon="download" aria-hidden="true"></span>Download backup</button>
+                <button class="publishing-action" type="button" id="restore-backup" role="menuitem" tabindex="-1"><span class="publishing-icon" data-icon="upload" aria-hidden="true"></span>Restore backup</button>
+                <a class="publishing-action" href="https://ehsandesigns.com/" target="_blank" rel="noopener noreferrer" role="menuitem" tabindex="-1" aria-label="View site (opens in a new tab)"><span class="publishing-icon" data-icon="external" aria-hidden="true"></span>View site</a>
+                <button class="publishing-action publishing-sign-out" type="button" id="sign-out" role="menuitem" tabindex="-1"><span class="publishing-icon" data-icon="sign-out" aria-hidden="true"></span>Sign out</button>
+              </div>
+            </div>
+          </div>
+          <input type="file" id="restore-backup-input" accept="application/json,.json" hidden />
           <nav class="dashboard-tabs" aria-label="Dashboard sections">
             <button class="dashboard-tab is-active" type="button" data-section="projects" data-ui="selectedWork">Selected Work</button>
             <button class="dashboard-tab" type="button" data-section="caseStudies" data-ui="caseStudies">Case Studies</button>
@@ -66,7 +78,7 @@
           </nav>
         </header>
 
-        <section class="publishing-bar" data-state="loading" aria-label="Content status and tools">
+        <section class="publishing-bar" data-state="loading" aria-label="Content status">
           <div class="publishing-summary">
             <span class="publishing-state-icon" aria-hidden="true"></span>
             <div class="publishing-status-copy">
@@ -79,15 +91,6 @@
                 <button type="button" id="reload-content" hidden>Load latest</button>
               </div>
             </div>
-          </div>
-          <div class="publishing-actions" role="group" aria-label="Content tools">
-            <div class="publishing-backup-actions" role="group" aria-label="Backups">
-              <button class="publishing-action" type="button" id="download-backup"><span class="publishing-icon" data-icon="download" aria-hidden="true"></span>Download backup</button>
-              <button class="publishing-action" type="button" id="restore-backup"><span class="publishing-icon" data-icon="upload" aria-hidden="true"></span>Restore backup</button>
-            </div>
-            <input type="file" id="restore-backup-input" accept="application/json,.json" hidden />
-            <a class="publishing-action publishing-view-site" href="https://ehsandesigns.com/" target="_blank" rel="noopener noreferrer" aria-label="View site (opens in a new tab)">View site<span class="publishing-icon" data-icon="external" aria-hidden="true"></span></a>
-            <button class="publishing-action publishing-sign-out" type="button" id="sign-out"><span class="publishing-icon" data-icon="sign-out" aria-hidden="true"></span>Sign out</button>
           </div>
         </section>
 
@@ -190,6 +193,6 @@
       </div>
     </dialog>
 
-    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"><span class="toast-icon" aria-hidden="true"></span><span class="toast-message"></span></div>
   </body>
 </html>

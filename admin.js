@@ -167,6 +167,7 @@ function publishingStatus(state, message) {
     pending: 'Changes pending',
     saving: 'Saving changes',
     saved: 'Saved to GitHub',
+    notice: 'Draft backup available',
     error: loaded ? 'Changes not saved' : 'Content unavailable',
     conflict: 'Newer changes found'
   };
@@ -176,7 +177,10 @@ function publishingStatus(state, message) {
   else if (state === 'saving') detail = 'Saving your latest changes to GitHub.';
   else if (state === 'saved' && message === 'Saved to GitHub') detail = 'Content changes save automatically.';
   else if (state === 'saved' && message.startsWith('Saved to GitHub. ')) detail = message.slice('Saved to GitHub. '.length);
-  document.querySelector('.publishing-bar').dataset.state = state;
+  const bar = document.querySelector('.publishing-bar');
+  bar.dataset.state = state;
+  bar.hidden = state === 'saved';
+  if (state !== 'saved') hideToast();
   document.querySelector('#publishing-status-title').textContent = titles[state] || 'Content status';
   document.querySelector('#publishing-status-detail').textContent = detail;
   document.querySelector('#retry-publish').hidden = state !== 'error';
@@ -219,7 +223,7 @@ async function loadPublishedData() {
     updateCounts();
     publishingStatus('saved', 'Saved to GitHub');
     if (restored) saveData();
-    else if (storage.getItem(RECOVERY_KEY)) publishingStatus('saved', 'A previous draft is available in Download backup.');
+    else if (storage.getItem(RECOVERY_KEY)) publishingStatus('notice', 'A previous draft is available in Settings → Download backup.');
   } catch (error) {
     const message = error?.name === 'AbortError'
       ? 'Loading timed out. Retry loading your published content.'
@@ -266,6 +270,7 @@ async function publishData() {
       storage.removeItem(DRAFT_KEY);
       if (['projects', 'caseStudies', 'experience'].includes(activeSection)) renderItems();
       publishingStatus('saved', 'Saved to GitHub. The site updates after automatic deployment.');
+      showToast('Saved to GitHub', { success: true });
     } else {
       storage.setItem(DRAFT_KEY, JSON.stringify({ revision: serverRevision, content: data }));
       saveTimer = setTimeout(publishData, 700);
@@ -301,12 +306,17 @@ function applySettings() {
   document.querySelector('#saved-indicator').lastElementChild.textContent = t('allChangesSaved');
   updateHeadings();
 }
-function showToast(text) {
+function hideToast() {
+  clearTimeout(toastTimer);
+  document.querySelector('#toast').classList.remove('is-visible');
+}
+function showToast(text, { success = false } = {}) {
   const toast = document.querySelector('#toast');
-  toast.textContent = text;
+  toast.querySelector('.toast-message').textContent = text;
+  toast.dataset.tone = success ? 'success' : 'neutral';
   toast.classList.add('is-visible');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove('is-visible'), 2600);
+  toastTimer = setTimeout(hideToast, 3200);
 }
 function sectionLabel(section) {
   return ({ overview: 'overview', projects: 'selectedWork', caseStudies: 'caseStudies', experience: 'experience', profile: 'profileContact', settings: 'appearanceTitle' })[section] || 'overview';
@@ -918,6 +928,39 @@ function resetData() {
   renderSection();
 }
 
+const settingsToggle = document.querySelector('#dashboard-settings-toggle');
+const settingsMenu = document.querySelector('#dashboard-settings-menu');
+const settingsContainer = document.querySelector('.dashboard-settings');
+function closeSettingsMenu(returnFocus = false) {
+  settingsMenu.hidden = true;
+  settingsToggle.setAttribute('aria-expanded', 'false');
+  if (returnFocus) settingsToggle.focus();
+}
+function openSettingsMenu(last = false) {
+  settingsMenu.hidden = false;
+  settingsToggle.setAttribute('aria-expanded', 'true');
+  const items = [...settingsMenu.querySelectorAll('[role="menuitem"]:not(:disabled)')];
+  (last ? items.at(-1) : items[0])?.focus();
+}
+settingsToggle.addEventListener('click', () => settingsMenu.hidden ? openSettingsMenu() : closeSettingsMenu(true));
+settingsToggle.addEventListener('keydown', event => {
+  if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); openSettingsMenu(event.key === 'ArrowUp'); }
+});
+settingsMenu.addEventListener('keydown', event => {
+  if (event.key === 'Tab') { setTimeout(() => closeSettingsMenu(), 0); return; }
+  if (event.key === ' ' && event.target.closest('[role="menuitem"]')) { event.preventDefault(); event.target.closest('[role="menuitem"]').click(); return; }
+  const items = [...settingsMenu.querySelectorAll('[role="menuitem"]:not(:disabled)')];
+  const index = items.indexOf(document.activeElement);
+  if (['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
+    event.preventDefault();
+    const next = event.key === 'Home' ? 0 : event.key === 'End' ? items.length - 1 : (index + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
+    items[next]?.focus();
+  }
+});
+settingsMenu.addEventListener('click', event => { if (event.target.closest('[role="menuitem"]')) closeSettingsMenu(true); });
+document.addEventListener('keydown', event => { if (event.key === 'Escape' && !settingsMenu.hidden) { event.preventDefault(); closeSettingsMenu(true); } });
+document.addEventListener('pointerdown', event => { if (!settingsContainer.contains(event.target)) closeSettingsMenu(); });
+document.addEventListener('focusin', event => { if (!settingsContainer.contains(event.target)) closeSettingsMenu(); });
 document.querySelectorAll('[data-section]').forEach((button) => button.addEventListener('click', () => setSection(button.dataset.section)));
 document.querySelector('#primary-action').addEventListener('click', addNew);
 document.querySelector('#retry-publish').addEventListener('click', publishData);

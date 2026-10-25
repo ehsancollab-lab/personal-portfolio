@@ -1,6 +1,6 @@
 # Portfolio and story editor verification
 
-Date: 2026-10-18.
+Latest verification: 2026-10-25.
 
 ## Changes
 
@@ -11,12 +11,13 @@ Date: 2026-10-18.
 - The Tiptap story composer implements direct writing, floating selection tools, headings, bold/italic/links, quote/list formatting, undo/redo, block insertion, code/dividers, image upload/paste/drop, captions/alt text/widths, YouTube/Vimeo embeds, cover settings, preview, local draft recovery and GitHub publication.
 - Rich text is stored as validated JSON and rendered through DOM nodes. Existing Markdown opens in the visual composer. Cover/body uploads are deduplicated and saved atomically with content.
 - Automated checks use stable supplied-content fixtures. Deployment checks compare built content to the current owner-managed JSON and do not require a fixed card count.
+- Dashboard tools live in a settings dropdown to the right of the centered title. Confirmed publications show a temporary `Saved to GitHub` toast; initial loading does not show a false success, and failed/conflicting saves retain recovery actions.
 
 ## Executed checks
 
 `npm test`: 27 server, story schema and build checks.
 
-`npm run test:browser`: 13 Chromium scenarios:
+`npm run test:browser`: 18 Chromium scenarios:
 
 1. Section switching without additional document requests, cached header/view identity, detail navigation and back/forward.
 2. Responsive image selection, local fonts, saved dark theme/icons, typography animation, reduced motion and layouts at 1440/390/320px.
@@ -31,6 +32,11 @@ Date: 2026-10-18.
 11. Uniform light detail-page background `#FDFDFD` on direct entry and client navigation, including correct restoration when leaving the detail view.
 12. Replacing an existing article image and cover, clearing obsolete responsive candidates, and preserving the replacement and caption after saving/reopening.
 13. Repeated replacement of a library image in a new story, with captions retained and no overlapping text-formatting bubble.
+14. Settings-button placement, centered title, four menu items, arrow/Home navigation, Escape/focus return, Tab and outside-click dismissal.
+15. Success appears only after a successful API response, dismisses after 3.2 seconds, and appears again after another save.
+16. Downloading/restoring a backup through Settings, checking the public-site destination and signing out.
+17. Failed saves remain visible with Retry, successful retries show success, and conflicts never show a success toast.
+18. The settings menu stays within 390/320px screens, preserves 44px menu targets and respects reduced motion.
 
 The replacement regression was reproduced before the fix: the `src` changed while the browser kept displaying the old `srcset` candidate. Text tools could also overlap image tools during repeated replacement. Responsive attributes are now cleared when using a raw replacement, the text bubble appears only for actual text selections, and saving waits for image preparation. Opening the link editor hides the text bubble, and floating text tools stay below the composer panels.
 
