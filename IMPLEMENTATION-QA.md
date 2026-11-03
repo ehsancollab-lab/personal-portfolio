@@ -1,6 +1,6 @@
 # Portfolio and story editor verification
 
-Latest verification: 2026-10-25.
+Latest verification: 2026-11-03.
 
 ## Changes
 
@@ -12,12 +12,16 @@ Latest verification: 2026-10-25.
 - Rich text is stored as validated JSON and rendered through DOM nodes. Existing Markdown opens in the visual composer. Cover/body uploads are deduplicated and saved atomically with content.
 - Automated checks use stable supplied-content fixtures. Deployment checks compare built content to the current owner-managed JSON and do not require a fixed card count.
 - Dashboard tools live in a settings dropdown to the right of the centered title. Confirmed publications show a temporary `Saved to GitHub` toast; initial loading does not show a false success, and failed/conflicting saves retain recovery actions.
+- About Me is restored in the public navigation. The introduction uses the owner-provided facts: self-taught UI/UX designer, married, and loves reading. The bookshelf contains 50 books in six collections, with three representative covers per collection.
+- Collection cards expand into a shelf using shared surface, title and cover transitions. Book covers move into their detail view and back to their original shelf/grid position. Cached search and scroll survive returning; interrupted navigation keeps the latest destination. Reduced motion skips the transitions, and browsers without View Transitions use animated cover clones.
+- Each book has its English and Persian titles, author, topics, an original short summary, an owner-requested first-person takeaway and a Persian research source. Sources are recorded in `book-sources.js`; the takeaways are editorial copy, not quotations from the books.
+- The owner requested sample cover art until the original files arrive. All 50 entries currently use clearly labelled typographic sample jackets. Real covers can be assigned through the `cover` field; future files under `assets/books` are included in responsive image generation. Persian titles use locally hosted Vazirmatn.
 
 ## Executed checks
 
-`npm test`: 27 server, story schema and build checks.
+`npm test`: 31 server, story schema, book metadata and build checks.
 
-`npm run test:browser`: 18 Chromium scenarios:
+`npm run test:browser`: 28 Chromium scenarios:
 
 1. Section switching without additional document requests, cached header/view identity, detail navigation and back/forward.
 2. Responsive image selection, local fonts, saved dark theme/icons, typography animation, reduced motion and layouts at 1440/390/320px.
@@ -37,6 +41,18 @@ Latest verification: 2026-10-25.
 16. Downloading/restoring a backup through Settings, checking the public-site destination and signing out.
 17. Failed saves remain visible with Retry, successful retries show success, and conflicts never show a success toast.
 18. The settings menu stays within 390/320px screens, preserves 44px menu targets and respects reduced motion.
+19. About navigation, biography facts, the complete count and six three-cover collection cards.
+20. Shared surface/title/three-cover names on collection expansion and reverse motion, without extra document requests.
+21. English author and Persian title search, Arabic/Persian letter normalization, hidden results and clearing an empty search.
+22. Opening all 50 books through their collection cards and checking author, Persian title, summary, takeaway, source, sample label and Back.
+23. Book transition, cached collection search and scroll, document titles, and browser back/forward.
+24. About, collection and book layouts at 390/320px in dark mode, persistent theme and local Persian font loading.
+25. Reduced motion bypasses the shared transition API, and keyboard Enter opens a collection.
+26. Cover-clone animation and cleanup when View Transitions are unavailable.
+27. Direct book/collection aliases and usable invalid-link states.
+28. Rapid navigation cancels prior motion, retains the latest destination and leaves no named transition elements behind.
+
+The reference video was inspected for its fanned covers, expanding collection surface, shelf arrangement and reverse motion. Desktop and mobile screenshots, including a paused transition midpoint, were reviewed locally. This is an adaptation to the portfolio's existing design; original cover artwork is pending from the owner.
 
 The replacement regression was reproduced before the fix: the `src` changed while the browser kept displaying the old `srcset` candidate. Text tools could also overlap image tools during repeated replacement. Responsive attributes are now cleared when using a raw replacement, the text bubble appears only for actual text selections, and saving waits for image preparation. Opening the link editor hides the text bubble, and floating text tools stay below the composer panels.
 

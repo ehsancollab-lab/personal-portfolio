@@ -8,6 +8,7 @@ import { renderStory } from "./story-render.js";
 import { publishedContent } from "./published-content.js";
 import { animateTypography } from "./typography.js";
 import { createSiteHeader } from "./site-shell.js";
+import { renderLibrary, transitionLibrary, cancelLibraryTransition, libraryPages } from './library.js';
 
 const root = document.documentElement;
 let page = document.body.dataset.page || "selected-work";
@@ -340,7 +341,7 @@ function renderHeaderAndFooter() {
   const copyrightYear = document.querySelector("#copyright-year");
   if (copyrightYear) copyrightYear.textContent = String(new Date().getFullYear());
 
-  const current = page === "case-study" ? "case-studies" : page;
+  const current = page === "case-study" ? "case-studies" : libraryPages.has(page) ? 'about' : page;
   document.querySelectorAll("[data-page-link]").forEach((link) => {
     const selected = link.dataset.pageLink === current;
     link.classList.toggle("is-current", selected);
@@ -383,7 +384,7 @@ const initialMain = document.querySelector('main');
 const routeKey = (url = new URL(location.href)) => routeFor(url) + url.search;
 function routeFor(url) {
   const filename = url.pathname.replace(/\/$/, '').split('/').pop().replace(/\.html$/, '');
-  return ({ '': 'selected-work', index: 'selected-work', 'case-studies': 'case-studies', experience: 'experience', 'case-study': 'case-study' })[filename] || null;
+  return ({ '': 'selected-work', index: 'selected-work', 'case-studies': 'case-studies', experience: 'experience', 'case-study': 'case-study', about: 'about', books: 'books', book: 'book' })[filename] || null;
 }
 function makePage(next) {
   const main = document.createElement('main');
@@ -392,7 +393,10 @@ function makePage(next) {
     'selected-work': ['work-section', 'selected-work', '<h2 class="visually-hidden">Selected Work</h2><div class="project-grid" id="project-grid" aria-label="Selected work"></div>'],
     'case-studies': ['case-studies-section', 'case-studies-content', '<h2 class="visually-hidden">Case Studies</h2><div class="case-studies-list" id="case-studies-list" aria-label="Case studies"></div>'],
     experience: ['experience-section', 'experience-content', '<h2 class="visually-hidden">Experience</h2><div class="experience-list" id="experience-list" aria-label="Experience"></div>'],
-    'case-study': ['case-detail-section', 'case-study-content', '<div class="case-detail" id="case-detail"></div>']
+    'case-study': ['case-detail-section', 'case-study-content', '<div class="case-detail" id="case-detail"></div>'],
+    about: ['about-section', 'about-content', ''],
+    books: ['library-section', 'library-content', ''],
+    book: ['library-section', 'library-content', '']
   }[next];
   main.className = config[0]; main.id = config[1]; main.innerHTML = config[2];
   return main;
@@ -401,7 +405,7 @@ function renderPage(next, fresh = false) {
   page = next;
   root.dataset.page = next;
   document.body.dataset.page = next;
-  if (next === 'case-study') sharedHeader.remove();
+  if (['case-study', 'books', 'book'].includes(next)) sharedHeader.remove();
   else if (!sharedHeader.isConnected) document.querySelector('main').before(sharedHeader);
   const key = routeKey();
   let main = pageViews.get(key);
@@ -415,7 +419,13 @@ function renderPage(next, fresh = false) {
     if (next === 'experience') renderExperience();
     if (next === 'case-study') renderCaseStudyDetails();
   }
-  if (next !== 'case-study') {
+  if (libraryPages.has(next)) {
+    // Refresh the metadata of cached views without discarding their search state.
+    if (newView) renderLibrary(main, next);
+    else { document.title = main.dataset.documentTitle; document.querySelector('meta[name="description"]').content = main.dataset.documentDescription; }
+    main.dataset.documentTitle = document.title;
+    main.dataset.documentDescription = document.querySelector('meta[name="description"]').content;
+  } else if (next !== 'case-study') {
     document.title = next === 'selected-work' ? 'Ehsan Masoomi — Senior AI Product Designer' : (next === 'case-studies' ? 'Case Studies' : 'Experience') + ' — Ehsan Masoomi';
     document.querySelector('meta[name="description"]').content = next === 'selected-work' ? 'Ehsan Masoomi — Senior AI Product Designer.' : document.title;
   } else if (!newView) renderCaseStudyDetails();
@@ -426,24 +436,35 @@ function renderPage(next, fresh = false) {
   return main;
 }
 let currentRoute = routeKey();
+let currentURL = new URL(location.href);
+let navigationVersion = 0;
 renderPage(page);
 animateTypography(sharedHeader);
-function navigate(url, push = true) {
+function navigate(url, push = true, trigger = null) {
   const next = routeFor(url);
   if (!next || (push && url.href === location.href && next === page)) return;
+  const version = ++navigationVersion;
   scrollPositions.set(currentRoute, scrollY);
-  if (push) history.pushState({}, '', url.href);
-  const main = renderPage(next);
-  currentRoute = routeKey(url);
-  window.scrollTo({ top: push ? 0 : scrollPositions.get(currentRoute) || 0, behavior: 'instant' });
-  main.focus({ preventScroll: true });
+  const swap = () => {
+    if (version !== navigationVersion) return false;
+    if (push) history.pushState({}, '', url.href);
+    const main = renderPage(next);
+    currentRoute = routeKey(url);
+    currentURL = new URL(url.href);
+    const restore = !push || trigger?.hasAttribute('data-restore-scroll');
+    window.scrollTo({ top: restore ? scrollPositions.get(currentRoute) || 0 : 0, behavior: 'instant' });
+    main.focus({ preventScroll: true });
+    return true;
+  };
+  if (libraryPages.has(page) && libraryPages.has(next)) transitionLibrary(currentURL, url, trigger, swap);
+  else { cancelLibraryTransition(); swap(); }
 }
 document.addEventListener('click', event => {
   const link = event.target.closest('a[href]');
   if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.target || link.hasAttribute('download')) return;
   const url = new URL(link.href, location.href);
   if (url.origin !== location.origin || !routeFor(url) || (url.pathname === location.pathname && url.search === location.search && url.hash)) return;
-  event.preventDefault(); navigate(url);
+  event.preventDefault(); navigate(url, true, link);
 });
 window.addEventListener('popstate', () => navigate(new URL(location.href), false));
 history.scrollRestoration = 'manual';

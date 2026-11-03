@@ -30,3 +30,13 @@ test('dashboard is deployed with the authentication worker on every route', asyn
   assert.match(await read('admin/login.html'), /autocomplete="current-password"/);
   assert.doesNotMatch(await read('admin/_worker.js'), /test-only-github-token|test-only-password/);
 });
+
+test('About, collections and book details have direct public routes and local library assets', async () => {
+  for (const name of ['about', 'books', 'book']) {
+    assert.match(await read('site/' + name + '.html'), /library\.css/);
+    assert.match(await read('site/' + name + '/index.html'), /<base href="\.\.\/"/);
+  }
+  await access(new URL('../build/site/assets/fonts/vazirmatn-arabic-wght-normal.woff2', import.meta.url));
+  assert.match(await read('site/index.html'), /data-page-link="about"/);
+  assert.doesNotMatch(await read('site/library-content.js'), /GITHUB_CONTENT_TOKEN|ADMIN_PASSWORD/);
+});

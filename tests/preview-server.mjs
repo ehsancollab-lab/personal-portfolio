@@ -45,7 +45,7 @@ async function asset(request, target) {
   let path = decodeURIComponent(new URL(request.url).pathname);
   if (path === '/data/portfolio.json' && target === 'site') return new Response(savedText, { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
   if (uploads.has(path) && target === 'site') return new Response(Buffer.from(uploads.get(path), 'base64'), { headers: { 'Content-Type': mime[extname(path)] } });
-  if (path === '/') path = '/index.html';
+  if (path.endsWith('/')) path += 'index.html';
   else if (!extname(path)) path += '.html';
   const filename = resolve(root, 'build', target, '.' + path);
   if (!filename.startsWith(resolve(root, 'build', target) + '/')) return new Response('Forbidden', { status: 403 });

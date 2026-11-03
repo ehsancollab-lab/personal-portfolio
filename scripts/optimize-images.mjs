@@ -10,7 +10,7 @@ export async function optimizeImages(root, output) {
   const manifest = {};
   let originalBytes = 0;
   let displayBytes = 0;
-  for (const directory of ['projects', 'case-studies', 'uploads']) {
+  for (const directory of ['projects', 'case-studies', 'uploads', 'books']) {
     const folder = join(root, 'assets', directory);
     let files;
     try { files = await readdir(folder); } catch { continue; }
