@@ -1,4 +1,5 @@
 import { bookSources } from './book-sources.js';
+import { bookCovers } from './book-covers.js';
 
 export const aboutIntro = [
   'I’m a self-taught UI/UX designer. Curiosity brought me into design, and learning by doing has kept me here. I enjoy understanding how people think and turning that understanding into useful, thoughtful digital experiences.',
@@ -171,8 +172,8 @@ const rows = [
 
 export const books = rows.map(([id, title, titleFa, author, category, topics, summary, takeaway]) => ({
   id, title, titleFa, author, category, topics, summary, takeaway,
-  // Fill this with a local image path when the owner supplies the cover files.
-  cover: '',
+  cover: bookCovers[id]?.src || '',
+  coverImage: bookCovers[id],
   source: bookSources[id]
 }));
 export const booksInCategory = id => books.filter(book => book.category === id);

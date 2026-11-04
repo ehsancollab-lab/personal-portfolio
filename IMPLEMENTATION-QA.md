@@ -1,6 +1,6 @@
 # Portfolio and story editor verification
 
-Latest verification: 2026-11-03.
+Latest verification: 2026-11-04.
 
 ## Changes
 
@@ -15,11 +15,11 @@ Latest verification: 2026-11-03.
 - About Me is restored in the public navigation. The introduction uses the owner-provided facts: self-taught UI/UX designer, married, and loves reading. The bookshelf contains 50 books in six collections, with three representative covers per collection.
 - Collection cards expand into a shelf using shared surface, title and cover transitions. Book covers move into their detail view and back to their original shelf/grid position. Cached search and scroll survive returning; interrupted navigation keeps the latest destination. Reduced motion skips the transitions, and browsers without View Transitions use animated cover clones.
 - Each book has its English and Persian titles, author, topics, an original short summary, an owner-requested first-person takeaway and a Persian research source. Sources are recorded in `book-sources.js`; the takeaways are editorial copy, not quotations from the books.
-- The owner requested sample cover art until the original files arrive. All 50 entries currently use clearly labelled typographic sample jackets. Real covers can be assigned through the `cover` field; future files under `assets/books` are included in responsive image generation. Persian titles use locally hosted Vazirmatn.
+- All 50 owner-supplied covers replace the temporary sample jackets. The unmodified PNG files live under `assets/books`; `book-covers.js` records their book assignments, dimensions, display frames and SHA-256 hashes. CSS frames hide the surrounding white photo margins while preserving the complete cover and its proportions; full-page white cover designs retain their paper margins. Responsive WebP variants are generated for display. Persian titles use locally hosted Vazirmatn.
 
 ## Executed checks
 
-`npm test`: 31 server, story schema, book metadata and build checks.
+`npm test`: 32 server, story schema, book metadata, original-image integrity and build checks.
 
 `npm run test:browser`: 28 Chromium scenarios:
 
@@ -44,7 +44,7 @@ Latest verification: 2026-11-03.
 19. About navigation, biography facts, the complete count and six three-cover collection cards.
 20. Shared surface/title/three-cover names on collection expansion and reverse motion, without extra document requests.
 21. English author and Persian title search, Arabic/Persian letter normalization, hidden results and clearing an empty search.
-22. Opening all 50 books through their collection cards and checking author, Persian title, summary, takeaway, source, sample label and Back.
+22. Opening all 50 books through their collection cards and checking author, Persian title, summary, takeaway, source, loaded responsive WebP cover, absence of sample artwork and Back.
 23. Book transition, cached collection search and scroll, document titles, and browser back/forward.
 24. About, collection and book layouts at 390/320px in dark mode, persistent theme and local Persian font loading.
 25. Reduced motion bypasses the shared transition API, and keyboard Enter opens a collection.
@@ -52,7 +52,7 @@ Latest verification: 2026-11-03.
 27. Direct book/collection aliases and usable invalid-link states.
 28. Rapid navigation cancels prior motion, retains the latest destination and leaves no named transition elements behind.
 
-The reference video was inspected for its fanned covers, expanding collection surface, shelf arrangement and reverse motion. Desktop and mobile screenshots, including a paused transition midpoint, were reviewed locally. This is an adaptation to the portfolio's existing design; original cover artwork is pending from the owner.
+The reference video was inspected for its fanned covers, expanding collection surface, shelf arrangement and reverse motion. Desktop and mobile screenshots, including a paused transition midpoint, were reviewed locally. The supplied 50-image ZIP was visually matched to the book list. The updated collection cards, shelf and detail pages were reviewed with those covers, including the 320px dark-mode detail layout. No sample jackets or pending-cover message remain in the current bookshelf.
 
 The replacement regression was reproduced before the fix: the `src` changed while the browser kept displaying the old `srcset` candidate. Text tools could also overlap image tools during repeated replacement. Responsive attributes are now cleared when using a raw replacement, the text bubble appears only for actual text selections, and saving waits for image preparation. Opening the link editor hides the text bubble, and floating text tools stay below the composer panels.
 

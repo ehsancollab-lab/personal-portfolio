@@ -17,10 +17,22 @@ function cover(book) {
   const wrapper = element('span', 'book-cover');
   wrapper.dataset.bookCover = book.id;
   if (book.cover) {
+    const art = book.coverImage;
+    const frame = art?.frame || [0, 0, art?.width || 7, art?.height || 10];
+    const [left, top, width, height] = frame;
+    wrapper.style.aspectRatio = width + ' / ' + height;
+    const viewport = element('span', 'book-cover-viewport');
     const image = element('img');
-    responsiveImage(image, book.cover, { eager: true, sizes: '(max-width: 700px) 42vw, 260px' });
+    const scale = art ? art.width / width : 1;
+    responsiveImage(image, book.cover, { eager: true, sizes: `(max-width: 700px) ${Math.ceil(42 * scale)}vw, ${Math.ceil(285 * scale)}px` });
     image.alt = book.title + ' — book cover';
-    wrapper.append(image);
+    if (art) {
+      image.style.width = art.width / width * 100 + '%';
+      image.style.height = art.height / height * 100 + '%';
+      image.style.left = -left / width * 100 + '%';
+      image.style.top = -top / height * 100 + '%';
+    }
+    viewport.append(image); wrapper.append(viewport);
   } else {
     // A deliberate sample jacket, not an approximation of an actual edition.
     const sample = element('span', 'sample-cover');
@@ -109,7 +121,8 @@ function renderAbout(main) {
     count.textContent = term ? total + (total === 1 ? ' collection found' : ' collections found') : 'Showing all collections';
     empty.hidden = total > 0;
   });
-  library.append(head, field, count, grid, empty, element('p', 'library-cover-note', 'Sample cover art. Original covers coming soon.'));
+  library.append(head, field, count, grid, empty);
+  if (books.some(book => !book.cover)) library.append(element('p', 'library-cover-note', 'Sample cover art. Original covers coming soon.'));
   main.append(intro, library);
   document.title = 'About Me — Ehsan Masoomi';
   document.querySelector('meta[name="description"]').content = 'A self-taught UI/UX designer, a little about life outside work, and the books Ehsan Masoomi has read.';

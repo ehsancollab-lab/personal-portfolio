@@ -22,7 +22,7 @@
 .collection-card-title { margin: 25px 16px 4px; font-size: 19px; font-weight: 500; letter-spacing: -.025em; line-height: 1.4; text-align: center; }
 .collection-card-description { margin: 0 16px; color: var(--muted); font-size: 12px; line-height: 1.6; text-align: center; }
 .book-fan { position: absolute; left: 50%; bottom: -18px; display: block; width: 138px; height: 198px; transform: translateX(-50%); }
-.book-fan > .book-cover { position: absolute; inset: 0; height: 100%; transform-origin: 50% 90%; transition: transform 520ms cubic-bezier(.22,.75,.2,1); }
+.book-fan > .book-cover { position: absolute; inset: auto 0 0; height: auto; transform-origin: 50% 90%; transition: transform 520ms cubic-bezier(.22,.75,.2,1); }
 .book-fan > .book-cover:nth-child(1) { z-index: 1; transform: translateX(-86px) rotate(-7deg); }
 .book-fan > .book-cover:nth-child(2) { z-index: 2; transform: translateY(-7px); }
 .book-fan > .book-cover:nth-child(3) { z-index: 3; transform: translateX(86px) rotate(7deg); }
@@ -35,6 +35,8 @@
 .book-collection-card:focus-visible .book-fan > .book-cover:nth-child(2) { transform: translateY(-20px); }
 .book-cover { position: relative; display: block; width: 100%; aspect-ratio: .7; border-radius: 2px 5px 5px 2px; box-shadow: -2px 3px 4px #00000014, 0 13px 19px -7px #00000030; container-type: inline-size; }
 .book-cover > img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
+.book-cover-viewport { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; }
+.book-cover-viewport > img { position: absolute; display: block; width: 100%; height: 100%; max-width: none; }
 .sample-cover { --cover-paper: #dfd2bb; --cover-ink: #36332c; position: absolute; inset: 0; display: flex; flex-direction: column; overflow: hidden; padding: 12% 12% 9% 16%; border: 1px solid #0000000c; border-radius: inherit; background: var(--cover-paper); color: var(--cover-ink); box-shadow: inset 5px 0 4px #00000012, inset 8px 0 1px #ffffff24; }
 .sample-cover[data-palette="sage"] { --cover-paper: #c5cdbb; --cover-ink: #2c382d; }
 .sample-cover[data-palette="ink"] { --cover-paper: #363c46; --cover-ink: #f1ece2; }

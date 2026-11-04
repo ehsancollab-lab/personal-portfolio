@@ -11,7 +11,7 @@ const output = resolve(root, 'build', target);
 await rm(output, { recursive: true, force: true });
 await mkdir(output, { recursive: true });
 const files = target === 'site'
-  ? ['index.html', 'case-studies.html', 'case-study.html', 'experience.html', 'about.html', 'books.html', 'book.html', 'library.js', 'library.css', 'library-content.js', 'book-sources.js', 'styles.css', 'theme-init.js', 'app.js', 'content.js', 'case-content.js', 'data', 'assets']
+  ? ['index.html', 'case-studies.html', 'case-study.html', 'experience.html', 'about.html', 'books.html', 'book.html', 'library.js', 'library.css', 'library-content.js', 'book-sources.js', 'book-covers.js', 'styles.css', 'theme-init.js', 'app.js', 'content.js', 'case-content.js', 'data', 'assets']
   : ['admin.js', 'admin.css', 'content.js', 'case-content.js', 'assets', 'login.html', 'login.css', 'login.js'];
 files.push('typography.js', 'story-model.js', 'story-render.js', 'images.js', 'image-manifest.js', 'case-cards.js', 'case-cards.css', 'published-content.js', 'site-shell.js');
 if (target === 'admin') files.push('case-editor.js', 'case-editor.css');

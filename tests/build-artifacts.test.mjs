@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { access, readFile } from 'node:fs/promises';
 import { buildPages } from '../scripts/build-pages.mjs';
+import { books } from '../library-content.js';
 
 for (const target of ['site', 'admin']) await buildPages(target);
 const read = (path) => readFile(new URL('../build/' + path, import.meta.url), 'utf8');
@@ -39,4 +40,21 @@ test('About, collections and book details have direct public routes and local li
   await access(new URL('../build/site/assets/fonts/vazirmatn-arabic-wght-normal.woff2', import.meta.url));
   assert.match(await read('site/index.html'), /data-page-link="about"/);
   assert.doesNotMatch(await read('site/library-content.js'), /GITHUB_CONTENT_TOKEN|ADMIN_PASSWORD/);
+});
+
+test('all 50 original cover files and their responsive WebP variants are in the public build', async () => {
+  const manifestText = await read('site/image-manifest.js');
+  const manifest = JSON.parse(manifestText.replace(/^export const imageManifest = /, '').replace(/;\s*$/, ''));
+  for (const book of books) {
+    await access(new URL('../build/site/' + book.cover, import.meta.url));
+    const entry = manifest[book.cover];
+    assert.ok(entry, book.id);
+    assert.equal(entry.width, book.coverImage.width);
+    assert.equal(entry.height, book.coverImage.height);
+    assert.ok(entry.variants.length >= 2, book.id);
+    for (const variant of entry.variants) {
+      assert.match(variant.path, /^assets\/optimized\/[a-f0-9]+-\d+\.webp$/);
+      await access(new URL('../build/site/' + variant.path, import.meta.url));
+    }
+  }
 });

@@ -19,6 +19,8 @@ test('About navigation, owner biography and six three-cover collections', async 
   await expect(page.locator('.bookshelf-heading')).toContainText('50 books. 6 collections.');
   await expect(page.locator('.book-collection-card')).toHaveCount(6);
   for (const card of await page.locator('.book-collection-card').all()) await expect(card.locator('.book-cover')).toHaveCount(3);
+  await expect(page.locator('.sample-cover, .library-cover-note')).toHaveCount(0);
+  await expect.poll(() => page.locator('.book-collections img').evaluateAll(images => images.length === 18 && images.every(image => image.complete && image.naturalWidth > 0))).toBe(true);
   await expect(page.locator('.primary-nav [aria-current="page"]')).toHaveText('About Me');
   expect(documents).toHaveLength(1); expect(errors).toEqual([]);
   await page.screenshot({ path: resolve(work, 'about-desktop.png'), fullPage: true });
@@ -94,7 +96,12 @@ test('all 50 books open with the correct author, Persian title, summary, takeawa
       await expect(page.locator('.book-summary p')).toHaveText(book.summary);
       await expect(page.locator('.book-takeaway blockquote')).toHaveText(book.takeaway);
       await expect(page.locator('.book-source')).toHaveAttribute('href', book.source.url);
-      await expect(page.locator('.sample-cover')).toHaveAttribute('aria-label', 'Sample cover for ' + book.title);
+      await expect(page.locator('.sample-cover')).toHaveCount(0);
+      const image = page.locator('.book-detail-art img');
+      await expect(image).toHaveAttribute('alt', book.title + ' — book cover');
+      await expect(image).toHaveAttribute('srcset', /320w/);
+      await expect.poll(() => image.evaluate(node => node.complete && node.naturalWidth > 0)).toBe(true);
+      expect(await image.evaluate(node => node.currentSrc)).toMatch(/\/assets\/optimized\/[a-f0-9]+-\d+\.webp$/);
       await page.locator('.library-back').click();
       await expect(page.locator('.collection-panel h1')).toHaveText(category.title);
     }
