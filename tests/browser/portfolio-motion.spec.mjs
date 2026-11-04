@@ -24,7 +24,7 @@ test('Selected Work has large single-column cards, smaller corners and responsiv
   await page.screenshot({ path: resolve(work, 'selected-work-large-static.png') });
 });
 
-test('featured fans and shelves show the requested books and library edges align', async ({ page }) => {
+test('featured fans and shelves show the requested books in the centered, header-width layout', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(site + '/about.html');
   const expected = {
@@ -34,18 +34,18 @@ test('featured fans and shelves show the requested books and library edges align
   };
   const intro = await page.locator('.about-introduction').boundingBox();
   const grid = await page.locator('.book-collections').boundingBox();
-  const search = await page.locator('.library-search').boundingBox();
+  const header = await page.locator('.site-header').boundingBox();
   expect(Math.abs(intro.x - grid.x)).toBeLessThan(1);
-  expect(Math.abs(search.x - grid.x)).toBeLessThan(1);
-  expect(Math.abs(search.width - grid.width)).toBeLessThan(1);
+  expect(Math.abs(header.x - grid.x)).toBeLessThan(1);
+  expect(Math.abs(header.width - grid.width)).toBeLessThan(1);
+  await expect(page.getByRole('searchbox')).toHaveCount(0);
   for (const [id, books] of Object.entries(expected)) {
     const card = page.locator('.book-collection-card[data-category-id="' + id + '"]');
     expect(await card.locator('[data-book-cover]').evaluateAll(nodes => nodes.map(n => n.dataset.bookCover))).toEqual(books);
     await card.click();
     expect(await page.locator('.featured-book-shelf [data-book-cover]').evaluateAll(nodes => nodes.map(n => n.dataset.bookCover))).toEqual(books);
-    const title = await page.locator('.collection-page-heading').boundingBox();
-    const field = await page.locator('.library-search').boundingBox();
-    expect(Math.abs(title.x - field.x)).toBeLessThan(1);
+    await expect(page.locator('.collection-page-heading')).toHaveCSS('text-align', 'center');
+    await expect(page.getByRole('searchbox')).toHaveCount(0);
     const heights = await page.locator('.featured-book-shelf .book-cover').evaluateAll(nodes => nodes.map(n => n.offsetHeight));
     expect(Math.max(...heights) - Math.min(...heights)).toBeLessThanOrEqual(1);
     const copy = await page.locator('.library-book-copy').evaluateAll(nodes => nodes.slice(0, 4).map(n => n.getBoundingClientRect().top));

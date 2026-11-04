@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { access, readFile } from 'node:fs/promises';
+import { access, readFile, readdir } from 'node:fs/promises';
 import { buildPages } from '../scripts/build-pages.mjs';
 import { books } from '../library-content.js';
 
@@ -57,4 +57,12 @@ test('all 50 original cover files and their responsive WebP variants are in the 
       await access(new URL('../build/site/' + variant.path, import.meta.url));
     }
   }
+});
+
+test('Lenis is pinned, hosted locally and excluded from the dashboard runtime', async () => {
+  const pkg = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'));
+  assert.equal(pkg.dependencies.lenis, '1.3.11');
+  const chunks = await readdir(new URL('../build/site/chunks/', import.meta.url));
+  assert.ok(chunks.some(name => /^lenis.*\.js$/.test(name)));
+  await assert.rejects(() => access(new URL('../build/admin/smooth-scroll.js', import.meta.url)));
 });

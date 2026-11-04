@@ -86,9 +86,12 @@ test('responsive images, local fonts, dark icons, text animation and small scree
   await page.getByRole('button', { name: 'Switch to light theme' }).click();
   for (const width of [390, 320]) {
     await page.setViewportSize({ width, height: 844 });
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     const cards = page.locator('.case-study-card');
-    const first = await cards.nth(0).boundingBox(); const second = await cards.nth(1).boundingBox();
+    const [first, second] = await cards.evaluateAll(nodes => nodes.slice(0, 2).map(node => {
+      const rect = node.getBoundingClientRect(); return { y: rect.y, height: rect.height };
+    }));
     expect(second.y).toBeGreaterThan(first.y + first.height);
     await page.screenshot({ path: resolve(work, `case-studies-${width}.png`), fullPage: true });
   }

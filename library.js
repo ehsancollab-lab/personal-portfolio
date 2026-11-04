@@ -9,7 +9,6 @@ const element = (tag, className, text) => {
 };
 const categoryURL = id => './books.html?category=' + encodeURIComponent(id);
 const bookURL = id => './book.html?id=' + encodeURIComponent(id);
-const normalized = value => String(value).normalize('NFKC').toLowerCase().replace(/[يى]/g, 'ی').replace(/ك/g, 'ک').replace(/[\u064b-\u065f]/g, '').replace(/[^\p{L}\p{N}]/gu, '');
 export const libraryPages = new Set(['about', 'books', 'book']);
 const palettes = ['sand', 'sage', 'ink', 'rose', 'blue', 'ochre'];
 
@@ -60,21 +59,6 @@ function toolbar(main, href, text) {
   const icon = element('img'); icon.src = './assets/figma/theme-toggle.svg'; icon.width = 32; icon.height = 32; icon.alt = '';
   theme.append(icon); bar.append(backLink(href, text), theme); main.append(bar);
 }
-function search(label, placeholder) {
-  const field = element('label', 'library-search');
-  field.append(element('span', 'visually-hidden', label));
-  const input = element('input'); input.type = 'search'; input.placeholder = placeholder; input.autocomplete = 'off';
-  field.append(input);
-  return { field, input };
-}
-function emptySearch(input) {
-  const empty = element('div', 'library-empty');
-  empty.hidden = true;
-  const clear = element('button', 'library-clear', 'Clear search'); clear.type = 'button';
-  clear.addEventListener('click', () => { input.value = ''; input.dispatchEvent(new Event('input')); input.focus(); });
-  empty.append(element('p', '', 'No books match that search.'), clear);
-  return empty;
-}
 function categoryCard(category, index) {
   const items = booksInCategory(category.id);
   const link = element('a', 'book-collection-card'); link.href = categoryURL(category.id); link.dataset.categoryId = category.id;
@@ -106,23 +90,9 @@ function renderAbout(main) {
   const copy = element('div'); const title = element('h2', '', 'My bookshelf'); title.id = 'bookshelf-title';
   copy.append(title, element('p', '', books.length + ' books. ' + bookCategories.length + ' collections. A few ideas that stayed with me.'));
   head.append(copy);
-  const { field, input } = search('Search my book collections', 'Search collections or books');
-  const count = element('p', 'library-result-count', 'Showing all collections'); count.setAttribute('role', 'status');
   const grid = element('div', 'book-collections');
-  const cards = bookCategories.map(categoryCard); grid.append(...cards);
-  const empty = emptySearch(input);
-  input.addEventListener('input', () => {
-    const term = normalized(input.value);
-    cards.forEach((card, index) => {
-      const category = bookCategories[index];
-      const haystack = [category.title, category.description, ...booksInCategory(category.id).flatMap(book => [book.title, book.titleFa, book.author])].join(' ');
-      card.hidden = !normalized(haystack).includes(term);
-    });
-    const total = cards.filter(card => !card.hidden).length;
-    count.textContent = term ? total + (total === 1 ? ' collection found' : ' collections found') : 'Showing all collections';
-    empty.hidden = total > 0;
-  });
-  library.append(head, field, count, grid, empty);
+  grid.append(...bookCategories.map(categoryCard));
+  library.append(head, grid);
   if (books.some(book => !book.cover)) library.append(element('p', 'library-cover-note', 'Sample cover art. Original covers coming soon.'));
   main.append(intro, library);
   document.title = 'About Me — Ehsan Masoomi';
@@ -138,28 +108,18 @@ function renderCollection(main, params) {
   heading.append(element('p', 'library-eyebrow', 'MY BOOKSHELF'));
   const title = element('h1', '', category.title); title.dataset.categoryTitle = category.id;
   heading.append(title, element('p', '', category.description));
-  const { field, input } = search('Search ' + category.title, 'Search this collection');
   const shelf = element('div', 'featured-book-shelf');
   shelf.setAttribute('aria-label', 'Three books from this collection');
   category.featured.map(bookById).forEach(book => {
     const link = element('a', 'shelf-book'); link.href = bookURL(book.id); link.dataset.bookId = book.id;
     link.setAttribute('aria-label', 'Read about ' + book.title); link.append(cover(book)); shelf.append(link);
   });
-  panel.append(heading, field, shelf);
+  panel.append(heading, shelf);
   const list = element('section', 'collection-book-list'); list.setAttribute('aria-label', 'Books in this collection');
   const items = booksInCategory(category.id);
-  const count = element('p', 'library-result-count', 'Showing all ' + items.length + ' books'); count.setAttribute('role', 'status');
+  const count = element('p', 'library-result-count', 'Showing all ' + items.length + ' books');
   const grid = element('div', 'library-book-grid'); const cards = items.map(bookCard); grid.append(...cards);
-  const empty = emptySearch(input);
-  input.addEventListener('input', () => {
-    const term = normalized(input.value);
-    cards.forEach((card, i) => { const book = items[i]; card.hidden = !normalized([book.title, book.titleFa, book.author, book.topics].join(' ')).includes(term); });
-    const total = cards.filter(card => !card.hidden).length;
-    shelf.hidden = Boolean(term);
-    count.textContent = term ? total + (total === 1 ? ' book found' : ' books found') : 'Showing all ' + items.length + ' books';
-    empty.hidden = total > 0;
-  });
-  list.append(count, grid, empty); main.append(panel, list);
+  list.append(count, grid); main.append(panel, list);
   document.title = category.title + ' · My Bookshelf — Ehsan Masoomi';
   document.querySelector('meta[name="description"]').content = category.description + ' Books read by Ehsan Masoomi, with short summaries and personal takeaways.';
 }

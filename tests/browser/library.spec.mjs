@@ -59,24 +59,33 @@ test('collection expansion and reverse motion share the surface, title and three
   expect(documents).toHaveLength(1); expect(errors).toEqual([]);
 });
 
-test('English and Persian search filters visible cards and supports clearing an empty result', async ({ page }) => {
+test('annotated About layout matches the header, centers its heading and removes search', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(site + '/about.html');
-  const search = page.getByRole('searchbox');
-  await search.fill('Cal Newport');
-  await expect(page.locator('.book-collection-card:visible')).toHaveCount(1);
-  await expect(page.locator('.book-collection-card:visible')).toContainText('Work & business');
-  await search.fill('دل بستگي');
-  await expect(page.locator('.book-collection-card:visible')).toHaveCount(1);
-  await page.locator('.book-collection-card:visible').click();
-  await page.getByRole('searchbox').fill('دل بستگي');
-  await expect(page.locator('.library-book-card:visible')).toHaveCount(1);
-  await expect(page.locator('.library-book-card:visible')).toContainText('Attached');
-  await expect(page.locator('.featured-book-shelf')).toBeHidden();
-  await page.getByRole('searchbox').fill('a title that does not exist');
-  await expect(page.locator('.library-book-card:visible')).toHaveCount(0);
-  await expect(page.getByRole('status')).toContainText('0 books found');
-  await page.getByRole('button', { name: 'Clear search' }).click();
+  await expect(page.getByRole('searchbox')).toHaveCount(0);
+  await expect(page.locator('.about-library .library-result-count')).toHaveCount(0);
+  await expect(page.locator('.bookshelf-heading')).toHaveCSS('text-align', 'center');
+  for (const width of [1440, 800, 700, 600, 390, 320]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    const header = await page.locator('.site-header').boundingBox();
+    const intro = await page.locator('.about-introduction').boundingBox();
+    const cards = await page.locator('.book-collection-card').all();
+    expect(Math.abs(header.x - intro.x)).toBeLessThan(1);
+    expect(Math.abs(header.width - intro.width)).toBeLessThan(1);
+    let previous;
+    for (const card of cards) {
+      const box = await card.boundingBox();
+      expect(Math.abs(header.x - box.x)).toBeLessThan(1);
+      expect(Math.abs(header.width - box.width)).toBeLessThan(1);
+      if (previous) expect(box.y).toBeGreaterThan(previous.y + previous.height);
+      previous = box;
+    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  }
+  await page.locator('.book-collection-card').first().click();
+  await expect(page.getByRole('searchbox')).toHaveCount(0);
+  await expect(page.locator('.collection-page-heading')).toHaveCSS('text-align', 'center');
   await expect(page.locator('.library-book-card:visible')).toHaveCount(13);
   await expect(page.locator('.featured-book-shelf')).toBeVisible();
 });
@@ -110,10 +119,9 @@ test('all 50 books open with the correct author, Persian title, summary, takeawa
   expect(errors).toEqual([]);
 });
 
-test('book motion, cached search, scroll, title and browser back and forward work together', async ({ page }) => {
+test('book motion, cached collection scroll, title and browser back and forward work together', async ({ page }) => {
   const errors = []; page.on('pageerror', error => errors.push(error.message));
   await page.goto(site + '/books.html?category=fiction');
-  await page.getByRole('searchbox').fill('Orwell');
   const card = page.locator('.library-book-card[data-book-id="animal-farm"]');
   await card.scrollIntoViewIfNeeded();
   const before = await page.evaluate(() => scrollY);
@@ -121,12 +129,12 @@ test('book motion, cached search, scroll, title and browser back and forward wor
   await expect(page).toHaveTitle('Animal Farm · My Bookshelf — Ehsan Masoomi');
   await page.screenshot({ path: resolve(work, 'book-desktop.png'), fullPage: true });
   await page.locator('.library-back').click(); await settled(page);
-  await expect(page.getByRole('searchbox')).toHaveValue('Orwell');
-  await expect(page.locator('.library-book-card:visible')).toHaveCount(2);
+  await expect(page.getByRole('searchbox')).toHaveCount(0);
+  await expect(page.locator('.library-book-card:visible')).toHaveCount(11);
   expect(Math.abs(await page.evaluate(() => scrollY) - before)).toBeLessThan(3);
   await expect(page).toHaveTitle('Fiction & literature · My Bookshelf — Ehsan Masoomi');
   await page.goBack(); await expect(page.locator('.book-detail-copy h1')).toHaveText('Animal Farm'); await settled(page);
-  await page.goForward(); await expect(page.getByRole('searchbox')).toHaveValue('Orwell'); await settled(page);
+  await page.goForward(); await expect(page.locator('.library-book-card')).toHaveCount(11); await settled(page);
   expect(errors).toEqual([]);
 });
 

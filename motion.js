@@ -2,6 +2,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
+export const motionRuntime = { ticker: gsap.ticker, scrollTrigger: ScrollTrigger };
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 let cleanup = () => {};
 let generation = 0;

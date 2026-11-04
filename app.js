@@ -9,7 +9,8 @@ import { publishedContent } from "./published-content.js";
 import { animateTypography } from "./typography.js";
 import { createSiteHeader } from "./site-shell.js";
 import { renderLibrary, transitionLibrary, cancelLibraryTransition, libraryPages } from './library.js';
-import { mountPageMotion } from './motion.js';
+import { mountPageMotion, motionRuntime } from './motion.js';
+import { initSmoothScroll, scrollToPosition, scrollToSection } from './smooth-scroll.js';
 
 const root = document.documentElement;
 let page = document.body.dataset.page || "selected-work";
@@ -447,6 +448,7 @@ function navigate(url, push = true, trigger = null) {
   if (!next || (push && url.href === location.href && next === page)) return;
   const version = ++navigationVersion;
   scrollPositions.set(currentRoute, scrollY);
+  scrollToPosition(scrollY);
   const swap = () => {
     if (version !== navigationVersion) return false;
     if (push) history.pushState({}, '', url.href);
@@ -454,7 +456,7 @@ function navigate(url, push = true, trigger = null) {
     currentRoute = routeKey(url);
     currentURL = new URL(url.href);
     const restore = !push || trigger?.hasAttribute('data-restore-scroll');
-    window.scrollTo({ top: restore ? scrollPositions.get(currentRoute) || 0 : 0, behavior: 'instant' });
+    scrollToPosition(restore ? scrollPositions.get(currentRoute) || 0 : 0);
     main.focus({ preventScroll: true });
     return true;
   };
@@ -464,12 +466,25 @@ function navigate(url, push = true, trigger = null) {
 document.addEventListener('click', event => {
   const link = event.target.closest('a[href]');
   if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.target || link.hasAttribute('download')) return;
-  const url = new URL(link.href, location.href);
-  if (url.origin !== location.origin || !routeFor(url) || (url.pathname === location.pathname && url.search === location.search && url.hash)) return;
+  const href = link.getAttribute('href');
+  const url = new URL(href?.startsWith('#') ? href : link.href, location.href);
+  if (url.origin !== location.origin || !routeFor(url)) return;
+  if (routeKey(url) === currentRoute && url.hash) {
+    let id;
+    try { id = decodeURIComponent(url.hash.slice(1)); } catch { return; }
+    const target = document.getElementById(id);
+    if (!target) return;
+    event.preventDefault();
+    history.replaceState(history.state, '', url.href);
+    currentURL = new URL(url.href);
+    scrollToSection(target, { immediate: link.classList.contains('skip-link') });
+    return;
+  }
   event.preventDefault(); navigate(url, true, link);
 });
 window.addEventListener('popstate', () => navigate(new URL(location.href), false));
 history.scrollRestoration = 'manual';
+initSmoothScroll(motionRuntime);
 // Revalidate in the background; the build embeds content for an immediate first render.
 (async () => {
   try {

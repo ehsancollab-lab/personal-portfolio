@@ -13,19 +13,22 @@ Latest verification: 2026-11-04.
 - Automated checks use stable supplied-content fixtures. Deployment checks compare built content to the current owner-managed JSON and do not require a fixed card count.
 - Dashboard tools live in a settings dropdown to the right of the centered title. Confirmed publications show a temporary `Saved to GitHub` toast; initial loading does not show a false success, and failed/conflicting saves retain recovery actions.
 - About Me is restored in the public navigation. The introduction uses the owner-provided facts: self-taught UI/UX designer, married, and loves reading. The bookshelf contains 50 books in six collections, with three representative covers per collection.
-- Collection cards expand into a shelf using shared surface, title and cover transitions. Book covers move into their detail view and back to their original shelf/grid position. Cached search and scroll survive returning; interrupted navigation keeps the latest destination. Reduced motion skips the transitions, and browsers without View Transitions use animated cover clones.
+- Collection cards expand into a shelf using shared surface, title and cover transitions. Book covers move into their detail view and back to their original shelf/grid position. Cached collection scroll survives returning; interrupted navigation keeps the latest destination. Reduced motion skips the transitions, and browsers without View Transitions use animated cover clones.
 - Each book has its English and Persian titles, author, topics, an original short summary, an owner-requested first-person takeaway and a Persian research source. Sources are recorded in `book-sources.js`; the takeaways are editorial copy, not quotations from the books.
 - All 50 owner-supplied covers replace the temporary sample jackets. The unmodified PNG files live under `assets/books`; `book-covers.js` records their book assignments, dimensions, display frames and SHA-256 hashes. CSS frames hide the surrounding white photo margins while preserving the complete cover and its proportions; full-page white cover designs retain their paper margins. Responsive WebP variants are generated for display. Persian titles use locally hosted Vazirmatn.
 - Featured psychology books are Behave, Why Has Nobody Told Me This Before? and Self-Compassion. Design features Visual Literacy, Principles of Form and Design and the Masoud Sepehr graphic-analysis book. Growth features Twelve Rules for Life in place of Atomic Habits.
-- About copy, bookshelf heading and search share their left edge. Collection headings and search share the panel's inner edge. Fans, shelves and grid covers use a common height within each context while preserving their individual aspect ratios; grid titles start on the same row baseline.
+- The annotated About layout matches the shared header's width and left edge at desktop and mobile breakpoints. Its six collection cards form a single column with larger desktop fans, and the introductory gap is reduced. My bookshelf and the collection-page headings are centered. About and collection search controls are removed, along with About's filter-status line; category book totals remain. Fans, shelves and grid covers preserve their individual aspect ratios at a common height within each context, and grid titles start on the same row baseline.
 - Selected Work uses a single column, artwork up to 1680px wide, responsive image candidates sized for that layout, and 12px desktop / 8px mobile outer corners.
 - GSAP supplies page entry and ScrollTrigger project reveals. A lazily loaded Three.js scene provides pointer-driven perspective, gentle surface deformation and a GLSL light/ripple shader. It uses one canvas, capped device pixel ratio, only nearby card textures, decoded bitmaps with actual source-pixel dimensions, and no repeated GPU draws when idle. Route changes and context loss release textures, bitmaps, geometry and the renderer. Reduced motion, touch-only pointers, data-saving mode and unavailable WebGL retain the normal image gallery.
+- Locally hosted Lenis 1.3.11 starts after fonts are ready, with `lerp: 0.085`, `wheelMultiplier: 0.92`, smooth wheel input and native touch scrolling. It uses the GSAP ticker and updates ScrollTrigger; layout refreshes resize its measurements. Same-view anchors use a 1.3-second quartic ease, 35px desktop / 20px small-screen offsets, destination focus and a replaced URL hash. Skip links and route/history scroll restoration are immediate. Dialogs and `[data-scroll-native]` areas scroll independently; modal background motion stops. Reduced motion, page hide/show and chunk-loading failures cleanly restore or retain native scrolling. The dashboard does not load Lenis.
 
 ## Executed checks
 
-`npm test`: 33 server, story schema, book metadata, original-image integrity and build checks.
+`npm test`: 34 server, story schema, book metadata, original-image integrity and build checks.
 
-`npm run test:browser`: 35 Chromium scenarios:
+`npm run test:browser`: 42 Chromium scenarios:
+
+The full suite was followed by a targeted rerun of the responsive-layout scenario after making its viewport measurements frame-stable. All 42 scenarios passed across these runs; the implementation was unchanged during that test-only adjustment.
 
 1. Section switching without additional document requests, cached header/view identity, detail navigation and back/forward.
 2. Responsive image selection, local fonts, saved dark theme/icons, typography animation, reduced motion and layouts at 1440/390/320px.
@@ -47,21 +50,28 @@ Latest verification: 2026-11-04.
 18. The settings menu stays within 390/320px screens, preserves 44px menu targets and respects reduced motion.
 19. About navigation, biography facts, the complete count and six three-cover collection cards.
 20. Shared surface/title/three-cover names on collection expansion and reverse motion, without extra document requests.
-21. English author and Persian title search, Arabic/Persian letter normalization, hidden results and clearing an empty search.
+21. Annotated About alignment with the header at 1440/800/700/600/390/320px, large single-column category cards, centered headings and absence of search controls/filter status.
 22. Opening all 50 books through their collection cards and checking author, Persian title, summary, takeaway, source, loaded responsive WebP cover, absence of sample artwork and Back.
-23. Book transition, cached collection search and scroll, document titles, and browser back/forward.
+23. Book transition, cached collection scroll, document titles, and browser back/forward.
 24. About, collection and book layouts at 390/320px in dark mode, persistent theme and local Persian font loading.
 25. Reduced motion bypasses the shared transition API, and keyboard Enter opens a collection.
 26. Cover-clone animation and cleanup when View Transitions are unavailable.
 27. Direct book/collection aliases and usable invalid-link states.
 28. Rapid navigation cancels prior motion, retains the latest destination and leaves no named transition elements behind.
 29. Large single-column Selected Work geometry, smaller corners and responsive images at 1920/1440/390/320px.
-30. Requested featured books in both fans and shelves; consistent search edges, shelf heights and grid-title alignment.
+30. Requested featured books in both fans and shelves; header-width About layout, centered collection headings, shelf heights and grid-title alignment.
 31. GSAP page entry and project reveals on scroll.
 32. Real Three.js shader pixels, pointer reaction, idle draw-count stability and canvas cleanup when changing pages.
 33. Reduced motion prevents and disposes the GPU scene while restoring the semantic image gallery.
 34. Missing WebGL and context loss preserve the normal project images.
 35. Touch layouts use the static gallery and keep book rows aligned at 390/320px.
+36. Wheel input eases through intermediate positions and a 600px input reaches the configured 552px target while retaining native scroll position.
+37. Section anchors update the URL, stop at the responsive padding offset and focus their destination.
+38. Skip links jump immediately and resolve correctly on extensionless routes.
+39. Reduced motion and page hide/show remove and recreate Lenis without changing the scroll position.
+40. Native nested scroll regions and modal dialogs scroll independently; closing the modal resumes background wheel scrolling.
+41. Route changes cancel pending inertia, and book Back/browser history restore collection position.
+42. A missing Lenis chunk falls back to native scrolling and usable skip links.
 
 The GPU browser scenarios use Chromium's software WebGL renderer to exercise actual shader compilation, draw calls and pixel output. An initial responsive-HTML-image texture size mismatch was reproduced and fixed by uploading decoded ImageBitmaps with their real pixel dimensions. A separate dark-theme resize check found no WebGL errors or horizontal overflow.
 
