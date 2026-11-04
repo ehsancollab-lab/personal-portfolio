@@ -1,8 +1,8 @@
 # Ehsan Masoomi Portfolio
 
-Responsive, English-only portfolio based on the supplied Figma frames, with independent GitHub Pages hosting and a password-protected Cloudflare Pages dashboard.
+Responsive English/Persian portfolio based on the supplied Figma frames, with independent GitHub Pages hosting and a password-protected Cloudflare Pages dashboard.
 
-The site includes Selected Work, a Case Studies list and detail page, and Experience.
+The site includes Selected Work, Case Studies, an Experience timeline, About Me, and a 50-book library.
 
 ## Build and hosting
 
@@ -32,7 +32,11 @@ Browser integration checks use `npm run test:browser`. They run Chromium against
 - assets/Ehsan-Masoomi-CV-EN.pdf is the supplied downloadable CV.
 - assets/figma/ contains the profile portrait and header icons exported from the Figma frame.
 - The CV download and theme control sit in the top header row, as shown in Figma. The theme control uses the Figma moon icon in light mode and a filled sun icon in dark mode.
-- The portfolio and dashboard always use English and a left-to-right layout.
+- The public portfolio switches between English/LTR and Persian/RTL. The language preference persists across routes and reloads. Persian uses the supplied On Regular and On SemiBold webfonts; the dashboard remains English/LTR.
+- `i18n.js`, `content-fa.js`, and `books-fa.js` contain UI labels and the Persian versions of the current published copy. Future English copy edits keep their source text until a corresponding translation is added.
+- The mobile section tabs scroll horizontally. A bottom capsule repeats the four sections when the original tabs scroll out of view.
+- Experience follows the supplied vertical timeline reference and keeps the existing bullet points. Company logos currently use owner-approved initial placeholders pending the official files.
+- Pointer clicks use a short sample from the supplied recording, with a fine-pointer halo and click ripple. Interior Back links have an Escape shortcut. A progressive, theme-aware bottom blur stays behind usable navigation and footer links.
 - admin.html is an English-only responsive content dashboard for Selected Work, Case Studies, Experience, and profile/contact details. It supports create, edit, delete, visibility, Selected Work reordering, import, and JSON export.
 - Case study content uses simple Markdown headings, bullets, and local image markers in the Details field. The available image names appear in the image selector and the field hint.
 - `data/portfolio.json` is the shared published content, loaded by all public visitors.

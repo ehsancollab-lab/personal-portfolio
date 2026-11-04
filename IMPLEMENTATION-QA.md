@@ -15,20 +15,26 @@ Latest verification: 2026-11-04.
 - About Me is restored in the public navigation. The introduction uses the owner-provided facts: self-taught UI/UX designer, married, and loves reading. The bookshelf contains 50 books in six collections, with three representative covers per collection.
 - Collection cards expand into a shelf using shared surface, title and cover transitions. Book covers move into their detail view and back to their original shelf/grid position. Cached collection scroll survives returning; interrupted navigation keeps the latest destination. Reduced motion skips the transitions, and browsers without View Transitions use animated cover clones.
 - Each book has its English and Persian titles, author, topics, an original short summary, an owner-requested first-person takeaway and a Persian research source. Sources are recorded in `book-sources.js`; the takeaways are editorial copy, not quotations from the books.
-- All 50 owner-supplied covers replace the temporary sample jackets. The unmodified PNG files live under `assets/books`; `book-covers.js` records their book assignments, dimensions, display frames and SHA-256 hashes. CSS frames hide the surrounding white photo margins while preserving the complete cover and its proportions; full-page white cover designs retain their paper margins. Responsive WebP variants are generated for display. Persian titles use locally hosted Vazirmatn.
+- All 50 owner-supplied covers replace the temporary sample jackets. The unmodified PNG files live under `assets/books`; `book-covers.js` records their book assignments, dimensions, display frames and SHA-256 hashes. CSS frames hide the surrounding white photo margins while preserving the complete cover and its proportions; full-page white cover designs retain their paper margins. Responsive WebP variants are generated for display. Each language displays one book title; the duplicated secondary Persian-name line is removed. Persian uses the owner-supplied On Regular and On SemiBold WOFF2 files.
 - Featured psychology books are Behave, Why Has Nobody Told Me This Before? and Self-Compassion. Design features Visual Literacy, Principles of Form and Design and the Masoud Sepehr graphic-analysis book. Growth features Twelve Rules for Life in place of Atomic Habits.
 - The annotated About layout matches the shared header's width and left edge at desktop and mobile breakpoints. Its six collection cards form a single column with larger desktop fans, and the introductory gap is reduced. My bookshelf and the collection-page headings are centered. About and collection search controls are removed, along with About's filter-status line; category book totals remain. Fans, shelves and grid covers preserve their individual aspect ratios at a common height within each context, and grid titles start on the same row baseline.
-- Selected Work uses a single column, artwork up to 1680px wide, responsive image candidates sized for that layout, and 12px desktop / 8px mobile outer corners.
+- Selected Work uses a single column, artwork at 70.8% of desktop viewport width, capped at 1360px (the revised 1920px reference), with full-width mobile gutters, responsive image candidates sized for that layout, and 12px desktop / 8px mobile outer corners.
 - GSAP supplies page entry and ScrollTrigger project reveals. A lazily loaded Three.js scene provides pointer-driven perspective, gentle surface deformation and a GLSL light/ripple shader. It uses one canvas, capped device pixel ratio, only nearby card textures, decoded bitmaps with actual source-pixel dimensions, and no repeated GPU draws when idle. Route changes and context loss release textures, bitmaps, geometry and the renderer. Reduced motion, touch-only pointers, data-saving mode and unavailable WebGL retain the normal image gallery.
 - Locally hosted Lenis 1.3.11 starts after fonts are ready, with `lerp: 0.085`, `wheelMultiplier: 0.92`, smooth wheel input and native touch scrolling. It uses the GSAP ticker and updates ScrollTrigger; layout refreshes resize its measurements. Same-view anchors use a 1.3-second quartic ease, 35px desktop / 20px small-screen offsets, destination focus and a replaced URL hash. Skip links and route/history scroll restoration are immediate. Dialogs and `[data-scroll-native]` areas scroll independently; modal background motion stops. Reduced motion, page hide/show and chunk-loading failures cleanly restore or retain native scrolling. The dashboard does not load Lenis.
 
+- The public EN/FA segmented control sits between CV and theme, persists in local storage, and updates `lang`, `dir`, copy and route titles. The On font uses Regular for body copy and SemiBold for headings. Persian translations cover all current profile/About/experience/case-study strings and all 50 book summaries and takeaways; the source content remains unchanged.
+- Section tabs remain one horizontally scrolling row on mobile. A fixed bottom capsule appears when the source navigation leaves the viewport, mirrors the active section and RTL direction, and hides on interior case/book/collection pages. Hidden duplicates are inert.
+- Experience follows `Rec 0040.mp4`: a vertical timeline with blue dots and scroll progress, year/date, company identity above company name and role, and the existing bullet points. Per the owner’s confirmation, company marks remain initial placeholders until their logo files are supplied. No hover project previews were added.
+- A four-layer masked backdrop blur appears at the bottom after scrolling, adapts to the theme, ignores pointer input, and leaves the bottom navigation and footer readable.
+- `Rec 0042.mp4` informed the blur/vertical text entrance, short departure transition, and interior Back button with an Escape shortcut. Click rings and the hover halo ignore pointer input; touch omits the halo, and reduced motion skips the ripple and transitions. The 220 ms WAV is cut from the owner-supplied click recording and plays only after user input.
+
 ## Executed checks
 
-`npm test`: 34 server, story schema, book metadata, original-image integrity and build checks.
+`npm test`: 37 server, story schema, book metadata, original-image integrity, localization coverage and build checks.
 
-`npm run test:browser`: 42 Chromium scenarios:
+`npm run test:browser`: 53 Chromium scenarios:
 
-The full suite was followed by a targeted rerun of the responsive-layout scenario after making its viewport measurements frame-stable. All 42 scenarios passed across these runs; the implementation was unchanged during that test-only adjustment.
+The full suite passed 51 scenarios and exposed two navigation timing cases. The floating menu now also checks actual tab geometry on scroll, covering route restoration within one observer frame. The rapid-navigation scenario waits for the new view after the intentional departure animation. Both cases and rapid page navigation passed the targeted rerun. The final affected-suite rerun covers all bilingual, pointer/floating-navigation and Lenis scenarios; all 53 scenarios have passing results across these runs.
 
 1. Section switching without additional document requests, cached header/view identity, detail navigation and back/forward.
 2. Responsive image selection, local fonts, saved dark theme/icons, typography animation, reduced motion and layouts at 1440/390/320px.
@@ -72,6 +78,17 @@ The full suite was followed by a targeted rerun of the responsive-layout scenari
 40. Native nested scroll regions and modal dialogs scroll independently; closing the modal resumes background wheel scrolling.
 41. Route changes cancel pending inertia, and book Back/browser history restore collection position.
 42. A missing Lenis chunk falls back to native scrolling and usable skip links.
+43. The EN/FA control order, persisted locale/theme, local On fonts and Regular/SemiBold weights.
+44. A single mobile tab row with horizontal scrolling, visible active tab, RTL direction and no page overflow.
+45. Single localized book titles and complete Persian author/summary/takeaway copy on interior routes.
+46. Persian rich-story text, metadata, media preservation and interior toolbar.
+47. Experience company/role order, unchanged bullets, dates, dots, mirrored timeline and approved logo placeholders.
+48. Progressive bottom blur activation, theme adaptation, pointer passthrough and footer link hit targets.
+49. Bottom capsule visibility after the source tabs leave view, all four destinations and no document navigation.
+50. Mobile/RTL bottom capsule bounds and hidden/inert state on interior pages.
+51. Hover halo, pressed state, temporary click ring and playback/decoding of the local 220 ms source WAV.
+52. Reduced-motion click behavior and the styled Back button’s Escape shortcut.
+53. Blur/vertical text keyframes and last-destination behavior during interrupted departures.
 
 The GPU browser scenarios use Chromium's software WebGL renderer to exercise actual shader compilation, draw calls and pixel output. An initial responsive-HTML-image texture size mismatch was reproduced and fixed by uploading decoded ImageBitmaps with their real pixel dimensions. A separate dark-theme resize check found no WebGL errors or horizontal overflow.
 

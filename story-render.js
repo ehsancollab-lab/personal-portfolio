@@ -1,12 +1,12 @@
 import { normalizeStoryDoc, markdownDocument, safeStoryLink, videoEmbed } from './story-model.js';
 import { responsiveImage } from './images.js';
-export function renderStory(target, document, { body = '', resolveImage } = {}) {
+export function renderStory(target, document, { body = '', resolveImage, translate = value => value } = {}) {
   let doc;
   try { doc = normalizeStoryDoc(document) || markdownDocument(body); }
   catch { doc = markdownDocument(body); }
   function render(node) {
     if (node.type === 'text') {
-      let element = globalThis.document.createTextNode(node.text);
+      let element = globalThis.document.createTextNode(translate(node.text));
       for (const mark of node.marks || []) {
         const tag = { bold: 'strong', italic: 'em', strike: 's', code: 'code', underline: 'u', link: 'a' }[mark.type];
         if (!tag) continue;
@@ -22,10 +22,10 @@ export function renderStory(target, document, { body = '', resolveImage } = {}) 
       figure.className = 'case-article-figure story-image-' + node.attrs.layout;
       if (node.attrs.src === 'evaluation.png') figure.classList.add('is-narrow');
       const image = globalThis.document.createElement('img');
-      image.alt = node.attrs.alt;
+      image.alt = translate(node.attrs.alt);
       responsiveImage(image, resolveImage(node.attrs.src), { sizes: node.attrs.layout === 'normal' ? '(max-width: 740px) calc(100vw - 40px), 700px' : '(max-width: 1100px) calc(100vw - 40px), 1100px' });
       figure.append(image);
-      if (node.attrs.caption) { const caption = globalThis.document.createElement('figcaption'); caption.textContent = node.attrs.caption; figure.append(caption); }
+      if (node.attrs.caption) { const caption = globalThis.document.createElement('figcaption'); caption.textContent = translate(node.attrs.caption); figure.append(caption); }
       return figure;
     }
     if (node.type === 'video') {
@@ -33,7 +33,7 @@ export function renderStory(target, document, { body = '', resolveImage } = {}) 
       figure.className = 'story-video';
       const iframe = globalThis.document.createElement('iframe');
       iframe.src = videoEmbed(node.attrs.src);
-      iframe.loading = 'lazy'; iframe.title = 'Case study video'; iframe.allowFullscreen = true;
+      iframe.loading = 'lazy'; iframe.title = translate('Case study video'); iframe.allowFullscreen = true;
       iframe.referrerPolicy = 'strict-origin-when-cross-origin';
       iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation');
       figure.append(iframe); return figure;

@@ -10,15 +10,17 @@ test('Selected Work has large single-column cards, smaller corners and responsiv
   await page.goto(site);
   for (const width of [1440, 1920, 390, 320]) {
     await page.setViewportSize({ width, height: 1000 });
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
     const cards = page.locator('.project-card');
     const first = await cards.nth(0).boundingBox(); const second = await cards.nth(1).boundingBox();
     expect(Math.abs(first.x - second.x)).toBeLessThan(1);
     expect(second.y).toBeGreaterThanOrEqual(first.y + first.height + 15);
-    expect(first.width).toBeGreaterThanOrEqual(width === 1920 ? 1680 : width - 80);
+    expect(first.width).toBeCloseTo(width <= 420 ? width - 32 : width <= 700 ? width - 40 : Math.min(1360, width * .708), 0);
+    expect(first.width / first.height).toBeCloseTo(2760 / 1921, 2);
     await expect(cards.first()).toHaveCSS('border-top-left-radius', width <= 700 ? '8px' : '12px');
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   }
-  await expect(page.locator('.project-card img').first()).toHaveAttribute('sizes', /1680px/);
+  await expect(page.locator('.project-card img').first()).toHaveAttribute('sizes', /1360px/);
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.locator('.project-card').first().scrollIntoViewIfNeeded();
   await page.screenshot({ path: resolve(work, 'selected-work-large-static.png') });

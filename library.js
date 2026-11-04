@@ -1,10 +1,11 @@
 import { aboutIntro, bookCategories, books, booksInCategory, categoryById, bookById } from './library-content.js';
 import { responsiveImage } from './images.js';
+import { getLocale, localizeText, localizeBook, number, phrase } from './i18n.js';
 
 const element = (tag, className, text) => {
   const node = document.createElement(tag);
   if (className) node.className = className;
-  if (text != null) node.textContent = text;
+  if (text != null) node.textContent = localizeText(text);
   return node;
 };
 const categoryURL = id => './books.html?category=' + encodeURIComponent(id);
@@ -13,6 +14,7 @@ export const libraryPages = new Set(['about', 'books', 'book']);
 const palettes = ['sand', 'sage', 'ink', 'rose', 'blue', 'ochre'];
 
 function cover(book) {
+  book = localizeBook(book);
   const wrapper = element('span', 'book-cover');
   wrapper.dataset.bookCover = book.id;
   if (book.cover) {
@@ -25,7 +27,7 @@ function cover(book) {
     const image = element('img');
     const scale = art ? art.width / width : 1;
     responsiveImage(image, book.cover, { eager: true, sizes: `(max-width: 700px) ${Math.ceil(42 * scale)}vw, ${Math.ceil(285 * scale)}px` });
-    image.alt = book.title + ' — book cover';
+    image.alt = phrase('{title} — book cover', 'جلد کتاب {title}', { title: book.title });
     if (art) {
       image.style.width = art.width / width * 100 + '%';
       image.style.height = art.height / height * 100 + '%';
@@ -36,9 +38,9 @@ function cover(book) {
   } else {
     // A deliberate sample jacket, not an approximation of an actual edition.
     const sample = element('span', 'sample-cover');
-    sample.dataset.palette = palettes[books.indexOf(book) % palettes.length];
+    sample.dataset.palette = palettes[books.findIndex(item => item.id === book.id) % palettes.length];
     sample.setAttribute('role', 'img');
-    sample.setAttribute('aria-label', 'Sample cover for ' + book.title);
+    sample.setAttribute('aria-label', phrase('Sample cover for {title}', 'جلد نمونهٔ کتاب {title}', { title: book.title }));
     sample.append(element('span', 'sample-cover-label', 'MY BOOKSHELF'), element('strong', 'sample-cover-title', book.title), element('span', 'sample-cover-author', book.author), element('span', 'sample-cover-note', 'Sample cover'));
     wrapper.append(sample);
   }
@@ -50,6 +52,8 @@ function backLink(href, text) {
   link.dataset.restoreScroll = '';
   const icon = element('span', 'library-back-icon'); icon.setAttribute('aria-hidden', 'true');
   link.prepend(icon);
+  const shortcut = element('kbd', 'back-shortcut', 'ESC'); shortcut.setAttribute('aria-hidden', 'true');
+  link.append(shortcut); link.setAttribute('aria-keyshortcuts', 'Escape');
   return link;
 }
 function toolbar(main, href, text) {
@@ -62,9 +66,9 @@ function toolbar(main, href, text) {
 function categoryCard(category, index) {
   const items = booksInCategory(category.id);
   const link = element('a', 'book-collection-card'); link.href = categoryURL(category.id); link.dataset.categoryId = category.id;
-  link.setAttribute('aria-label', category.title + ', ' + items.length + ' books');
+  link.setAttribute('aria-label', phrase('{title}, {count} books', '{title}، {count} کتاب', { title: localizeText(category.title), count: number(items.length) }));
   const meta = element('div', 'collection-card-meta');
-  meta.append(element('span', '', String(index + 1).padStart(2, '0') + ' / COLLECTION'), element('span', '', items.length + ' books'));
+  meta.append(element('span', '', phrase('{n} / COLLECTION', 'مجموعهٔ {n}', { n: getLocale() === 'en' ? String(index + 1).padStart(2, '0') : number(index + 1) })), element('span', '', phrase('{count} books', '{count} کتاب', { count: number(items.length) })));
   const title = element('h3', 'collection-card-title', category.title); title.dataset.categoryTitle = category.id;
   const fan = element('span', 'book-fan');
   category.featured.map(bookById).forEach(book => fan.append(cover(book)));
@@ -72,12 +76,12 @@ function categoryCard(category, index) {
   return link;
 }
 function bookCard(book) {
+  book = localizeBook(book);
   const link = element('a', 'library-book-card'); link.href = bookURL(book.id); link.dataset.bookId = book.id;
-  link.setAttribute('aria-label', 'Read about ' + book.title);
+  link.setAttribute('aria-label', phrase('Read about {title}', 'دربارهٔ کتاب {title}', { title: book.title }));
   const image = element('span', 'library-book-image'); image.append(cover(book));
   const copy = element('span', 'library-book-copy');
   copy.append(element('h3', '', book.title), element('span', 'library-book-author', book.author));
-  const persian = element('span', 'library-book-persian', book.titleFa); persian.lang = 'fa'; persian.dir = 'rtl'; copy.append(persian);
   link.append(image, copy);
   return link;
 }
@@ -88,15 +92,15 @@ function renderAbout(main) {
   const library = element('section', 'about-library'); library.id = 'my-books'; library.setAttribute('aria-labelledby', 'bookshelf-title');
   const head = element('div', 'bookshelf-heading');
   const copy = element('div'); const title = element('h2', '', 'My bookshelf'); title.id = 'bookshelf-title';
-  copy.append(title, element('p', '', books.length + ' books. ' + bookCategories.length + ' collections. A few ideas that stayed with me.'));
+  copy.append(title, element('p', '', phrase('{count} books. {categories} collections. A few ideas that stayed with me.', '{count} کتاب در {categories} دسته؛ چند ایده که با من مانده‌اند.', { count: number(books.length), categories: number(bookCategories.length) })));
   head.append(copy);
   const grid = element('div', 'book-collections');
   grid.append(...bookCategories.map(categoryCard));
   library.append(head, grid);
   if (books.some(book => !book.cover)) library.append(element('p', 'library-cover-note', 'Sample cover art. Original covers coming soon.'));
   main.append(intro, library);
-  document.title = 'About Me — Ehsan Masoomi';
-  document.querySelector('meta[name="description"]').content = 'A self-taught UI/UX designer, a little about life outside work, and the books Ehsan Masoomi has read.';
+  document.title = localizeText('About Me') + ' — ' + localizeText('Ehsan Masoomi');
+  document.querySelector('meta[name="description"]').content = localizeText('A self-taught UI/UX designer, a little about life outside work, and the books Ehsan Masoomi has read.');
 }
 function renderCollection(main, params) {
   const category = categoryById(params.get('category'));
@@ -109,28 +113,30 @@ function renderCollection(main, params) {
   const title = element('h1', '', category.title); title.dataset.categoryTitle = category.id;
   heading.append(title, element('p', '', category.description));
   const shelf = element('div', 'featured-book-shelf');
-  shelf.setAttribute('aria-label', 'Three books from this collection');
+  shelf.setAttribute('aria-label', localizeText('Three books from this collection'));
   category.featured.map(bookById).forEach(book => {
     const link = element('a', 'shelf-book'); link.href = bookURL(book.id); link.dataset.bookId = book.id;
-    link.setAttribute('aria-label', 'Read about ' + book.title); link.append(cover(book)); shelf.append(link);
+    link.setAttribute('aria-label', phrase('Read about {title}', 'دربارهٔ کتاب {title}', { title: localizeBook(book).title })); link.append(cover(book)); shelf.append(link);
   });
   panel.append(heading, shelf);
-  const list = element('section', 'collection-book-list'); list.setAttribute('aria-label', 'Books in this collection');
+  const list = element('section', 'collection-book-list'); list.setAttribute('aria-label', localizeText('Books in this collection'));
   const items = booksInCategory(category.id);
-  const count = element('p', 'library-result-count', 'Showing all ' + items.length + ' books');
+  const count = element('p', 'library-result-count', phrase('Showing all {count} books', 'همهٔ {count} کتاب این دسته', { count: number(items.length) }));
   const grid = element('div', 'library-book-grid'); const cards = items.map(bookCard); grid.append(...cards);
   list.append(count, grid); main.append(panel, list);
-  document.title = category.title + ' · My Bookshelf — Ehsan Masoomi';
-  document.querySelector('meta[name="description"]').content = category.description + ' Books read by Ehsan Masoomi, with short summaries and personal takeaways.';
+  document.title = localizeText(category.title) + ' · ' + phrase('My Bookshelf', 'قفسهٔ کتاب‌های من') + ' — ' + localizeText('Ehsan Masoomi');
+  document.querySelector('meta[name="description"]').content = phrase('{description} Books read by Ehsan Masoomi, with short summaries and personal takeaways.', '{description} کتاب‌هایی که احسان معصومی خوانده است، همراه با معرفی کوتاه و برداشت شخصی.', { description: localizeText(category.description) });
 }
 function notFound(main, title, description) {
   const empty = element('section', 'library-not-found'); empty.append(element('h1', '', title), element('p', '', description)); main.append(empty);
-  document.title = title + ' — Ehsan Masoomi';
+  document.title = localizeText(title) + ' — ' + localizeText('Ehsan Masoomi');
+  document.querySelector('meta[name="description"]').content = localizeText(description);
 }
 function renderBook(main, params) {
-  const book = bookById(params.get('id'));
+  const raw = bookById(params.get('id'));
+  const book = raw && localizeBook(raw);
   const category = book && categoryById(book.category);
-  toolbar(main, category ? categoryURL(category.id) : './about.html#my-books', category ? 'Back to ' + category.title : 'All collections');
+  toolbar(main, category ? categoryURL(category.id) : './about.html#my-books', category ? phrase('Back to {category}', 'بازگشت به {category}', { category: localizeText(category.title) }) : localizeText('All collections'));
   if (!book) { notFound(main, 'Book not found', 'You can find the rest of my reading list in the collections.'); return; }
   main.dataset.bookId = book.id;
   const article = element('article', 'library-book-detail');
@@ -138,18 +144,17 @@ function renderBook(main, params) {
   const copy = element('div', 'book-detail-copy');
   const categoryLink = element('a', 'library-eyebrow', category.title); categoryLink.href = categoryURL(category.id); categoryLink.dataset.restoreScroll = '';
   const title = element('h1', '', book.title);
-  const persian = element('p', 'book-detail-persian', book.titleFa); persian.lang = 'fa'; persian.dir = 'rtl';
-  const author = element('p', 'book-detail-author', 'By ' + book.author);
-  const summary = element('section', 'book-summary'); summary.setAttribute('aria-label', 'About the book');
+  const author = element('p', 'book-detail-author', phrase('By {author}', 'نویسنده: {author}', { author: book.author }));
+  const summary = element('section', 'book-summary'); summary.setAttribute('aria-label', localizeText('About the book'));
   summary.append(element('h2', '', 'About the book'), element('p', '', book.summary));
-  const takeaway = element('section', 'book-takeaway'); takeaway.setAttribute('aria-label', 'My takeaway');
+  const takeaway = element('section', 'book-takeaway'); takeaway.setAttribute('aria-label', localizeText('My takeaway'));
   takeaway.append(element('h2', '', 'My takeaway'), element('blockquote', '', book.takeaway));
   const source = element('a', 'book-source', 'Book information in Persian');
   source.href = book.source.url; source.target = '_blank'; source.rel = 'noopener noreferrer';
-  source.setAttribute('aria-label', 'Book information in Persian — ' + book.source.label + ' (opens in a new tab)');
-  copy.append(categoryLink, title, persian, author, element('p', 'book-topics', book.topics), summary, takeaway, source);
+  source.setAttribute('aria-label', phrase('Book information in Persian — {source} (opens in a new tab)', 'اطلاعات کتاب در منبع فارسی (در زبانهٔ جدید باز می‌شود)', { source: book.source.label }));
+  copy.append(categoryLink, title, author, element('p', 'book-topics', book.topics), summary, takeaway, source);
   article.append(art, copy); main.append(article);
-  document.title = book.title + ' · My Bookshelf — Ehsan Masoomi';
+  document.title = book.title + ' · ' + phrase('My Bookshelf', 'قفسهٔ کتاب‌های من') + ' — ' + localizeText('Ehsan Masoomi');
   document.querySelector('meta[name="description"]').content = book.summary;
 }
 export function renderLibrary(main, page, query = location.search) {

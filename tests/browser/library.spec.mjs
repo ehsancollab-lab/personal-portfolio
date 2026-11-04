@@ -90,7 +90,7 @@ test('annotated About layout matches the header, centers its heading and removes
   await expect(page.locator('.featured-book-shelf')).toBeVisible();
 });
 
-test('all 50 books open with the correct author, Persian title, summary, takeaway, source and Back', async ({ page }) => {
+test('all 50 books open with the correct author, single title, summary, takeaway, source and Back', async ({ page }) => {
   test.setTimeout(120000);
   const errors = []; page.on('pageerror', error => errors.push(error.message));
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -101,7 +101,7 @@ test('all 50 books open with the correct author, Persian title, summary, takeawa
       await page.locator('.library-book-card[data-book-id="' + book.id + '"]').click();
       await expect(page.locator('.book-detail-copy h1')).toHaveText(book.title);
       await expect(page.locator('.book-detail-author')).toHaveText('By ' + book.author);
-      await expect(page.locator('.book-detail-persian')).toHaveText(book.titleFa);
+      await expect(page.locator('.book-detail-persian, .library-book-persian')).toHaveCount(0);
       await expect(page.locator('.book-summary p')).toHaveText(book.summary);
       await expect(page.locator('.book-takeaway blockquote')).toHaveText(book.takeaway);
       await expect(page.locator('.book-source')).toHaveAttribute('href', book.source.url);
@@ -138,7 +138,7 @@ test('book motion, cached collection scroll, title and browser back and forward 
   expect(errors).toEqual([]);
 });
 
-test('library is responsive at 390 and 320 pixels and keeps the saved theme and local Persian font', async ({ page }) => {
+test('library is responsive at 390 and 320 pixels and keeps the saved theme without duplicate book names', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(site + '/about.html');
   await page.getByRole('button', { name: 'Switch to dark theme' }).click();
@@ -154,8 +154,7 @@ test('library is responsive at 390 and 320 pixels and keeps the saved theme and 
     await page.locator('.library-book-card[data-book-id="attached"]').click();
     await page.evaluate(() => document.fonts.ready);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    expect(await page.locator('.book-detail-persian').evaluate(node => getComputedStyle(node).fontFamily)).toContain('Vazirmatn');
-    expect(await page.evaluate(() => performance.getEntriesByType('resource').some(entry => /vazirmatn.*woff2/.test(entry.name)))).toBe(true);
+    await expect(page.locator('.book-detail-persian, .library-book-persian')).toHaveCount(0);
     await page.screenshot({ path: resolve(work, `book-${width}-dark.png`), fullPage: true });
     await page.locator('.library-back').click(); await page.locator('.library-back').click();
   }
@@ -218,6 +217,7 @@ test('rapid navigation keeps the latest destination and removes interrupted moti
   await settled(page); await page.waitForTimeout(650);
   await expect(page.locator('body')).toHaveAttribute('data-page', 'selected-work');
   await page.locator('.primary-nav').getByRole('link', { name: 'About Me', exact: true }).click();
+  await expect(page.locator('body')).toHaveAttribute('data-page', 'about');
   await page.evaluate(() => {
     document.querySelector('.book-collection-card[data-category-id="psychology"]').click();
     document.querySelector('.book-collection-card[data-category-id="growth"]').click();

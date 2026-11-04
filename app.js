@@ -9,8 +9,12 @@ import { publishedContent } from "./published-content.js";
 import { animateTypography } from "./typography.js";
 import { createSiteHeader } from "./site-shell.js";
 import { renderLibrary, transitionLibrary, cancelLibraryTransition, libraryPages } from './library.js';
-import { mountPageMotion, motionRuntime } from './motion.js';
+import { mountPageMotion, motionRuntime, transitionPage, cancelPageTransition } from './motion.js';
 import { initSmoothScroll, scrollToPosition, scrollToSection } from './smooth-scroll.js';
+import { getLocale, setLocale, localizeText, number, phrase, syncLanguageControls } from './i18n.js';
+import { mountViewportBlur } from './viewport-blur.js';
+import { createFloatingNavigation } from './floating-navigation.js';
+import { mountPointerFeedback } from './pointer-feedback.js';
 
 const root = document.documentElement;
 let page = document.body.dataset.page || "selected-work";
@@ -49,6 +53,7 @@ function defaultContent() {
 function text(value) {
   return typeof value === "string" ? value : String(value?.en || "");
 }
+const displayText = value => localizeText(text(value));
 
 function validHref(value) {
   const href = String(value || "").trim();
@@ -115,7 +120,8 @@ function externalAnchor(href, label) {
   const anchor = document.createElement("a");
   const safeHref = validHref(href);
   anchor.href = safeHref ? href : "#";
-  anchor.textContent = label;
+  anchor.textContent = localizeText(label);
+  anchor.dir = 'auto';
   if (String(href).startsWith("https://")) {
     anchor.target = "_blank";
     anchor.rel = "noopener noreferrer";
@@ -135,23 +141,13 @@ function renderLinks(target) {
 function renderBio() {
   const bio = document.querySelector("#bio");
   if (!bio) return;
-  const managedBio = contentOverride?.profile?.bio;
-  if (managedBio != null) {
-    const value = text(managedBio);
-    const names = Object.entries(copy.companyNames);
-    const pattern = new RegExp('(' + names.map(([, name]) => name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')', 'g');
-    bio.replaceChildren(...value.split(pattern).map((part) => {
-      const found = names.find(([, name]) => name === part);
-      return found ? externalAnchor(companyLinks[found[0]], part) : document.createTextNode(part);
-    }));
-    return;
-  }
-  const nodes = copy.bioSegments.map((segment) => {
-    if (segment.text !== undefined) return document.createTextNode(segment.text);
-    const key = segment.link;
-    return externalAnchor(companyLinks[key], copy.companyNames[key]);
-  });
-  bio.replaceChildren(...nodes);
+  const value = displayText(contentOverride?.profile?.bio ?? copy.bioSegments.map(segment => segment.text ?? copy.companyNames[segment.link]).join(''));
+  const names = Object.entries(copy.companyNames);
+  const pattern = new RegExp('(' + names.map(([, name]) => name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')', 'g');
+  bio.replaceChildren(...value.split(pattern).map((part) => {
+    const found = names.find(([, name]) => name === part);
+    return found ? externalAnchor(companyLinks[found[0]], part) : document.createTextNode(part);
+  }));
 }
 
 function assetPath(name) {
@@ -168,8 +164,8 @@ function createProjectCard(project, index) {
   figure.className = "project-card";
   figure.setAttribute("role", "listitem");
   const image = document.createElement("img");
-  responsiveImage(image, assetPath(project.image), { eager: index < 2, priority: index === 0, sizes: "(max-width: 420px) calc(100vw - 32px), (max-width: 700px) calc(100vw - 40px), (max-width: 920px) calc(100vw - 48px), (max-width: 1760px) calc(100vw - 80px), 1680px" });
-  image.alt = text(project.title).trim() || copy.projectAlt + " " + (index + 1);
+  responsiveImage(image, assetPath(project.image), { eager: index < 2, priority: index === 0, sizes: "(max-width: 420px) calc(100vw - 32px), (max-width: 700px) calc(100vw - 40px), (max-width: 1920px) 70.8vw, 1360px" });
+  image.alt = displayText(project.title).trim() || phrase('Selected work preview {n}', 'پیش‌نمایش کار منتخب {n}', { n: number(index + 1) });
 
   image.decoding = "async";
   image.loading = index < 2 ? "eager" : "lazy";
@@ -208,14 +204,16 @@ function renderCaseStudies() {
   if (!items.length) {
     const empty = document.createElement("p");
     empty.className = "empty-page-message";
-    empty.textContent = "No case studies yet.";
+    empty.textContent = localizeText('No case studies yet.');
     list.append(empty);
     return;
   }
-  items.forEach((item, index) => list.append(caseCard(item, { resolveImage: assetPath, eager: index < 2, href: "./case-study.html?id=" + encodeURIComponent(item.id) })));
+  items.forEach((item, index) => list.append(caseCard({ ...item, title: displayText(item.title) || localizeText('Untitled case study'), summary: displayText(item.summary) }, { resolveImage: assetPath, eager: index < 2, href: "./case-study.html?id=" + encodeURIComponent(item.id) })));
   if (items.length % 2 === 1) {
     const placeholder = caseCard({ id: 'coming-soon', title: 'New case studies will be displayed here soon.', summary: 'Since symmetry is really important to me and visual asymmetry bothers me, I’ve added a sample card here for now.' });
     placeholder.classList.add('case-study-card-placeholder');
+    placeholder.querySelector('.case-study-card-title').textContent = localizeText(placeholder.querySelector('.case-study-card-title').textContent);
+    placeholder.querySelector('.case-study-card-summary').textContent = localizeText(placeholder.querySelector('.case-study-card-summary').textContent);
     list.append(placeholder);
   }
 }
@@ -228,37 +226,49 @@ function renderExperience() {
   if (!items.length) {
     const empty = document.createElement("p");
     empty.className = "empty-page-message";
-    empty.textContent = "No experience entries yet.";
+    empty.textContent = localizeText('No experience entries yet.');
     list.append(empty);
     return;
   }
+  list.setAttribute('aria-label', localizeText('Experience'));
+  const track = document.createElement('span');
+  track.className = 'experience-track'; track.setAttribute('aria-hidden', 'true');
+  track.append(document.createElement('span'));
+  list.append(track);
   items.forEach((item) => {
     const entry = document.createElement("article");
     entry.className = "experience-entry";
-
+    const dates = document.createElement('div');
+    dates.className = 'experience-dates';
+    const year = document.createElement('span'); year.className = 'experience-year';
+    const firstYear = text(item.dates).match(/\b(19|20)\d{2}\b/)?.[0];
+    year.textContent = firstYear ? number(Number(firstYear)) : '';
+    const range = document.createElement('span'); range.className = 'experience-date-range';
+    range.textContent = displayText(item.dates);
+    dates.append(year, range);
+    const dot = document.createElement('span'); dot.className = 'experience-dot'; dot.setAttribute('aria-hidden', 'true');
+    const body = document.createElement('div'); body.className = 'experience-body';
+    const logo = document.createElement('span'); logo.className = 'experience-logo experience-logo-placeholder';
+    logo.dir = 'ltr'; logo.setAttribute('aria-hidden', 'true');
+    logo.textContent = /^mors/i.test(item.company) ? 'M' : /^nibex/i.test(item.company) ? 'N' : /^remocapp/i.test(item.company) ? 'R' : text(item.company).slice(0, 1);
     const heading = document.createElement("div");
     heading.className = "experience-heading";
-    const roleAndCompany = document.createElement("div");
-    roleAndCompany.className = "experience-title-line";
-    const role = document.createElement("h3");
-    role.textContent = text(item.role);
-    const company = document.createElement("p");
+    const role = document.createElement("p"); role.className = 'experience-role';
+    role.textContent = displayText(item.role);
+    const company = document.createElement("h3");
     company.className = "experience-company";
-    company.textContent = text(item.company);
-    roleAndCompany.append(role, company);
-    const dates = document.createElement("p");
-    dates.className = "experience-dates";
-    dates.textContent = text(item.dates);
-    heading.append(roleAndCompany, dates);
+    company.textContent = displayText(item.company);
+    heading.append(company, role);
 
     const description = document.createElement("ul");
     description.className = "experience-bullets";
     text(item.description).split(/\r?\n/).map((bullet) => bullet.replace(/^\s*[-•]\s*/, "").trim()).filter(Boolean).forEach((bullet) => {
       const li = document.createElement("li");
-      li.textContent = bullet;
+      li.textContent = localizeText(bullet);
       description.append(li);
     });
-    entry.append(heading, description);
+    body.append(logo, heading, description);
+    entry.append(dates, dot, body);
     list.append(entry);
   });
 }
@@ -287,8 +297,10 @@ function renderCaseStudyDetails() {
   iconImage.alt = "";
   icon.append(iconImage);
   const backLabel = document.createElement("span");
-  backLabel.textContent = "Back to Home";
+  backLabel.textContent = localizeText('Back to Home');
   back.append(icon, backLabel);
+  const shortcut = document.createElement('kbd'); shortcut.className = 'back-shortcut'; shortcut.textContent = 'ESC'; shortcut.setAttribute('aria-hidden', 'true');
+  back.append(shortcut); back.setAttribute('aria-keyshortcuts', 'Escape');
 
   const themeToggle = document.createElement("button");
   themeToggle.className = "theme-toggle detail-theme-toggle";
@@ -306,8 +318,10 @@ function renderCaseStudyDetails() {
   if (!item) {
     const empty = document.createElement("p");
     empty.className = "case-detail-empty";
-    empty.textContent = "This case study is unavailable.";
+    empty.textContent = localizeText('This case study is unavailable.');
     host.append(empty);
+    document.title = localizeText('This case study is unavailable.') + ' — ' + localizeText('Ehsan Masoomi');
+    document.querySelector('meta[name="description"]').content = localizeText('This case study is unavailable.');
     return;
   }
 
@@ -315,10 +329,10 @@ function renderCaseStudyDetails() {
   article.className = "case-detail-article";
   const title = document.createElement("h1");
   title.className = "case-detail-title";
-  title.textContent = text(item.title);
+  title.textContent = displayText(item.title);
   const body = document.createElement("div");
   body.className = "case-article-body";
-  renderStory(body, item.document, { body: item.body, resolveImage: assetPath });
+  renderStory(body, item.document, { body: item.body, resolveImage: assetPath, translate: localizeText });
   article.append(title, body);
   if (item.href && validHref(item.href)) {
     const projectLink = externalAnchor(item.href, "Visit project");
@@ -326,33 +340,40 @@ function renderCaseStudyDetails() {
     article.append(projectLink);
   }
   host.append(article);
-  document.title = text(item.title) + " — Ehsan Masoomi";
-  document.querySelector('meta[name="description"]').content = text(item.summary);
+  document.title = displayText(item.title) + ' — ' + localizeText('Ehsan Masoomi');
+  document.querySelector('meta[name="description"]').content = displayText(item.summary);
 }
 
 function renderHeaderAndFooter() {
-  root.lang = "en";
-  root.dir = "ltr";
+  root.lang = getLocale();
+  root.dir = getLocale() === 'fa' ? 'rtl' : 'ltr';
   const greeting = document.querySelector("#greeting");
-  if (greeting) greeting.textContent = contentOverride?.profile?.greeting == null ? copy.greeting : text(contentOverride.profile.greeting);
+  if (greeting) greeting.textContent = displayText(contentOverride?.profile?.greeting ?? copy.greeting);
   const contactPrompt = document.querySelector("#contact-prompt");
-  if (contactPrompt) contactPrompt.textContent = contentOverride?.profile?.contactPrompt == null ? copy.contactPrompt : text(contentOverride.profile.contactPrompt);
+  if (contactPrompt) contactPrompt.textContent = displayText(contentOverride?.profile?.contactPrompt ?? copy.contactPrompt);
   renderBio();
   renderLinks(document.querySelector("#header-contact-links"));
   renderLinks(document.querySelector("#footer-contact-links"));
   const copyrightYear = document.querySelector("#copyright-year");
-  if (copyrightYear) copyrightYear.textContent = String(new Date().getFullYear());
+  if (copyrightYear) copyrightYear.textContent = number(new Date().getFullYear());
+  const copyright = document.querySelector('.copyright');
+  if (copyright?.lastElementChild) copyright.lastElementChild.textContent = ' ' + localizeText('Ehsan Masoomi');
+  const cv = document.querySelector('#cv-label'); if (cv) cv.textContent = localizeText('Download CV');
+  document.querySelector('.avatar-mark')?.setAttribute('aria-label', localizeText('Ehsan Masoomi'));
 
   const current = page === "case-study" ? "case-studies" : libraryPages.has(page) ? 'about' : page;
   document.querySelectorAll("[data-page-link]").forEach((link) => {
+    link.textContent = localizeText({ 'selected-work': 'Selected Work', 'case-studies': 'Case Studies', experience: 'Experience', about: 'About Me' }[link.dataset.pageLink]);
     const selected = link.dataset.pageLink === current;
     link.classList.toggle("is-current", selected);
     if (selected) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");
   });
-  document.querySelector(".primary-nav")?.setAttribute("aria-label", "Portfolio sections");
-  document.querySelector(".contact-block")?.setAttribute("aria-label", "Contact information");
-  document.querySelector(".display-controls")?.setAttribute("aria-label", "Display settings");
+  document.querySelector('.primary-nav')?.setAttribute('aria-label', localizeText('Portfolio sections'));
+  document.querySelector('.primary-nav')?.setAttribute('data-scroll-native', '');
+  document.querySelector('.contact-block')?.setAttribute('aria-label', localizeText('Contact information'));
+  document.querySelector('.display-controls')?.setAttribute('aria-label', localizeText('Display settings'));
+  document.querySelectorAll('.contact-links').forEach(nav => nav.setAttribute('aria-label', localizeText('Contact links')));
 }
 
 function updateTheme() {
@@ -360,14 +381,14 @@ function updateTheme() {
   root.dataset.theme = theme;
   document.querySelectorAll(".theme-toggle").forEach((toggle) => {
     toggle.setAttribute("aria-pressed", String(dark));
-    toggle.setAttribute("aria-label", dark ? "Switch to light theme" : "Switch to dark theme");
+    toggle.setAttribute('aria-label', localizeText(dark ? 'Switch to light theme' : 'Switch to dark theme'));
     const image = toggle.querySelector('img');
     if (image) {
       image.src = dark ? './assets/ui/sun-fill.svg' : './assets/figma/theme-toggle.svg';
       image.width = dark ? 20 : 32;
       image.height = dark ? 20 : 32;
     }
-    toggle.title = dark ? "Switch to light theme" : "Switch to dark theme";
+    toggle.title = localizeText(dark ? 'Switch to light theme' : 'Switch to dark theme');
   });
   document.querySelector('meta[name="theme-color"]').content = dark ? "#131315" : page === "case-study" ? "#fdfdfd" : "#ffffff";
   safeStorage.set("ehsan-portfolio-theme", theme);
@@ -382,8 +403,9 @@ document.addEventListener("click", (event) => {
 const pageViews = new Map();
 const scrollPositions = new Map();
 const sharedHeader = document.querySelector('.site-header') || createSiteHeader();
+const floatingNavigation = createFloatingNavigation(sharedHeader.querySelector('.primary-nav'));
 const initialMain = document.querySelector('main');
-const routeKey = (url = new URL(location.href)) => routeFor(url) + url.search;
+const routeKey = (url = new URL(location.href)) => routeFor(url) + url.search + '::' + getLocale();
 function routeFor(url) {
   const filename = url.pathname.replace(/\/$/, '').split('/').pop().replace(/\.html$/, '');
   return ({ '': 'selected-work', index: 'selected-work', 'case-studies': 'case-studies', experience: 'experience', 'case-study': 'case-study', about: 'about', books: 'books', book: 'book' })[filename] || null;
@@ -415,6 +437,7 @@ function renderPage(next, fresh = false) {
   if (newView) { main = fresh ? makePage(next) : pageViews.size === 0 ? initialMain : makePage(next); pageViews.set(key, main); }
   if (document.querySelector('main') !== main) document.querySelector('main').replaceWith(main);
   renderHeaderAndFooter();
+  floatingNavigation.update(!['case-study', 'books', 'book'].includes(next));
   if (newView) {
     if (next === 'selected-work') renderProjects();
     if (next === 'case-studies') renderCaseStudies();
@@ -428,21 +451,45 @@ function renderPage(next, fresh = false) {
     main.dataset.documentTitle = document.title;
     main.dataset.documentDescription = document.querySelector('meta[name="description"]').content;
   } else if (next !== 'case-study') {
-    document.title = next === 'selected-work' ? 'Ehsan Masoomi — Senior AI Product Designer' : (next === 'case-studies' ? 'Case Studies' : 'Experience') + ' — Ehsan Masoomi';
-    document.querySelector('meta[name="description"]').content = next === 'selected-work' ? 'Ehsan Masoomi — Senior AI Product Designer.' : document.title;
+    document.title = next === 'selected-work' ? localizeText('Ehsan Masoomi') + ' — ' + localizeText('Senior AI Product Designer') : localizeText(next === 'case-studies' ? 'Case Studies' : 'Experience') + ' — ' + localizeText('Ehsan Masoomi');
+    document.querySelector('meta[name="description"]').content = document.title;
   } else if (!newView) renderCaseStudyDetails();
   const skip = document.querySelector('.skip-link');
-  skip.href = '#' + main.id; skip.textContent = 'Skip to main content';
+  skip.href = '#' + main.id; skip.textContent = localizeText('Skip to main content');
+  main.querySelector('.visually-hidden')?.replaceChildren(document.createTextNode(localizeText({ 'selected-work': 'Selected Work', 'case-studies': 'Case Studies', experience: 'Experience' }[next] || '')));
+  main.querySelector('#project-grid')?.setAttribute('aria-label', localizeText('Selected Work'));
+  main.querySelector('#case-studies-list')?.setAttribute('aria-label', localizeText('Case Studies'));
+  syncLanguageControls();
   updateTheme();
   animateTypography(main);
   mountPageMotion(main, next);
+  requestAnimationFrame(ensureActiveNavVisible);
   return main;
 }
+function ensureActiveNavVisible() {
+  const nav = document.querySelector('.primary-nav'); const active = nav?.querySelector('[aria-current="page"]');
+  if (!active) return;
+  const frame = nav.getBoundingClientRect(), item = active.getBoundingClientRect();
+  if (item.left < frame.left) nav.scrollBy({ left: item.left - frame.left - 4, behavior: 'instant' });
+  else if (item.right > frame.right) nav.scrollBy({ left: item.right - frame.right + 4, behavior: 'instant' });
+}
+window.addEventListener('resize', () => requestAnimationFrame(ensureActiveNavVisible), { passive: true });
+document.fonts?.addEventListener('loadingdone', ensureActiveNavVisible);
 let currentRoute = routeKey();
 let currentURL = new URL(location.href);
 let navigationVersion = 0;
 renderPage(page);
 animateTypography(sharedHeader);
+document.addEventListener('click', event => {
+  const button = event.target.closest('[data-language]');
+  if (!button || button.dataset.language === getLocale()) return;
+  const position = scrollY;
+  scrollPositions.set(currentRoute, position); navigationVersion++; cancelLibraryTransition(); cancelPageTransition();
+  setLocale(button.dataset.language); currentRoute = routeKey();
+  renderPage(page); scrollToPosition(position);
+  document.querySelector('[data-language="' + getLocale() + '"]')?.focus({ preventScroll: true });
+  document.fonts.ready.then(() => { motionRuntime.scrollTrigger.refresh(); ensureActiveNavVisible(); });
+});
 function navigate(url, push = true, trigger = null) {
   const next = routeFor(url);
   if (!next || (push && url.href === location.href && next === page)) return;
@@ -460,8 +507,8 @@ function navigate(url, push = true, trigger = null) {
     main.focus({ preventScroll: true });
     return true;
   };
-  if (libraryPages.has(page) && libraryPages.has(next)) transitionLibrary(currentURL, url, trigger, swap);
-  else { cancelLibraryTransition(); swap(); }
+  if (libraryPages.has(page) && libraryPages.has(next)) { cancelPageTransition(); transitionLibrary(currentURL, url, trigger, swap); }
+  else { cancelLibraryTransition(); transitionPage(document.querySelector('main'), swap); }
 }
 document.addEventListener('click', event => {
   const link = event.target.closest('a[href]');
@@ -483,8 +530,15 @@ document.addEventListener('click', event => {
   event.preventDefault(); navigate(url, true, link);
 });
 window.addEventListener('popstate', () => navigate(new URL(location.href), false));
+document.addEventListener('keydown', event => {
+  if (event.key !== 'Escape' || event.defaultPrevented || document.querySelector('dialog[open]') || event.target.closest('input, textarea, [contenteditable="true"]')) return;
+  const back = document.querySelector('.library-back, .case-back-link');
+  if (back) { event.preventDefault(); back.click(); }
+});
 history.scrollRestoration = 'manual';
 initSmoothScroll(motionRuntime);
+mountViewportBlur();
+mountPointerFeedback();
 // Revalidate in the background; the build embeds content for an immediate first render.
 (async () => {
   try {

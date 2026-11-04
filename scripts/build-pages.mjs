@@ -15,16 +15,12 @@ const files = target === 'site'
   : ['admin.js', 'admin.css', 'content.js', 'case-content.js', 'assets', 'login.html', 'login.css', 'login.js'];
 files.push('typography.js', 'story-model.js', 'story-render.js', 'images.js', 'image-manifest.js', 'case-cards.js', 'case-cards.css', 'published-content.js', 'site-shell.js');
 if (target === 'admin') files.push('case-editor.js', 'case-editor.css');
-if (target === 'site') files.push('motion.js', 'work-scene.js', 'smooth-scroll.js');
+if (target === 'site') files.push('motion.js', 'work-scene.js', 'smooth-scroll.js', 'i18n.js', 'i18n.css', 'content-fa.js', 'books-fa.js', 'viewport-blur.js', 'floating-navigation.js', 'pointer-feedback.js', 'interaction.css');
 for (const file of files) await cp(resolve(root, file), resolve(output, file), { recursive: true });
 await optimizeImages(root, output);
 await mkdir(resolve(output, 'assets/fonts'), { recursive: true });
 await cp(resolve(root, 'node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2'), resolve(output, 'assets/fonts/inter-latin-wght-normal.woff2'));
 await cp(resolve(root, 'node_modules/@fontsource-variable/inter/LICENSE'), resolve(output, 'assets/fonts/INTER-LICENSE'));
-if (target === 'site') {
-  await cp(resolve(root, 'node_modules/@fontsource-variable/vazirmatn/files/vazirmatn-arabic-wght-normal.woff2'), resolve(output, 'assets/fonts/vazirmatn-arabic-wght-normal.woff2'));
-  await cp(resolve(root, 'node_modules/@fontsource-variable/vazirmatn/LICENSE'), resolve(output, 'assets/fonts/VAZIRMATN-LICENSE'));
-}
 await writeFile(resolve(output, 'published-content.js'), 'export const publishedContent = ' + await readFile(resolve(root, 'data/portfolio.json'), 'utf8') + ';\n');
 if (target === 'site') {
   await writeFile(resolve(output, '.nojekyll'), '');

@@ -1,0 +1,1 @@
+`tap.wav` is a 220 ms mono excerpt from the click at 00:00.625 in the user-supplied `Rec 0042.mp4`, added at the user's request to reproduce that click sound. Only the final 20 ms have an exit fade to avoid a cut-off artefact. The full recording is not distributed.
