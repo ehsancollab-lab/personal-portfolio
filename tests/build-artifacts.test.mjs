@@ -37,7 +37,7 @@ test('About, collections and book details have direct public routes and local li
     assert.match(await read('site/' + name + '.html'), /library\.css/);
     assert.match(await read('site/' + name + '/index.html'), /<base href="\.\.\/"/);
   }
-  for (const weight of ['Regular', 'SemiBold']) await access(new URL('../build/site/assets/fonts/On-' + weight + '.woff2', import.meta.url));
+  for (const weight of ['Regular', 'SemiBold', 'Bold']) await access(new URL('../build/site/assets/fonts/On-' + weight + '.woff2', import.meta.url));
   await assert.rejects(() => access(new URL('../build/site/assets/fonts/vazirmatn-arabic-wght-normal.woff2', import.meta.url)));
   assert.match(await read('site/i18n.css'), /font-family: On/);
   assert.match(await read('site/i18n.css'), /font-weight: 600/);

@@ -23,12 +23,15 @@ test('minimal EN/FA control sits between CV and theme, persists, and applies loc
   await expect(page.locator('.about-introduction')).toContainText('خودم یاد گرفتم');
   await expect(page.locator('.about-introduction')).not.toContainText('self-taught');
   await page.evaluate(() => document.fonts.ready);
-  await expect(page.locator('.about-introduction h2')).toHaveCSS('font-weight', '600');
-  await expect(page.locator('.about-introduction p').first()).toHaveCSS('font-weight', '400');
+  await expect(page.locator('.about-introduction h2')).toHaveCSS('font-weight', '700');
+  await expect(page.locator('.about-introduction h2')).toHaveCSS('font-size', '19px');
+  await expect(page.locator('.about-introduction p').first()).toHaveCSS('font-weight', '600');
+  await expect(page.locator('.about-introduction p').first()).toHaveCSS('line-height', '25px');
   expect(await page.locator('body').evaluate(node => getComputedStyle(node).fontFamily)).toContain('On');
   const fontRequests = await page.evaluate(() => performance.getEntriesByType('resource').map(item => item.name).filter(name => /\/fonts\//.test(name)));
   expect(fontRequests.some(name => /On-Regular\.woff2/.test(name))).toBe(true);
   expect(fontRequests.some(name => /On-SemiBold\.woff2/.test(name))).toBe(true);
+  expect(fontRequests.some(name => /On-Bold\.woff2/.test(name))).toBe(true);
   expect(fontRequests.some(name => /Yekan|vazirmatn/i.test(name))).toBe(false);
   await page.getByRole('button', { name: 'تغییر به حالت تیره', exact: true }).click();
   await page.reload();
@@ -40,6 +43,40 @@ test('minimal EN/FA control sits between CV and theme, persists, and applies loc
   await expect(page.locator('.about-introduction h2')).toHaveText('A little about me');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   expect(errors).toEqual([]);
+});
+
+test('all public headings stay 19px Bold and 18px body copy is SemiBold with 25px leading', async ({ page }) => {
+  test.setTimeout(90000);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const routes = ['/', '/about.html', '/experience.html', '/case-studies.html', '/case-study.html?id=mohtavachi-content-calendar', '/books.html?category=psychology', '/book.html?id=self-compassion'];
+  for (const route of routes) {
+    await page.goto(site + route);
+    for (const locale of ['en', 'fa']) {
+      await language(page, locale).click();
+      await page.evaluate(() => document.fonts.ready);
+      for (const width of [1440, 390, 320]) {
+        await page.setViewportSize({ width, height: 844 });
+        await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+        const headings = await page.locator('h1, h2, h3, h4, h5, h6, .experience-role, .book-quote-text, .book-quote-name').evaluateAll(nodes => nodes.map(node => {
+          const css = getComputedStyle(node);
+          return { text: node.textContent, size: css.fontSize, weight: css.fontWeight };
+        }));
+        expect(headings.length).toBeGreaterThan(0);
+        expect(headings.filter(node => node.size !== '19px' || node.weight !== '700'), `${route}, ${locale}, ${width}`).toEqual([]);
+        const body = await page.locator('p, li, blockquote').evaluateAll(nodes => nodes.map(node => {
+          const css = getComputedStyle(node);
+          return { text: node.textContent, size: css.fontSize, weight: css.fontWeight, leading: css.lineHeight };
+        }).filter(node => node.size === '18px'));
+        expect(body.filter(node => node.weight !== '600' || node.leading !== '25px'), `${route}, ${locale}, ${width}`).toEqual([]);
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      }
+    }
+  }
+  await page.goto(site + '/about.html');
+  await page.evaluate(() => document.fonts.ready);
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await expect.poll(() => page.locator('.book-collections img').evaluateAll(images => images.length === 18 && images.every(image => image.complete && image.naturalWidth > 0))).toBe(true);
+  await page.screenshot({ path: resolve(work, 'about-fa-bold-19-body-18-25.png'), fullPage: true });
 });
 
 test('mobile navigation stays in one horizontally scrollable row in both languages', async ({ page }) => {
@@ -82,7 +119,7 @@ test('books display a single localized title and fluent notes with language cont
     await expect(page.locator('.book-takeaway blockquote')).toHaveText(faBooks[id].takeaway);
     await expect(page.locator('.book-detail-persian, .library-book-persian')).toHaveCount(0);
     await expect(language(page, 'fa')).toHaveAttribute('aria-pressed', 'true');
-    await expect(page.locator('.book-source')).toHaveAttribute('href', book.source.url);
+    await expect(page.locator('.book-source')).toHaveCount(0);
     await language(page, 'en').click();
     await expect(page.locator('.book-detail-copy h1')).toHaveText(book.title);
     await expect(page.locator('.book-summary p')).toHaveText(book.summary);
@@ -93,6 +130,39 @@ test('books display a single localized title and fluent notes with language cont
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({ path: resolve(work, 'collection-fa-320.png'), fullPage: true });
   expect(errors).toEqual([]);
+});
+
+test('book takeaways use a signed testimonial, switch reading direction and keep detail covers upright', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(site + '/book.html?id=self-compassion');
+  for (const locale of ['en', 'fa']) {
+    await language(page, locale).click();
+    await page.evaluate(() => document.fonts.ready);
+    const quote = page.locator('.book-quote-text');
+    const attribution = page.locator('.book-quote-attribution');
+    await expect(quote).toHaveText(locale === 'fa' ? faBooks['self-compassion'].takeaway : bookById('self-compassion').takeaway);
+    await expect(quote).toHaveCSS('direction', locale === 'fa' ? 'rtl' : 'ltr');
+    await expect(quote).toHaveCSS('font-size', '19px');
+    await expect(quote).toHaveCSS('font-weight', '700');
+    await expect(page.locator('.book-quote')).toHaveCSS('text-align', 'center');
+    await expect(page.locator('.book-quote-name')).toHaveText(locale === 'fa' ? 'احسان معصومی' : 'Ehsan Masoomi');
+    await expect(page.locator('.book-quote-role')).toHaveText(locale === 'fa' ? 'طراح ارشد محصول با تمرکز بر هوش مصنوعی' : 'Senior AI Product Designer');
+    await expect(attribution.locator('img')).toHaveAttribute('src', './assets/figma/profile.png');
+    await expect.poll(() => attribution.locator('img').evaluate(node => node.complete && node.naturalWidth > 0)).toBe(true);
+    await expect(page.locator('.book-source')).toHaveCount(0);
+    await expect(page.getByRole('link', { name: /Book information in Persian|اطلاعات کتاب در منبع فارسی/ })).toHaveCount(0);
+    for (const width of [1440, 390, 320]) {
+      await page.setViewportSize({ width, height: 1000 });
+      await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+      await expect(page.locator('.book-detail-art > .book-cover')).toHaveCSS('transform', 'none');
+      const quoteBox = await quote.boundingBox(), captionBox = await attribution.boundingBox();
+      expect(captionBox.y).toBeGreaterThan(quoteBox.y + quoteBox.height);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      if (width !== 390) await page.screenshot({ path: resolve(work, `book-testimonial-${locale}-${width}.png`), fullPage: true });
+    }
+  }
+  await page.evaluate(() => document.querySelector('.theme-toggle').click());
+  await expect(page.locator('.book-takeaway')).toHaveCSS('background-color', 'rgb(34, 34, 36)');
 });
 
 test('case study translates its rich story, metadata and toolbar while preserving media', async ({ page }) => {

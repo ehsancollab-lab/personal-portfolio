@@ -1,5 +1,8 @@
 @font-face { font-family: On; src: url('./assets/fonts/On-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
 @font-face { font-family: On; src: url('./assets/fonts/On-SemiBold.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: On; src: url('./assets/fonts/On-Bold.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+/* One title size across public routes and responsive breakpoints. */
+:root body[data-page] :is(h1, h2, h3, h4, h5, h6, .experience-role, .book-quote-text, .book-quote-name) { font-size: 19px; font-weight: 700; }
 .language-switch { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 2px; height: 32px; padding: 3px; border: 1px solid var(--border); border-radius: 999px; background: var(--control-bg); font-family: Inter, sans-serif; }
 .language-switch button { display: grid; place-items: center; width: 27px; height: 24px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: var(--muted); font: 500 10px/1 Inter, sans-serif; cursor: pointer; }
 .language-switch button[aria-pressed="true"] { color: var(--text); background: var(--page-bg); box-shadow: 0 1px 3px #00000012; }
@@ -12,15 +15,13 @@
 .lenis .primary-nav[data-scroll-native] { overscroll-behavior-x: contain; overscroll-behavior-y: auto; }
 .bio a { unicode-bidi: isolate; }
 :root:lang(fa) body { font-family: On, Tahoma, sans-serif; font-size: 18px; font-weight: 400; }
-:root:lang(fa) :is(h1, h2, h3, h4, h5, h6) { font-family: On, Tahoma, sans-serif; font-weight: 600; letter-spacing: 0; }
-:root:lang(fa) :is(strong, b) { font-weight: 600; }
-:root:lang(fa) :is(.bio, .contact-prompt, .experience-bullets, .about-introduction p, .book-summary p, .case-article-body p, .case-article-body li) { line-height: 1.95; }
-:root:lang(fa) :is(.bio, .contact-prompt, .about-introduction p, .book-summary p, .case-study-card-summary, .experience-bullets, .case-article-body) { font-size: 18px; }
-:root:lang(fa) :is(.contact-links, .copyright, .collection-card-description, .library-book-author, .book-detail-author, .book-source) { font-size: 16px; }
+:root:lang(fa) :is(h1, h2, h3, h4, h5, h6) { font-family: On, Tahoma, sans-serif; letter-spacing: 0; }
+:root:lang(fa) :is(strong, b) { font-weight: 700; }
+:root:lang(fa) :is(.bio, .contact-prompt, .about-introduction p, .book-summary p, .case-study-card-summary, .experience-bullets, .case-article-body) { font-size: 18px; font-weight: 600; line-height: 25px; }
+:root:lang(fa) :is(.case-article-body p, .case-article-body li) { line-height: 25px; }
+:root:lang(fa) :is(.contact-links, .copyright, .collection-card-description, .library-book-author, .book-detail-author, .book-quote-role) { font-size: 16px; }
+:root:lang(fa) .book-quote-text { letter-spacing: 0; quotes: '«' '»'; }
 :root:lang(fa) :is(.collection-card-meta, .library-eyebrow, .book-topics) { font-size: 13px; }
-:root:lang(fa) .library-book-copy h3 { font-size: 19px; }
-:root:lang(fa) .experience-company { font-size: 25px; }
-:root:lang(fa) .experience-role { font-size: 21px; }
 :root:lang(fa) .experience-year { font-size: 19px; font-weight: 400; letter-spacing: 0; }
 :root:lang(fa) .experience-date-range { font-size: 12px; }
 :root:lang(fa) .nav-tab { font-size: 17px; }
@@ -29,7 +30,6 @@
 :root:lang(fa) .nav-tab[aria-current="page"] { font-weight: 600; }
 :root:lang(fa) .library-back-icon { transform: rotate(180deg); }
 :root:lang(fa) .case-back-icon img { transform: rotate(180deg); }
-:root:lang(fa) .book-detail-art > .book-cover { transform: rotate(2deg); }
 :root:lang(fa) .book-fan > .book-cover:nth-child(1) { transform: translateX(var(--fan-spread)) rotate(7deg); }
 :root:lang(fa) .book-fan > .book-cover:nth-child(3) { transform: translateX(calc(-1 * var(--fan-spread))) rotate(-7deg); }
 :root:lang(fa) .book-detail-copy, :root:lang(fa) .library-book-copy { text-align: start; }
@@ -43,8 +43,6 @@
   .display-controls .cv-link { width: auto; gap: 6px; padding-inline: 9px; font-size: 12px; }
   .display-controls .cv-link img { width: 17px; height: 17px; flex-basis: 17px; }
   :root:lang(fa) .cv-link { font-size: 13px; }
-  :root:lang(fa) .experience-company { font-size: 21px; }
-  :root:lang(fa) .experience-role { font-size: 19px; }
   .detail-display-controls { gap: 8px; }
   .language-switch { padding: 2px; gap: 0; }
   .language-switch button { width: 25px; }

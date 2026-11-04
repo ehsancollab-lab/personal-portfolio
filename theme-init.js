@@ -6,7 +6,7 @@ try {
   document.documentElement.dir = language === 'fa' ? 'rtl' : 'ltr';
   if (language === 'fa') {
     const font = document.createElement('link'); font.rel = 'preload'; font.as = 'font'; font.type = 'font/woff2'; font.crossOrigin = 'anonymous';
-    font.href = new URL('./assets/fonts/On-Regular.woff2', document.baseURI).href;
+    font.href = new URL('./assets/fonts/On-SemiBold.woff2', document.baseURI).href;
     document.head.append(font);
   }
 } catch {}

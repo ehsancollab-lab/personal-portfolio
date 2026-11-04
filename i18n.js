@@ -23,7 +23,6 @@ const labels = {
   'A little about me': 'کمی دربارهٔ من', 'My bookshelf': 'قفسهٔ کتاب‌های من', 'MY BOOKSHELF': 'قفسهٔ کتاب‌های من',
   'All collections': 'همهٔ دسته‌ها', 'Three books from this collection': 'سه کتاب منتخب از این دسته',
   'Books in this collection': 'کتاب‌های این دسته', 'About the book': 'دربارهٔ کتاب', 'My takeaway': 'برداشت من',
-  'Book information in Persian': 'اطلاعات کتاب در منبع فارسی', 'opens in a new tab': 'در زبانهٔ جدید باز می‌شود',
   'Psychology & relationships': 'روان‌شناسی و روابط', 'Understanding ourselves and each other.': 'برای شناخت خودمان و یکدیگر.',
   'Growth & learning': 'رشد و یادگیری', 'Better questions. A little more perspective.': 'پرسش‌های بهتر و نگاهی بازتر.',
   'Work & business': 'کار و کسب‌وکار', 'Making space for work that matters.': 'جا باز کردن برای کارهای ارزشمند.',

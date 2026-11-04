@@ -77,7 +77,7 @@
 .library-not-found h1 { color: var(--text); font-size: 26px; font-weight: 500; }
 .library-book-detail { display: grid; grid-template-columns: minmax(0, 285px) minmax(0, 1fr); align-items: start; gap: 72px; margin-top: 64px; }
 .book-detail-art { position: sticky; top: 50px; padding: 0 12px; }
-.book-detail-art > .book-cover { transform: rotate(-2deg); }
+.book-detail-art > .book-cover { transform: none; }
 .book-detail-copy { min-width: 0; }
 .book-detail-copy > .library-eyebrow { display: inline-block; min-height: 24px; }
 .book-detail-copy > .library-eyebrow:hover { text-decoration: underline; text-underline-offset: 3px; }
@@ -85,12 +85,18 @@
 .book-detail-author { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.8; }
 .book-topics { margin: 15px 0 32px; color: var(--muted); font-size: 12px; line-height: 1.7; }
 .book-summary { margin-bottom: 32px; }
-.book-summary h2, .book-takeaway h2 { margin: 0 0 12px; color: var(--text); font-size: 14px; font-weight: 500; line-height: 1.5; }
+.book-summary h2 { margin: 0 0 12px; color: var(--text); font-size: 14px; font-weight: 500; line-height: 1.5; }
 .book-summary p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.85; text-wrap: pretty; }
-.book-takeaway { padding: 24px 0; border-top: 1px solid var(--library-line); border-bottom: 1px solid var(--library-line); }
-.book-takeaway blockquote { margin: 0; color: var(--text); font-size: 18px; line-height: 1.7; letter-spacing: -.015em; }
-.book-source { display: inline-flex; min-height: 44px; align-items: center; gap: 6px; margin-top: 16px; color: var(--muted); font-size: 12px; line-height: 1.6; text-underline-offset: 3px; }
-.book-source::after { width: 14px; height: 14px; background: currentColor; mask: url('./assets/figma/arrow-left.svg') center / contain no-repeat; transform: rotate(135deg); content: ''; }
+.book-takeaway { padding: 36px 28px 30px; border-radius: 18px; background: var(--library-panel); }
+.book-quote { margin: 0; text-align: center; }
+.book-quote-text { margin: 0; color: var(--text); line-height: 25px; letter-spacing: -.015em; text-wrap: balance; quotes: '“' '”'; }
+.book-quote-text::before { content: open-quote; }
+.book-quote-text::after { content: close-quote; }
+.book-quote-attribution { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-block-start: 24px; }
+.book-quote-portrait { display: block; width: 40px; height: 40px; margin-block-end: 6px; border-radius: 50%; object-fit: cover; }
+.book-quote-name { display: block; line-height: 25px; }
+.book-quote-role { max-width: 240px; color: var(--muted); font-size: 14px; font-weight: 400; line-height: 1.6; text-wrap: balance; }
+@media (max-width: 420px) { .book-takeaway { padding: 28px 20px 24px; } }
 .book-transition-clone { position: fixed; z-index: 1000; left: 0; top: 0; pointer-events: none; transform-origin: top left; }
 :root.library-transition::view-transition-group(*) { animation-duration: 520ms; animation-timing-function: cubic-bezier(.22,.75,.2,1); }
 :root.library-transition::view-transition-old(root), :root.library-transition::view-transition-new(root) { animation-duration: 320ms; }

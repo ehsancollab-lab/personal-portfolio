@@ -32,8 +32,9 @@ Browser integration checks use `npm run test:browser`. They run Chromium against
 - assets/Ehsan-Masoomi-CV-EN.pdf is the supplied downloadable CV.
 - assets/figma/ contains the profile portrait and header icons exported from the Figma frame.
 - The CV download and theme control sit in the top header row, as shown in Figma. The theme control uses the Figma moon icon in light mode and a filled sun icon in dark mode.
-- The public portfolio switches between English/LTR and Persian/RTL. The language preference persists across routes and reloads. Persian uses the supplied On Regular and On SemiBold webfonts; the dashboard remains English/LTR.
+- The public portfolio switches between English/LTR and Persian/RTL. The language preference persists across routes and reloads. Persian uses the supplied On webfonts: 19px Bold headings and 18px SemiBold body copy with 25px line height; the dashboard remains English/LTR.
 - `i18n.js`, `content-fa.js`, and `books-fa.js` contain UI labels and the Persian versions of the current published copy. Future English copy edits keep their source text until a corresponding translation is added.
+- Book detail covers stand upright. Personal takeaways use a bold, centered quotation with Ehsan’s portrait, localized name and job title. Research sources remain in the metadata and are not shown as external links.
 - The mobile section tabs scroll horizontally. A bottom capsule repeats the four sections when the original tabs scroll out of view.
 - Experience follows the supplied vertical timeline reference and keeps the existing bullet points. Company logos currently use owner-approved initial placeholders pending the official files.
 - Pointer clicks use a short sample from the supplied recording, with a fine-pointer halo and click ripple. Interior Back links have an Escape shortcut. A progressive, theme-aware bottom blur stays behind usable navigation and footer links.

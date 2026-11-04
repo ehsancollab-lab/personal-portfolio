@@ -90,7 +90,7 @@ test('annotated About layout matches the header, centers its heading and removes
   await expect(page.locator('.featured-book-shelf')).toBeVisible();
 });
 
-test('all 50 books open with the correct author, single title, summary, takeaway, source and Back', async ({ page }) => {
+test('all 50 books open with the correct author, single title, summary, signed takeaway and Back', async ({ page }) => {
   test.setTimeout(120000);
   const errors = []; page.on('pageerror', error => errors.push(error.message));
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -104,7 +104,9 @@ test('all 50 books open with the correct author, single title, summary, takeaway
       await expect(page.locator('.book-detail-persian, .library-book-persian')).toHaveCount(0);
       await expect(page.locator('.book-summary p')).toHaveText(book.summary);
       await expect(page.locator('.book-takeaway blockquote')).toHaveText(book.takeaway);
-      await expect(page.locator('.book-source')).toHaveAttribute('href', book.source.url);
+      await expect(page.locator('.book-source')).toHaveCount(0);
+      await expect(page.locator('.book-quote-name')).toHaveText('Ehsan Masoomi');
+      await expect(page.locator('.book-detail-art > .book-cover')).toHaveCSS('transform', 'none');
       await expect(page.locator('.sample-cover')).toHaveCount(0);
       const image = page.locator('.book-detail-art img');
       await expect(image).toHaveAttribute('alt', book.title + ' — book cover');
