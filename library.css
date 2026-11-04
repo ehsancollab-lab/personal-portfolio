@@ -75,7 +75,7 @@
 .library-book-author { color: var(--muted); font-size: 12px; line-height: 1.6; }
 .library-not-found { padding: 40px 12px; color: var(--muted); font-size: 15px; line-height: 1.7; text-align: center; }
 .library-not-found h1 { color: var(--text); font-size: 26px; font-weight: 500; }
-.library-book-detail { display: grid; grid-template-columns: minmax(0, 285px) minmax(0, 1fr); align-items: start; gap: 72px; margin-top: 64px; }
+.library-book-detail { --book-section-title-size: 19px; display: grid; grid-template-columns: minmax(0, 285px) minmax(0, 1fr); align-items: start; gap: 72px; margin-top: 64px; }
 .book-detail-art { position: sticky; top: 50px; padding: 0 12px; }
 .book-detail-art > .book-cover { transform: none; }
 .book-detail-copy { min-width: 0; }
@@ -84,19 +84,19 @@
 .book-detail-copy h1 { margin: 0 0 10px; font-size: clamp(25px, 3.5vw, 34px); font-weight: 500; letter-spacing: -.035em; line-height: 1.25; overflow-wrap: anywhere; }
 .book-detail-author { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.8; }
 .book-topics { margin: 15px 0 32px; color: var(--muted); font-size: 12px; line-height: 1.7; }
-.book-summary { margin-bottom: 32px; }
+.book-summary { margin-block: 32px; }
 .book-summary h2 { margin: 0 0 12px; color: var(--text); font-size: 14px; font-weight: 500; line-height: 1.5; }
 .book-summary p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.85; text-wrap: pretty; }
-.book-takeaway { padding: 36px 28px 30px; border-radius: 18px; background: var(--library-panel); }
-.book-quote { margin: 0; text-align: center; }
-.book-quote-text { margin: 0; color: var(--text); line-height: 25px; letter-spacing: -.015em; text-wrap: balance; quotes: '“' '”'; }
+.book-takeaway { padding: 0; background: transparent; }
+:root body[data-page] .book-detail-copy :is(.book-summary h2, .book-quote-text, .book-quote-name) { font-size: var(--book-section-title-size); }
+.book-quote { margin: 0; text-align: start; }
+.book-quote-text { margin: 0; color: var(--text); line-height: 25px; letter-spacing: -.015em; text-wrap: pretty; quotes: '“' '”'; }
 .book-quote-text::before { content: open-quote; }
 .book-quote-text::after { content: close-quote; }
-.book-quote-attribution { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-block-start: 24px; }
+.book-quote-attribution { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; margin-block-start: 24px; }
 .book-quote-portrait { display: block; width: 40px; height: 40px; margin-block-end: 6px; border-radius: 50%; object-fit: cover; }
 .book-quote-name { display: block; line-height: 25px; }
 .book-quote-role { max-width: 240px; color: var(--muted); font-size: 14px; font-weight: 400; line-height: 1.6; text-wrap: balance; }
-@media (max-width: 420px) { .book-takeaway { padding: 28px 20px 24px; } }
 .book-transition-clone { position: fixed; z-index: 1000; left: 0; top: 0; pointer-events: none; transform-origin: top left; }
 :root.library-transition::view-transition-group(*) { animation-duration: 520ms; animation-timing-function: cubic-bezier(.22,.75,.2,1); }
 :root.library-transition::view-transition-old(root), :root.library-transition::view-transition-new(root) { animation-duration: 320ms; }

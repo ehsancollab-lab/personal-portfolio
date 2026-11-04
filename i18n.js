@@ -2,18 +2,17 @@ import { faContent } from './content-fa.js';
 import { faBooks } from './books-fa.js';
 
 let locale = 'en';
-try { locale = localStorage.getItem('ehsan-portfolio-language') === 'fa' ? 'fa' : 'en'; } catch {}
 export const getLocale = () => locale;
 export function setLocale(value) {
   locale = value === 'fa' ? 'fa' : 'en';
   document.documentElement.lang = locale;
   document.documentElement.dir = locale === 'fa' ? 'rtl' : 'ltr';
-  try { localStorage.setItem('ehsan-portfolio-language', locale); } catch {}
 }
 export const number = value => new Intl.NumberFormat(locale === 'fa' ? 'fa-IR' : 'en-US', { useGrouping: false }).format(value);
 const labels = {
   'Ehsan Masoomi': 'احسان معصومی',
   'Senior AI Product Designer': 'طراح ارشد محصول با تمرکز بر هوش مصنوعی',
+  'Back': 'بازگشت',
   'Selected Work': 'کارهای منتخب', 'Case Studies': 'کیس‌استادی‌ها', 'Experience': 'سوابق کاری', 'About Me': 'دربارهٔ من',
   'Download CV': 'دریافت رزومه', 'Email': 'ایمیل', 'LinkedIn': 'لینکدین', 'X (Twitter)': 'ایکس (توییتر)', 'Instagram': 'اینستاگرام',
   'Display settings': 'تنظیمات نمایش', 'Portfolio sections': 'بخش‌های پورتفولیو', 'Contact information': 'اطلاعات تماس',

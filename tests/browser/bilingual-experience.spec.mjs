@@ -4,17 +4,20 @@ import { defaultExperience } from '../../case-content.js';
 import { bookById } from '../../library-content.js';
 import { faBooks } from '../../books-fa.js';
 import { faContent } from '../../content-fa.js';
+import { readFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 const site = 'http://localhost:4173';
 const work = resolve(import.meta.dirname, '../../../work/portfolio-browser');
 const language = (page, value) => page.locator('[data-language="' + value + '"]');
 test.beforeEach(async ({ request }) => { await request.post(site + '/__test/reset'); });
 
-test('minimal EN/FA control sits between CV and theme, persists, and applies local On weights', async ({ page }) => {
+test('EN/FA control applies On weights, keeps choices within navigation and resets on reload', async ({ page }) => {
   const errors = []; page.on('pageerror', error => errors.push(error.message));
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(site + '/about.html');
   expect(await page.locator('.display-controls').evaluate(node => [...node.children].map(child => child.className))).toEqual(['cv-link', 'language-switch', 'theme-toggle']);
   await expect(language(page, 'en')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('.language-switch')).toHaveCSS('border-top-width', '0px');
   await language(page, 'fa').click();
   await expect(page.locator('html')).toHaveAttribute('lang', 'fa');
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
@@ -34,15 +37,56 @@ test('minimal EN/FA control sits between CV and theme, persists, and applies loc
   expect(fontRequests.some(name => /On-Bold\.woff2/.test(name))).toBe(true);
   expect(fontRequests.some(name => /Yekan|vazirmatn/i.test(name))).toBe(false);
   await page.getByRole('button', { name: 'تغییر به حالت تیره', exact: true }).click();
-  await page.reload();
+  await page.locator('.primary-nav [data-page-link="experience"]').click();
+  await expect(page.locator('body')).toHaveAttribute('data-page', 'experience');
   await expect(page.locator('html')).toHaveAttribute('lang', 'fa');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await page.locator('.primary-nav [data-page-link="about"]').click();
+  await expect(page.locator('body')).toHaveAttribute('data-page', 'about');
   await page.screenshot({ path: resolve(work, 'about-fa-dark.png'), fullPage: true });
-  await language(page, 'en').click();
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.locator('html')).toHaveAttribute('dir', 'ltr');
   await expect(page.locator('.about-introduction h2')).toHaveText('A little about me');
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   expect(errors).toEqual([]);
+});
+
+test('updated CV downloads match the active language and every fresh document starts English/light', async ({ page, request }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce', colorScheme: 'dark' });
+  await page.addInitScript(() => {
+    localStorage.setItem('ehsan-portfolio-language', 'fa');
+    localStorage.setItem('ehsan-portfolio-theme', 'dark');
+  });
+  await page.goto(site + '/about.html');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  await expect(page.locator('html')).toHaveAttribute('dir', 'ltr');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  for (const [locale, hash] of [
+    ['en', 'b1299479c508e790c59a3aa872cba2f5ecf96b4e0e7332d6dce94cb0cc581d06'],
+    ['fa', '522ef516e1fd52bf84940f65bfc7366eeaf9cebea652bf7ac9f79e08be661162']
+  ]) {
+    await language(page, locale).click();
+    const name = 'Ehsan-Masoomi-CV-' + locale.toUpperCase() + '-November-2026.pdf';
+    await expect(page.locator('#cv-link')).toHaveAttribute('href', './assets/' + name);
+    await expect(page.locator('#cv-link')).toHaveAttribute('download', name);
+    await expect(page.locator('#cv-link')).toHaveAttribute('hreflang', locale);
+    const [download] = await Promise.all([page.waitForEvent('download'), page.locator('#cv-link').click()]);
+    expect(download.suggestedFilename()).toBe(name);
+    const bytes = await readFile(await download.path());
+    expect(createHash('sha256').update(bytes).digest('hex')).toBe(hash);
+  }
+  await page.getByRole('button', { name: 'تغییر به حالت تیره', exact: true }).click();
+  await page.locator('.primary-nav [data-page-link="experience"]').click();
+  await expect(page.locator('body')).toHaveAttribute('data-page', 'experience');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'fa');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await expect(page.locator('#cv-link')).toHaveAttribute('href', /CV-FA-November-2026\.pdf$/);
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await expect(page.locator('#cv-link')).toHaveAttribute('href', /CV-EN-November-2026\.pdf$/);
+  expect((await request.get(site + '/assets/Ehsan-Masoomi-CV-EN.pdf')).status()).toBe(404);
 });
 
 test('all public headings stay 19px Bold and 18px body copy is SemiBold with 25px leading', async ({ page }) => {
@@ -73,6 +117,7 @@ test('all public headings stay 19px Bold and 18px body copy is SemiBold with 25p
     }
   }
   await page.goto(site + '/about.html');
+  await language(page, 'fa').click();
   await page.evaluate(() => document.fonts.ready);
   await page.setViewportSize({ width: 1440, height: 1000 });
   await expect.poll(() => page.locator('.book-collections img').evaluateAll(images => images.length === 18 && images.every(image => image.complete && image.naturalWidth > 0))).toBe(true);
@@ -132,7 +177,7 @@ test('books display a single localized title and fluent notes with language cont
   expect(errors).toEqual([]);
 });
 
-test('book takeaways use a signed testimonial, switch reading direction and keep detail covers upright', async ({ page }) => {
+test('book details keep a minimal header, plain aligned quotation, short Back and upright cover', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(site + '/book.html?id=self-compassion');
   for (const locale of ['en', 'fa']) {
@@ -144,9 +189,20 @@ test('book takeaways use a signed testimonial, switch reading direction and keep
     await expect(quote).toHaveCSS('direction', locale === 'fa' ? 'rtl' : 'ltr');
     await expect(quote).toHaveCSS('font-size', '19px');
     await expect(quote).toHaveCSS('font-weight', '700');
-    await expect(page.locator('.book-quote')).toHaveCSS('text-align', 'center');
+    await expect(page.locator('.book-quote')).toHaveCSS('text-align', 'start');
+    await expect(page.locator('.book-takeaway')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+    await expect(page.locator('.book-quote-attribution')).toHaveCSS('align-items', 'flex-start');
     await expect(page.locator('.book-quote-name')).toHaveText(locale === 'fa' ? 'احسان معصومی' : 'Ehsan Masoomi');
-    await expect(page.locator('.book-quote-role')).toHaveText(locale === 'fa' ? 'طراح ارشد محصول با تمرکز بر هوش مصنوعی' : 'Senior AI Product Designer');
+    await expect(page.locator('.book-quote-role')).toHaveText(locale === 'fa' ? 'طراح محصول' : 'Product Designer');
+    await expect(page.locator('.library-back')).toHaveText(locale === 'fa' ? 'بازگشت' : 'Back');
+    await expect(page.locator('.library-back')).toHaveAttribute('aria-keyshortcuts', 'Escape');
+    await expect(page.locator('.library-back .back-shortcut')).toHaveCount(0);
+    if (locale === 'fa') await expect(page.locator('.library-back')).toHaveCSS('font-weight', '600');
+    await expect(page.locator('.book-detail-copy > .library-eyebrow, .book-detail-copy > .book-topics')).toHaveCount(0);
+    await expect(page.locator('.language-switch')).toHaveCSS('border-top-width', '0px');
+    const titleSize = await page.locator('.book-summary h2').evaluate(node => getComputedStyle(node).fontSize);
+    await expect(quote).toHaveCSS('font-size', titleSize);
+    await expect(page.locator('.book-quote-name')).toHaveCSS('font-size', titleSize);
     await expect(attribution.locator('img')).toHaveAttribute('src', './assets/figma/profile.png');
     await expect.poll(() => attribution.locator('img').evaluate(node => node.complete && node.naturalWidth > 0)).toBe(true);
     await expect(page.locator('.book-source')).toHaveCount(0);
@@ -157,12 +213,15 @@ test('book takeaways use a signed testimonial, switch reading direction and keep
       await expect(page.locator('.book-detail-art > .book-cover')).toHaveCSS('transform', 'none');
       const quoteBox = await quote.boundingBox(), captionBox = await attribution.boundingBox();
       expect(captionBox.y).toBeGreaterThan(quoteBox.y + quoteBox.height);
+      const portraitBox = await attribution.locator('img').boundingBox();
+      if (locale === 'en') expect(Math.abs(portraitBox.x - quoteBox.x)).toBeLessThan(1);
+      else expect(Math.abs(portraitBox.x + portraitBox.width - quoteBox.x - quoteBox.width)).toBeLessThan(1);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       if (width !== 390) await page.screenshot({ path: resolve(work, `book-testimonial-${locale}-${width}.png`), fullPage: true });
     }
   }
   await page.evaluate(() => document.querySelector('.theme-toggle').click());
-  await expect(page.locator('.book-takeaway')).toHaveCSS('background-color', 'rgb(34, 34, 36)');
+  await expect(page.locator('.book-takeaway')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
 });
 
 test('case study translates its rich story, metadata and toolbar while preserving media', async ({ page }) => {
@@ -185,11 +244,14 @@ test('case study translates its rich story, metadata and toolbar while preservin
   await expect(page.locator('.case-detail-title')).toContainText('AI-Powered Content Calendar');
 });
 
-test('Experience follows the reference timeline with company first, original bullets, dates and logo placeholders', async ({ page }) => {
+test('Experience follows the timeline with role first, smaller inline company, original bullets and dates', async ({ page }) => {
   const errors = []; page.on('pageerror', error => errors.push(error.message));
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(site + '/experience.html');
   await expect(page.locator('.experience-entry')).toHaveCount(3);
+  await expect(page.locator('.experience-logo-placeholder')).toHaveCount(0);
+  expect(await page.locator('.experience-logo img').evaluateAll(nodes => nodes.map(node => node.getAttribute('src')))).toEqual(['./assets/companies/mors.jpg', './assets/companies/nibex.jpg', './assets/companies/remocapp.jpg']);
+  await expect.poll(() => page.locator('.experience-logo img').evaluateAll(images => images.every(image => image.complete && image.naturalWidth === 200))).toBe(true);
   await expect(page.locator('.experience-track')).toHaveCount(1);
   for (const [index, item] of defaultExperience.entries()) {
     const entry = page.locator('.experience-entry').nth(index);
@@ -198,8 +260,11 @@ test('Experience follows the reference timeline with company first, original bul
     await expect(entry.locator('.experience-date-range')).toHaveText(item.dates);
     expect(await entry.locator('.experience-bullets li').allTextContents()).toEqual(item.description.split('\n').map(value => value.replace(/^\s*[-•]\s*/, '').trim()).filter(Boolean));
     const logo = await entry.locator('.experience-logo').boundingBox(), company = await entry.locator('.experience-company').boundingBox(), role = await entry.locator('.experience-role').boundingBox();
-    expect(logo.y + logo.height).toBeLessThan(company.y);
-    expect(company.y + company.height).toBeLessThanOrEqual(role.y);
+    expect(logo.y + logo.height).toBeLessThan(role.y);
+    expect(company.x).toBeGreaterThan(role.x + role.width);
+    expect(Math.abs(company.y - role.y)).toBeLessThan(10);
+    expect(await entry.locator('.experience-heading').evaluate(node => node.firstElementChild.className)).toBe('experience-role');
+    expect(await entry.locator('.experience-company').evaluate(node => parseFloat(getComputedStyle(node).fontSize))).toBeLessThan(await entry.locator('.experience-role').evaluate(node => parseFloat(getComputedStyle(node).fontSize)));
   }
   await expect(page.locator('.experience-entry a, .experience-entry video, .experience-entry canvas')).toHaveCount(0);
   await page.screenshot({ path: resolve(work, 'experience-en.png'), fullPage: true });

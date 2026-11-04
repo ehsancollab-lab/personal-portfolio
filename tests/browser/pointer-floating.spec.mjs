@@ -104,7 +104,7 @@ test('reduced motion keeps click audio and suppresses ripple and page motion; Es
 test('page and text entrance use blur and vertical motion and rapid navigation keeps the last destination', async ({ page }) => {
   const errors = []; page.on('pageerror', error => errors.push(error.message));
   await page.goto(site + '/experience.html');
-  const frames = await page.locator('.experience-company').first().evaluate(node => node.getAnimations().flatMap(animation => animation.effect.getKeyframes()));
+  const frames = await page.locator('.experience-role').first().evaluate(node => node.getAnimations().flatMap(animation => animation.effect.getKeyframes()));
   expect(frames.some(frame => frame.filter === 'blur(5px)')).toBe(true);
   await page.evaluate(() => {
     document.querySelector('.primary-nav [data-page-link="about"]').click();

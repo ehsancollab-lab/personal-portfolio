@@ -46,22 +46,24 @@ function cover(book) {
   }
   return wrapper;
 }
-function backLink(href, text) {
+function backLink(href, text, showShortcut = true) {
   const link = element('a', 'library-back', text);
   link.href = href;
   link.dataset.restoreScroll = '';
   const icon = element('span', 'library-back-icon'); icon.setAttribute('aria-hidden', 'true');
   link.prepend(icon);
-  const shortcut = element('kbd', 'back-shortcut', 'ESC'); shortcut.setAttribute('aria-hidden', 'true');
-  link.append(shortcut); link.setAttribute('aria-keyshortcuts', 'Escape');
+  if (showShortcut) {
+    const shortcut = element('kbd', 'back-shortcut', 'ESC'); shortcut.setAttribute('aria-hidden', 'true'); link.append(shortcut);
+  }
+  link.setAttribute('aria-keyshortcuts', 'Escape');
   return link;
 }
-function toolbar(main, href, text) {
+function toolbar(main, href, text, showShortcut = true) {
   const bar = element('div', 'library-toolbar');
   const theme = element('button', 'theme-toggle library-theme-toggle');
   theme.type = 'button'; theme.setAttribute('aria-label', 'Switch to dark theme'); theme.setAttribute('aria-pressed', 'false');
   const icon = element('img'); icon.src = './assets/figma/theme-toggle.svg'; icon.width = 32; icon.height = 32; icon.alt = '';
-  theme.append(icon); bar.append(backLink(href, text), theme); main.append(bar);
+  theme.append(icon); bar.append(backLink(href, text, showShortcut), theme); main.append(bar);
 }
 function categoryCard(category, index) {
   const items = booksInCategory(category.id);
@@ -136,27 +138,27 @@ function renderBook(main, params) {
   const raw = bookById(params.get('id'));
   const book = raw && localizeBook(raw);
   const category = book && categoryById(book.category);
-  toolbar(main, category ? categoryURL(category.id) : './about.html#my-books', category ? phrase('Back to {category}', 'بازگشت به {category}', { category: localizeText(category.title) }) : localizeText('All collections'));
+  toolbar(main, category ? categoryURL(category.id) : './about.html#my-books', 'Back', false);
   if (!book) { notFound(main, 'Book not found', 'You can find the rest of my reading list in the collections.'); return; }
   main.dataset.bookId = book.id;
   const article = element('article', 'library-book-detail');
   const art = element('div', 'book-detail-art'); art.append(cover(book));
   const copy = element('div', 'book-detail-copy');
-  const categoryLink = element('a', 'library-eyebrow', category.title); categoryLink.href = categoryURL(category.id); categoryLink.dataset.restoreScroll = '';
   const title = element('h1', '', book.title);
   const author = element('p', 'book-detail-author', phrase('By {author}', 'نویسنده: {author}', { author: book.author }));
   const summary = element('section', 'book-summary'); summary.setAttribute('aria-label', localizeText('About the book'));
   summary.append(element('h2', '', 'About the book'), element('p', '', book.summary));
   const takeaway = element('section', 'book-takeaway'); takeaway.setAttribute('aria-label', localizeText('My takeaway'));
   const quotation = element('figure', 'book-quote');
+  quotation.dir = getLocale() === 'fa' ? 'rtl' : 'ltr';
   const quote = element('blockquote', 'book-quote-text', book.takeaway);
   quote.dir = getLocale() === 'fa' ? 'rtl' : 'ltr';
   const attribution = element('figcaption', 'book-quote-attribution');
   const portrait = element('img', 'book-quote-portrait');
   portrait.src = './assets/figma/profile.png'; portrait.alt = ''; portrait.width = 40; portrait.height = 40; portrait.decoding = 'async';
-  attribution.append(portrait, element('span', 'book-quote-name', 'Ehsan Masoomi'), element('span', 'book-quote-role', 'Senior AI Product Designer'));
+  attribution.append(portrait, element('span', 'book-quote-name', 'Ehsan Masoomi'), element('span', 'book-quote-role', 'Product Designer'));
   quotation.append(quote, attribution); takeaway.append(quotation);
-  copy.append(categoryLink, title, author, element('p', 'book-topics', book.topics), summary, takeaway);
+  copy.append(title, author, summary, takeaway);
   article.append(art, copy); main.append(article);
   document.title = book.title + ' · ' + phrase('My Bookshelf', 'قفسهٔ کتاب‌های من') + ' — ' + localizeText('Ehsan Masoomi');
   document.querySelector('meta[name="description"]').content = book.summary;

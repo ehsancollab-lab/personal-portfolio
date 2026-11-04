@@ -19,14 +19,10 @@ import { mountPointerFeedback } from './pointer-feedback.js';
 const root = document.documentElement;
 let page = document.body.dataset.page || "selected-work";
 const projectAssets = [...projects];
-
-const safeStorage = {
-  get(key) {
-    try { return localStorage.getItem(key); } catch { return null; }
-  },
-  set(key, value) {
-    try { localStorage.setItem(key, value); } catch { /* Storage may be unavailable in private contexts. */ }
-  },
+const companyLogos = {
+  'experience-mors': './assets/companies/mors.jpg',
+  'experience-nibex': './assets/companies/nibex.jpg',
+  'experience-remocapp': './assets/companies/remocapp.jpg'
 };
 
 function clone(value) {
@@ -110,7 +106,7 @@ function normalizeContent(candidate) {
 
 let contentOverride = normalizeContent(publishedContent);
 
-let theme = safeStorage.get("ehsan-portfolio-theme") === "dark" ? "dark" : "light";
+let theme = 'light';
 
 function content() {
   return contentOverride || defaultContent();
@@ -248,17 +244,23 @@ function renderExperience() {
     dates.append(year, range);
     const dot = document.createElement('span'); dot.className = 'experience-dot'; dot.setAttribute('aria-hidden', 'true');
     const body = document.createElement('div'); body.className = 'experience-body';
-    const logo = document.createElement('span'); logo.className = 'experience-logo experience-logo-placeholder';
+    const logo = document.createElement('span'); logo.className = 'experience-logo';
     logo.dir = 'ltr'; logo.setAttribute('aria-hidden', 'true');
-    logo.textContent = /^mors/i.test(item.company) ? 'M' : /^nibex/i.test(item.company) ? 'N' : /^remocapp/i.test(item.company) ? 'R' : text(item.company).slice(0, 1);
+    if (companyLogos[item.id]) {
+      const image = document.createElement('img');
+      image.src = companyLogos[item.id]; image.alt = ''; image.width = 40; image.height = 40; image.decoding = 'async';
+      logo.append(image);
+    } else {
+      logo.classList.add('experience-logo-placeholder'); logo.textContent = text(item.company).slice(0, 1);
+    }
     const heading = document.createElement("div");
     heading.className = "experience-heading";
-    const role = document.createElement("p"); role.className = 'experience-role';
+    const role = document.createElement("h3"); role.className = 'experience-role';
     role.textContent = displayText(item.role);
-    const company = document.createElement("h3");
+    const company = document.createElement("span");
     company.className = "experience-company";
-    company.textContent = displayText(item.company);
-    heading.append(company, role);
+    company.textContent = displayText(item.company); company.dir = 'auto';
+    heading.append(role, company);
 
     const description = document.createElement("ul");
     description.className = "experience-bullets";
@@ -359,6 +361,11 @@ function renderHeaderAndFooter() {
   const copyright = document.querySelector('.copyright');
   if (copyright?.lastElementChild) copyright.lastElementChild.textContent = ' ' + localizeText('Ehsan Masoomi');
   const cv = document.querySelector('#cv-label'); if (cv) cv.textContent = localizeText('Download CV');
+  const cvLink = document.querySelector('#cv-link');
+  if (cvLink) {
+    const filename = 'Ehsan-Masoomi-CV-' + (getLocale() === 'fa' ? 'FA' : 'EN') + '-November-2026.pdf';
+    cvLink.href = './assets/' + filename; cvLink.download = filename; cvLink.hreflang = getLocale();
+  }
   document.querySelector('.avatar-mark')?.setAttribute('aria-label', localizeText('Ehsan Masoomi'));
 
   const current = page === "case-study" ? "case-studies" : libraryPages.has(page) ? 'about' : page;
@@ -391,7 +398,6 @@ function updateTheme() {
     toggle.title = localizeText(dark ? 'Switch to light theme' : 'Switch to dark theme');
   });
   document.querySelector('meta[name="theme-color"]').content = dark ? "#131315" : page === "case-study" ? "#fdfdfd" : "#ffffff";
-  safeStorage.set("ehsan-portfolio-theme", theme);
 }
 
 document.addEventListener("click", (event) => {
@@ -550,10 +556,3 @@ mountPointerFeedback();
     }
   } catch { /* The embedded portfolio works offline or with a slow content request. */ }
 })();
-
-window.addEventListener("storage", (event) => {
-  if (event.key === "ehsan-portfolio-theme") {
-    theme = event.newValue === "dark" ? "dark" : "light";
-    updateTheme();
-  }
-});

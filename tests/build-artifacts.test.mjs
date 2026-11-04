@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { access, readFile, readdir } from 'node:fs/promises';
 import { buildPages } from '../scripts/build-pages.mjs';
 import { books } from '../library-content.js';
+import { createHash } from 'node:crypto';
 
 for (const target of ['site', 'admin']) await buildPages(target);
 const read = (path) => readFile(new URL('../build/' + path, import.meta.url), 'utf8');
@@ -11,7 +12,19 @@ test('public deployment contains the actual portfolio, content, and CV', async (
   assert.equal((await read('site/CNAME')).trim(), 'ehsandesigns.com');
   const source = JSON.parse(await readFile(new URL('../data/portfolio.json', import.meta.url), 'utf8'));
   assert.deepEqual(JSON.parse(await read('site/data/portfolio.json')), source);
-  await access(new URL('../build/site/assets/Ehsan-Masoomi-CV-EN.pdf', import.meta.url));
+  for (const [lang, bytes, hash] of [
+    ['EN', 1573632, 'b1299479c508e790c59a3aa872cba2f5ecf96b4e0e7332d6dce94cb0cc581d06'],
+    ['FA', 901437, '522ef516e1fd52bf84940f65bfc7366eeaf9cebea652bf7ac9f79e08be661162']
+  ]) {
+    const pdf = await readFile(new URL('../build/site/assets/Ehsan-Masoomi-CV-' + lang + '-November-2026.pdf', import.meta.url));
+    assert.equal(pdf.length, bytes); assert.equal(pdf.subarray(0, 5).toString(), '%PDF-');
+    assert.equal(createHash('sha256').update(pdf).digest('hex'), hash);
+  }
+  await assert.rejects(() => access(new URL('../build/site/assets/Ehsan-Masoomi-CV-EN.pdf', import.meta.url)));
+  for (const name of ['mors', 'nibex', 'remocapp']) {
+    const asset = 'assets/companies/' + name + '.jpg';
+    assert.deepEqual(await readFile(new URL('../build/site/' + asset, import.meta.url)), await readFile(new URL('../' + asset, import.meta.url)));
+  }
   assert.match(await read('site/case-study/index.html'), /<base href="\.\.\/"/);
 });
 

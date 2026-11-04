@@ -29,14 +29,14 @@ Browser integration checks use `npm run test:browser`. They run Chromium against
 - case-content.js contains the Case Studies article, its local screenshot assets, and the Experience entries taken from the supplied Figma designs.
 - case-studies.html, case-study.html, and experience.html are responsive public pages that use the shared header, theme control, CV download, and footer.
 - assets/projects/ contains the 20 supplied Figma exports in the same order as the Selected Work frame.
-- assets/Ehsan-Masoomi-CV-EN.pdf is the supplied downloadable CV.
+- The November 2026 English and Persian PDFs under `assets/Ehsan-Masoomi-CV-{EN,FA}-November-2026.pdf` are the supplied downloadable resumes. The active website language determines the download. The superseded PDF is removed.
 - assets/figma/ contains the profile portrait and header icons exported from the Figma frame.
 - The CV download and theme control sit in the top header row, as shown in Figma. The theme control uses the Figma moon icon in light mode and a filled sun icon in dark mode.
-- The public portfolio switches between English/LTR and Persian/RTL. The language preference persists across routes and reloads. Persian uses the supplied On webfonts: 19px Bold headings and 18px SemiBold body copy with 25px line height; the dashboard remains English/LTR.
+- The public portfolio switches between English/LTR and Persian/RTL. Every fresh public document starts in English and light mode. Language and theme choices last through internal navigation in that visit and reset on reload. Persian uses the supplied On webfonts: 19px Bold headings and 18px SemiBold body copy with 25px line height; the dashboard remains English/LTR.
 - `i18n.js`, `content-fa.js`, and `books-fa.js` contain UI labels and the Persian versions of the current published copy. Future English copy edits keep their source text until a corresponding translation is added.
-- Book detail covers stand upright. Personal takeaways use a bold, centered quotation with Ehsan’s portrait, localized name and job title. Research sources remain in the metadata and are not shown as external links.
+- Book detail covers stand upright. Book headers show the title and author, with a short Back/بازگشت action. Personal takeaways have no panel background, align to the start of the chosen language, and show Ehsan’s portrait, localized name and Product Designer/طراح محصول caption. Quote and name sizes match About the book. Research sources remain in the metadata and are not shown as external links.
 - The mobile section tabs scroll horizontally. A bottom capsule repeats the four sections when the original tabs scroll out of view.
-- Experience follows the supplied vertical timeline reference and keeps the existing bullet points. Company logos currently use owner-approved initial placeholders pending the official files.
+- Experience follows the supplied vertical timeline reference and keeps the existing bullet points. The role leads each entry, followed inline by a smaller muted company name; narrow layouts wrap that metadata. The three original owner-supplied company logos are served locally under `assets/companies/`.
 - Pointer clicks use a short sample from the supplied recording, with a fine-pointer halo and click ripple. Interior Back links have an Escape shortcut. A progressive, theme-aware bottom blur stays behind usable navigation and footer links.
 - admin.html is an English-only responsive content dashboard for Selected Work, Case Studies, Experience, and profile/contact details. It supports create, edit, delete, visibility, Selected Work reordering, import, and JSON export.
 - Case study content uses simple Markdown headings, bullets, and local image markers in the Details field. The available image names appear in the image selector and the field hint.
@@ -44,7 +44,7 @@ Browser integration checks use `npm run test:browser`. They run Chromium against
 - Dashboard writes are authenticated by the Cloudflare worker and committed atomically to GitHub. New image files are stored under `assets/uploads/`; GitHub Pages publishes content changes through the included workflow.
 - Password verification, signed sessions, Origin checks, persistent D1 login limits, and revision conflict checks run on the server. Secrets are configured in Cloudflare and never committed.
 - Simple dashboard setup needs two encrypted production secrets: `ADMIN_PASSWORD` (the chosen password) and `GITHUB_CONTENT_TOKEN` (repository-scoped Contents read/write). The session signing key is derived automatically; no local setup script is required.
-- Browser storage retains unpublished recovery drafts and theme preferences. Earlier browser-only edits must be exported from the old site and imported before migration is complete.
+- Dashboard browser storage retains unpublished recovery drafts and its theme preferences. Earlier browser-only edits must be exported from the old site and imported before migration is complete.
 
 ## Story editing and navigation
 

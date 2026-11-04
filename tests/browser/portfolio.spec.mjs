@@ -76,7 +76,8 @@ test('responsive images, local fonts, dark icons, text animation and small scree
   expect(await page.locator('.cv-link img').evaluate(element => getComputedStyle(element).filter)).toContain('invert(1)');
   await page.screenshot({ path: resolve(work, 'case-studies-dark.png'), fullPage: true });
   await page.reload();
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await page.getByRole('button', { name: 'Switch to dark theme' }).click();
   await page.locator('.primary-nav').getByRole('link', { name: 'Experience', exact: true }).click();
   await expect(page.locator('.experience-entry h3').first()).toHaveClass(/text-reveal/);
   expect(await page.locator('.experience-entry h3').first().evaluate(element => element.getAnimations().length)).toBeGreaterThan(0);

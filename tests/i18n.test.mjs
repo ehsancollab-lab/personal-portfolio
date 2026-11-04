@@ -13,13 +13,13 @@ const storage = new Map();
 globalThis.document = { documentElement: {} };
 globalThis.localStorage = { setItem: (key, value) => storage.set(key, value) };
 
-test('language updates document direction, persists and reverses without changing source content', () => {
+test('language updates the current document without persisting preferences or changing source content', () => {
   const original = JSON.stringify(current);
   setLocale('fa');
   assert.equal(getLocale(), 'fa');
   assert.equal(document.documentElement.dir, 'rtl');
   assert.equal(document.documentElement.lang, 'fa');
-  assert.equal(storage.get('ehsan-portfolio-language'), 'fa');
+  assert.equal(storage.get('ehsan-portfolio-language'), undefined);
   assert.equal(localizeText('Download CV'), 'دریافت رزومه');
   assert.equal(number(50), '۵۰');
   assert.equal(phrase('{n} books', '{n} کتاب', { n: number(3) }), '۳ کتاب');

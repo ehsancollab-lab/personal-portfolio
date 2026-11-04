@@ -105,6 +105,8 @@ test('all 50 books open with the correct author, single title, summary, signed t
       await expect(page.locator('.book-summary p')).toHaveText(book.summary);
       await expect(page.locator('.book-takeaway blockquote')).toHaveText(book.takeaway);
       await expect(page.locator('.book-source')).toHaveCount(0);
+      await expect(page.locator('.book-detail-copy > .library-eyebrow, .book-detail-copy > .book-topics')).toHaveCount(0);
+      await expect(page.locator('.library-back')).toHaveText('Back');
       await expect(page.locator('.book-quote-name')).toHaveText('Ehsan Masoomi');
       await expect(page.locator('.book-detail-art > .book-cover')).toHaveCSS('transform', 'none');
       await expect(page.locator('.sample-cover')).toHaveCount(0);
@@ -140,7 +142,7 @@ test('book motion, cached collection scroll, title and browser back and forward 
   expect(errors).toEqual([]);
 });
 
-test('library is responsive at 390 and 320 pixels and keeps the saved theme without duplicate book names', async ({ page }) => {
+test('library keeps theme during navigation and starts light on reload without duplicate book names', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(site + '/about.html');
   await page.getByRole('button', { name: 'Switch to dark theme' }).click();
@@ -160,8 +162,7 @@ test('library is responsive at 390 and 320 pixels and keeps the saved theme with
     await page.screenshot({ path: resolve(work, `book-${width}-dark.png`), fullPage: true });
     await page.locator('.library-back').click(); await page.locator('.library-back').click();
   }
-  await page.reload(); await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-  await page.getByRole('button', { name: 'Switch to light theme' }).click();
+  await page.reload(); await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
 });
 
 test('reduced motion skips shared transitions and keyboard navigation opens collections', async ({ page }) => {
