@@ -9,6 +9,7 @@ import { publishedContent } from "./published-content.js";
 import { animateTypography } from "./typography.js";
 import { createSiteHeader } from "./site-shell.js";
 import { renderLibrary, transitionLibrary, cancelLibraryTransition, libraryPages } from './library.js';
+import { mountPageMotion } from './motion.js';
 
 const root = document.documentElement;
 let page = document.body.dataset.page || "selected-work";
@@ -166,7 +167,7 @@ function createProjectCard(project, index) {
   figure.className = "project-card";
   figure.setAttribute("role", "listitem");
   const image = document.createElement("img");
-  responsiveImage(image, assetPath(project.image), { eager: index < 2, priority: index === 0, sizes: "(max-width: 700px) calc(100vw - 40px), (max-width: 1536px) calc((100vw - 156px) / 2), 690px" });
+  responsiveImage(image, assetPath(project.image), { eager: index < 2, priority: index === 0, sizes: "(max-width: 420px) calc(100vw - 32px), (max-width: 700px) calc(100vw - 40px), (max-width: 920px) calc(100vw - 48px), (max-width: 1760px) calc(100vw - 80px), 1680px" });
   image.alt = text(project.title).trim() || copy.projectAlt + " " + (index + 1);
 
   image.decoding = "async";
@@ -433,6 +434,7 @@ function renderPage(next, fresh = false) {
   skip.href = '#' + main.id; skip.textContent = 'Skip to main content';
   updateTheme();
   animateTypography(main);
+  mountPageMotion(main, next);
   return main;
 }
 let currentRoute = routeKey();

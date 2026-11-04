@@ -143,7 +143,7 @@ test('library is responsive at 390 and 320 pixels and keeps the saved theme and 
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await expect(page.locator('.collection-panel')).toHaveCSS('background-color', 'rgb(34, 34, 36)');
     await page.screenshot({ path: resolve(work, `books-${width}-dark.png`), fullPage: true });
-    await page.locator('.shelf-book[data-book-id="attached"]').click();
+    await page.locator('.library-book-card[data-book-id="attached"]').click();
     await page.evaluate(() => document.fonts.ready);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     expect(await page.locator('.book-detail-persian').evaluate(node => getComputedStyle(node).fontFamily)).toContain('Vazirmatn');
@@ -165,7 +165,7 @@ test('reduced motion skips shared transitions and keyboard navigation opens coll
   await expect(page.locator('.collection-panel h1')).toHaveText('Psychology & relationships');
   expect(await page.evaluate(() => window.__transitionCalls)).toBe(0);
   await page.locator('.shelf-book').first().click();
-  await expect(page.locator('.book-detail-copy h1')).toHaveText('Attached');
+  await expect(page.locator('.book-detail-copy h1')).toHaveText('Behave');
   expect(await page.evaluate(() => window.__transitionCalls)).toBe(0);
 });
 

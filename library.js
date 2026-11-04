@@ -21,6 +21,7 @@ function cover(book) {
     const frame = art?.frame || [0, 0, art?.width || 7, art?.height || 10];
     const [left, top, width, height] = frame;
     wrapper.style.aspectRatio = width + ' / ' + height;
+    wrapper.style.setProperty('--book-ratio', width / height);
     const viewport = element('span', 'book-cover-viewport');
     const image = element('img');
     const scale = art ? art.width / width : 1;

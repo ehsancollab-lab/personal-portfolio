@@ -7,11 +7,11 @@ export const aboutIntro = [
 ];
 
 export const bookCategories = [
-  { id: 'psychology', title: 'Psychology & relationships', description: 'Understanding ourselves and each other.', featured: ['attached', 'behave', 'self-compassion'] },
-  { id: 'growth', title: 'Growth & learning', description: 'Better questions. A little more perspective.', featured: ['thinking-fast-and-slow', 'think-again', 'atomic-habits'] },
+  { id: 'psychology', title: 'Psychology & relationships', description: 'Understanding ourselves and each other.', featured: ['behave', 'why-nobody-told-me', 'self-compassion'] },
+  { id: 'growth', title: 'Growth & learning', description: 'Better questions. A little more perspective.', featured: ['thinking-fast-and-slow', 'think-again', 'twelve-rules-for-life'] },
   { id: 'work', title: 'Work & business', description: 'Making space for work that matters.', featured: ['deep-work', 'slow-productivity', 'build'] },
   { id: 'life', title: 'Life & meaning', description: 'The things that make a life feel like yours.', featured: ['mans-search-for-meaning', 'greenlights', 'art-of-living'] },
-  { id: 'design', title: 'Design & creativity', description: 'Learning to see, think and make.', featured: ['visual-literacy', 'form-and-design', 'think-bigger'] },
+  { id: 'design', title: 'Design & creativity', description: 'Learning to see, think and make.', featured: ['visual-literacy', 'form-and-design', 'graphic-analysis'] },
   { id: 'fiction', title: 'Fiction & literature', description: 'Other lives, other worlds, familiar feelings.', featured: ['fraction-whole', 'animal-farm', 'when-nietzsche-wept'] }
 ];
 

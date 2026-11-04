@@ -39,3 +39,12 @@ test('the About introduction uses the owner-provided biography facts', () => {
   assert.match(aboutIntro.join(' '), /married/);
   assert.match(aboutIntro.join(' '), /love reading/);
 });
+
+test('featured shelves match the owner-selected psychology, growth and design books', () => {
+  const expected = {
+    psychology: ['behave', 'why-nobody-told-me', 'self-compassion'],
+    growth: ['thinking-fast-and-slow', 'think-again', 'twelve-rules-for-life'],
+    design: ['visual-literacy', 'form-and-design', 'graphic-analysis']
+  };
+  for (const [id, featured] of Object.entries(expected)) assert.deepEqual(bookCategories.find(category => category.id === id).featured, featured);
+});

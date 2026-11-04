@@ -16,12 +16,16 @@ Latest verification: 2026-11-04.
 - Collection cards expand into a shelf using shared surface, title and cover transitions. Book covers move into their detail view and back to their original shelf/grid position. Cached search and scroll survive returning; interrupted navigation keeps the latest destination. Reduced motion skips the transitions, and browsers without View Transitions use animated cover clones.
 - Each book has its English and Persian titles, author, topics, an original short summary, an owner-requested first-person takeaway and a Persian research source. Sources are recorded in `book-sources.js`; the takeaways are editorial copy, not quotations from the books.
 - All 50 owner-supplied covers replace the temporary sample jackets. The unmodified PNG files live under `assets/books`; `book-covers.js` records their book assignments, dimensions, display frames and SHA-256 hashes. CSS frames hide the surrounding white photo margins while preserving the complete cover and its proportions; full-page white cover designs retain their paper margins. Responsive WebP variants are generated for display. Persian titles use locally hosted Vazirmatn.
+- Featured psychology books are Behave, Why Has Nobody Told Me This Before? and Self-Compassion. Design features Visual Literacy, Principles of Form and Design and the Masoud Sepehr graphic-analysis book. Growth features Twelve Rules for Life in place of Atomic Habits.
+- About copy, bookshelf heading and search share their left edge. Collection headings and search share the panel's inner edge. Fans, shelves and grid covers use a common height within each context while preserving their individual aspect ratios; grid titles start on the same row baseline.
+- Selected Work uses a single column, artwork up to 1680px wide, responsive image candidates sized for that layout, and 12px desktop / 8px mobile outer corners.
+- GSAP supplies page entry and ScrollTrigger project reveals. A lazily loaded Three.js scene provides pointer-driven perspective, gentle surface deformation and a GLSL light/ripple shader. It uses one canvas, capped device pixel ratio, only nearby card textures, decoded bitmaps with actual source-pixel dimensions, and no repeated GPU draws when idle. Route changes and context loss release textures, bitmaps, geometry and the renderer. Reduced motion, touch-only pointers, data-saving mode and unavailable WebGL retain the normal image gallery.
 
 ## Executed checks
 
-`npm test`: 32 server, story schema, book metadata, original-image integrity and build checks.
+`npm test`: 33 server, story schema, book metadata, original-image integrity and build checks.
 
-`npm run test:browser`: 28 Chromium scenarios:
+`npm run test:browser`: 35 Chromium scenarios:
 
 1. Section switching without additional document requests, cached header/view identity, detail navigation and back/forward.
 2. Responsive image selection, local fonts, saved dark theme/icons, typography animation, reduced motion and layouts at 1440/390/320px.
@@ -51,6 +55,15 @@ Latest verification: 2026-11-04.
 26. Cover-clone animation and cleanup when View Transitions are unavailable.
 27. Direct book/collection aliases and usable invalid-link states.
 28. Rapid navigation cancels prior motion, retains the latest destination and leaves no named transition elements behind.
+29. Large single-column Selected Work geometry, smaller corners and responsive images at 1920/1440/390/320px.
+30. Requested featured books in both fans and shelves; consistent search edges, shelf heights and grid-title alignment.
+31. GSAP page entry and project reveals on scroll.
+32. Real Three.js shader pixels, pointer reaction, idle draw-count stability and canvas cleanup when changing pages.
+33. Reduced motion prevents and disposes the GPU scene while restoring the semantic image gallery.
+34. Missing WebGL and context loss preserve the normal project images.
+35. Touch layouts use the static gallery and keep book rows aligned at 390/320px.
+
+The GPU browser scenarios use Chromium's software WebGL renderer to exercise actual shader compilation, draw calls and pixel output. An initial responsive-HTML-image texture size mismatch was reproduced and fixed by uploading decoded ImageBitmaps with their real pixel dimensions. A separate dark-theme resize check found no WebGL errors or horizontal overflow.
 
 The reference video was inspected for its fanned covers, expanding collection surface, shelf arrangement and reverse motion. Desktop and mobile screenshots, including a paused transition midpoint, were reviewed locally. The supplied 50-image ZIP was visually matched to the book list. The updated collection cards, shelf and detail pages were reviewed with those covers, including the 320px dark-mode detail layout. No sample jackets or pending-cover message remain in the current bookshelf.
 

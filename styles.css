@@ -225,23 +225,24 @@ button { font: inherit; }
 :root[data-theme="dark"] .nav-tab:hover { color: #ffffff; }
 
 .work-section {
-  max-width: 1536px;
+  max-width: 1760px;
   margin-inline: auto;
-  padding: 24px 70px;
+  padding: 24px 40px;
   outline: none;
 }
 
 .project-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 40px;
 }
 
 .project-card {
+  position: relative;
   overflow: hidden;
   aspect-ratio: 2760 / 1921;
   margin: 0;
-  border-radius: 28px;
+  border-radius: 12px;
   background: var(--surface);
 }
 
@@ -257,6 +258,8 @@ button { font: inherit; }
   height: 100%;
   object-fit: contain;
 }
+
+.work-webgl-stage { position: fixed; z-index: 2; inset: 0; display: block; width: 100%; height: 100%; pointer-events: none; }
 
 .site-footer {
   max-width: 1536px;
@@ -505,7 +508,7 @@ button { font: inherit; }
   .primary-nav { gap: 8px; margin-block-start: 40px; }
   .work-section { padding: 20px; }
   .project-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
-  .project-card { border-radius: 24px; }
+  .project-card { border-radius: 8px; }
   .case-studies-section { padding: 12px 20px 36px; }
   .experience-section { padding-inline: 20px; }
   .experience-list { gap: 30px; }
