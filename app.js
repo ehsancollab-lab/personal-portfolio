@@ -310,9 +310,9 @@ function renderCaseStudyDetails() {
   themeToggle.type = "button";
   themeToggle.setAttribute("aria-pressed", "false");
   const themeIcon = document.createElement("img");
-  themeIcon.src = "./assets/figma/theme-toggle.svg";
-  themeIcon.width = 32;
-  themeIcon.height = 32;
+  themeIcon.src = "./assets/ui/moon-fill.svg";
+  themeIcon.width = 20;
+  themeIcon.height = 20;
   themeIcon.alt = "";
   themeToggle.append(themeIcon);
   toolbar.append(back, themeToggle);
@@ -392,13 +392,13 @@ function updateTheme() {
     toggle.setAttribute('aria-label', localizeText(dark ? 'Switch to light theme' : 'Switch to dark theme'));
     const image = toggle.querySelector('img');
     if (image) {
-      image.src = dark ? './assets/ui/sun-fill.svg' : './assets/figma/theme-toggle.svg';
-      image.width = dark ? 20 : 32;
-      image.height = dark ? 20 : 32;
+      image.src = dark ? './assets/ui/sun-fill.svg' : './assets/ui/moon-fill.svg';
+      image.width = 20;
+      image.height = 20;
     }
     toggle.title = localizeText(dark ? 'Switch to light theme' : 'Switch to dark theme');
   });
-  document.querySelector('meta[name="theme-color"]').content = dark ? "#131315" : page === "case-study" ? "#fdfdfd" : "#ffffff";
+  document.querySelector('meta[name="theme-color"]').content = getComputedStyle(root).getPropertyValue('--page-bg').trim();
 }
 
 document.addEventListener("click", (event) => {

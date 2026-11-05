@@ -2,6 +2,12 @@
 
 Latest verification: 2026-11-05.
 
+## Blossom reference palette
+
+- The owner supplies `https://blossom-carousel.com/` and five screenshots as the color target. Large untextured screenshot regions consistently sample to `#fafafa`, white cards and black text/actions. Public CSS tokens now use that hierarchy with pale neutral borders, gray secondary text and soft neutral shadows; smaller supporting text uses `#737373` for readability. Dark mode is a neutral adaptation because the supplied reference only shows light mode.
+- The palette covers all seven public route types, primary/secondary/active/hover/focus controls, language/theme controls, case titles, library panels/shelf, timeline and bottom blur. Case pages no longer have a separate off-white value. Browser theme metadata follows the computed page token. A standalone local moon icon lets CSS color the theme control without the old baked-in gray background; the existing Phosphor license covers it.
+- `COLOR-PALETTE.md` records the role mappings and source scope. Existing color expectations are updated. No tests were added or run locally for this change; the public build succeeds. Publication is verified using the commit's hosting checks.
+
 ## November 5 monochrome Experience timeline
 
 - The timeline's progress line and active dots are black in light mode; dark mode uses the existing light foreground. Station and moving dots shrink from 8px to 6px, with offsets adjusted to preserve their center alignment. The moving cursor uses a low-opacity shadow with 10px blur; nearby station shadows also have soft edges.

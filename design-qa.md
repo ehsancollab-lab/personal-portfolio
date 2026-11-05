@@ -1,4 +1,12 @@
-# Plain background restoration — November 5, 2026
+# Blossom color mapping — November 5, 2026
+
+The owner's five mobile screenshots and `https://blossom-carousel.com/` define the current color target. Flat reference areas sample to `#fafafa` pages, white cards and black type/actions. `COLOR-PALETTE.md` records the public role mappings, secondary-text adaptation and derived neutral dark theme. The colors cover all public routes, controls, library panels/shelf, hover/focus, timeline and bottom blur.
+
+No local automated tests were added or run. The public production build succeeds. Earlier reports below document superseded background treatments.
+
+---
+
+# Historical: plain background restoration — November 5, 2026
 
 The owner subsequently discarded the complete sky treatment. Its runtime, stylesheet, build entries and dedicated assets are removed. Existing opaque theme backgrounds and pre-sky header/footer geometry are restored. The theme toggle, permanent bottom blur, Experience timeline, CV sizing and other content are retained; the floating bottom menu stays removed.
 

@@ -23,14 +23,14 @@ async function replaceImage(page, figure, file = replacementFile) {
   await expect.poll(() => figure.locator('> img').evaluate(element => element.complete && element.naturalWidth > 0)).toBe(true);
 }
 
-test('case cards zoom smoothly and their title becomes #2255FF on hover and keyboard focus', async ({ page }) => {
+test('case cards zoom smoothly and their title uses the monochrome accent on hover and keyboard focus', async ({ page }) => {
   await page.goto(site + '/case-studies.html');
   const card = page.locator('a.case-study-card').first();
   const image = card.locator('.case-study-card-media > img');
   const title = card.locator('.case-study-card-title');
   const before = await card.boundingBox();
   await card.hover();
-  await expect(title).toHaveCSS('color', 'rgb(34, 85, 255)');
+  await expect(title).toHaveCSS('color', 'rgb(0, 0, 0)');
   await expect(image).toHaveCSS('transform', 'matrix(1.04, 0, 0, 1.04, 0, 0)');
   expect(await image.evaluate(element => parseFloat(getComputedStyle(element).transitionDuration))).toBeGreaterThanOrEqual(.3);
   await page.screenshot({ path: resolve(work, 'case-card-hover-refined.png') });
@@ -40,25 +40,25 @@ test('case cards zoom smoothly and their title becomes #2255FF on hover and keyb
   await expect(image).toHaveCSS('transform', 'none');
   await page.keyboard.press('Tab');
   await card.focus();
-  await expect(title).toHaveCSS('color', 'rgb(34, 85, 255)');
+  await expect(title).toHaveCSS('color', 'rgb(0, 0, 0)');
 });
 
-test('the complete light detail page uses #FDFDFD on direct load and SPA navigation', async ({ page }) => {
+test('the complete light detail page uses the Blossom off-white on direct load and SPA navigation', async ({ page }) => {
   await page.goto(site + '/case-study.html');
-  for (const selector of ['html', 'body', '.case-detail-section', '.case-detail']) await expect(page.locator(selector)).toHaveCSS('background-color', 'rgb(253, 253, 253)');
+  for (const selector of ['html', 'body', '.case-detail-section', '.case-detail']) await expect(page.locator(selector)).toHaveCSS('background-color', 'rgb(250, 250, 250)');
   const effective = await page.locator('.case-detail-title, .case-article-body, .site-footer').evaluateAll(elements => elements.map(element => {
     for (let parent = element; parent; parent = parent.parentElement) { const color = getComputedStyle(parent).backgroundColor; if (color !== 'rgba(0, 0, 0, 0)' && color !== 'transparent') return color; }
   }));
-  expect(effective.every(color => color === 'rgb(253, 253, 253)')).toBe(true);
+  expect(effective.every(color => color === 'rgb(250, 250, 250)')).toBe(true);
   await page.screenshot({ path: resolve(work, 'case-detail-background-refined.png') });
   await page.getByRole('button', { name: 'Switch to dark theme' }).click();
-  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(19, 19, 21)');
+  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(17, 17, 17)');
   await page.getByRole('button', { name: 'Switch to light theme' }).click();
   await page.getByRole('link', { name: 'Back to Home' }).click();
-  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(250, 250, 250)');
   await page.locator('.primary-nav').getByRole('link', { name: 'Case Studies', exact: true }).click();
   await page.locator('a.case-study-card').first().click();
-  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(253, 253, 253)');
+  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(250, 250, 250)');
 });
 
 test('existing article image replacement changes the displayed image and survives saving', async ({ page }) => {

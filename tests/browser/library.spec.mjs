@@ -153,7 +153,7 @@ test('library keeps theme during navigation and starts light on reload without d
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.locator('.book-collection-card[data-category-id="psychology"]').click();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    await expect(page.locator('.collection-panel')).toHaveCSS('background-color', 'rgb(34, 34, 36)');
+    await expect(page.locator('.collection-panel')).toHaveCSS('background-color', 'rgb(26, 26, 26)');
     await page.screenshot({ path: resolve(work, `books-${width}-dark.png`), fullPage: true });
     await page.locator('.library-book-card[data-book-id="attached"]').click();
     await page.evaluate(() => document.fonts.ready);

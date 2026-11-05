@@ -62,7 +62,7 @@ function toolbar(main, href, text, showShortcut = true) {
   const bar = element('div', 'library-toolbar');
   const theme = element('button', 'theme-toggle library-theme-toggle');
   theme.type = 'button'; theme.setAttribute('aria-label', 'Switch to dark theme'); theme.setAttribute('aria-pressed', 'false');
-  const icon = element('img'); icon.src = './assets/figma/theme-toggle.svg'; icon.width = 32; icon.height = 32; icon.alt = '';
+  const icon = element('img'); icon.src = './assets/ui/moon-fill.svg'; icon.width = 20; icon.height = 20; icon.alt = '';
   theme.append(icon); bar.append(backLink(href, text, showShortcut), theme); main.append(bar);
 }
 function categoryCard(category, index) {

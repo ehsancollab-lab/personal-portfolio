@@ -1,6 +1,6 @@
 .case-study-card { display: block; min-width: 0; padding: 0; border: 0; border-radius: 0; background: transparent; color: inherit; text-decoration: none; }
 .case-study-card:hover, .case-study-card:focus-visible { background: transparent; }
-.case-study-card-media { position: relative; overflow: hidden; width: 100%; aspect-ratio: 1.442; border-radius: 8px; background: #bcbcbc; }
+.case-study-card-media { position: relative; overflow: hidden; width: 100%; aspect-ratio: 1.442; border-radius: 8px; background: var(--surface-soft, #f0f0f0); }
 .case-study-card-media > img { display: block; width: 100%; height: 100%; margin: 0; object-fit: cover; transition: filter 180ms ease, transform 180ms ease; }
 .case-study-card-copy { display: grid; gap: 7px; padding-top: 14px; }
 .case-study-card-title { margin: 0; color: var(--text, #373737); font-size: 17px; font-weight: 500; line-height: 1.55; overflow-wrap: anywhere; }
@@ -29,10 +29,10 @@
 a.case-study-card .case-study-card-media > img { transition: transform 360ms cubic-bezier(.2,.65,.3,1); }
 a.case-study-card .case-study-card-title { transition: color 180ms ease; }
 a.case-study-card:focus-visible .case-study-card-media > img { transform: scale(1.04); }
-a.case-study-card:focus-visible .case-study-card-title { color: #2255ff; }
+a.case-study-card:focus-visible .case-study-card-title { color: var(--accent, var(--text)); }
 @media (hover: hover) {
   a.case-study-card:hover .case-study-card-media > img { transform: scale(1.04); }
-  a.case-study-card:hover .case-study-card-title { color: #2255ff; }
+  a.case-study-card:hover .case-study-card-title { color: var(--accent, var(--text)); }
 }
 @media (prefers-reduced-motion: reduce) {
   a.case-study-card .case-study-card-media > img, a.case-study-card .case-study-card-title { transition-duration: .01ms; }

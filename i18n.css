@@ -3,9 +3,9 @@
 @font-face { font-family: On; src: url('./assets/fonts/On-Bold.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
 /* One title size across public routes and responsive breakpoints. */
 :root body[data-page] :is(h1, h2, h3, h4, h5, h6, .experience-role) { font-size: 19px; font-weight: 700; }
-.language-switch { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 2px; height: 32px; padding: 3px; border: 0; border-radius: 999px; background: var(--control-bg); font-family: Inter, sans-serif; }
+.language-switch { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 2px; height: 32px; padding: 3px; border: 0; border-radius: 999px; background: var(--surface-soft); font-family: Inter, sans-serif; }
 .language-switch button { display: grid; place-items: center; width: 27px; height: 24px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: var(--muted); font: 500 10px/1 Inter, sans-serif; cursor: pointer; }
-.language-switch button[aria-pressed="true"] { color: var(--text); background: var(--page-bg); box-shadow: 0 1px 3px #00000012; }
+.language-switch button[aria-pressed="true"] { color: var(--text); background: var(--surface); box-shadow: var(--control-shadow); }
 .language-switch button:focus-visible { outline-offset: 1px; }
 .detail-display-controls { display: flex; flex: 0 0 auto; align-items: center; gap: 12px; }
 .site-header .primary-nav { flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; padding-block: 4px; scroll-padding-inline: 4px; }

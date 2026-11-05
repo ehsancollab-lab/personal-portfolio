@@ -1,6 +1,6 @@
 .click-ring { position: fixed; z-index: 1500; width: 36px; height: 36px; border: 1px solid color-mix(in srgb, var(--text) 50%, transparent); border-radius: 50%; pointer-events: none; }
-.library-toolbar .library-back, .case-detail-toolbar .case-back-link { flex: 0 1 auto; min-height: 36px; padding: 6px 10px; gap: 8px; border: 1px solid var(--border); border-radius: 9px; background: color-mix(in srgb, var(--page-bg) 85%, var(--surface)); box-shadow: 0 1px 3px #00000006; font-size: 13px; line-height: 22px; transition: background-color 180ms ease, transform 180ms ease, box-shadow 180ms ease; }
-.library-toolbar .library-back:hover, .case-detail-toolbar .case-back-link:hover { text-decoration: none; background: var(--control-bg); box-shadow: 0 3px 10px #0000000a; transform: translateY(-1px); }
+.library-toolbar .library-back, .case-detail-toolbar .case-back-link { flex: 0 1 auto; min-height: 36px; padding: 6px 10px; gap: 8px; border: 1px solid var(--border); border-radius: 9px; background: var(--surface); box-shadow: var(--control-shadow); font-size: 13px; line-height: 22px; transition: background-color 180ms ease, transform 180ms ease, box-shadow 180ms ease; }
+.library-toolbar .library-back:hover, .case-detail-toolbar .case-back-link:hover { text-decoration: none; background: var(--card-hover); box-shadow: var(--card-shadow); transform: translateY(-1px); }
 .library-toolbar .library-back:active, .case-detail-toolbar .case-back-link:active { transform: scale(.97); }
 .case-back-link .case-back-icon { width: 18px; height: 20px; flex-basis: 18px; background: none; }
 .case-back-link .case-back-icon img, .library-back .library-back-icon { width: 18px; height: 18px; flex-basis: 18px; }
