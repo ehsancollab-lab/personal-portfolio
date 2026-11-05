@@ -1,12 +1,7 @@
-const tapURL = new URL('./assets/audio/tap.wav', import.meta.url).href;
+import { createClickSound } from './click-sound.js';
 export function mountPointerFeedback() {
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  const voices = Array.from({ length: 3 }, () => { const voice = new Audio(tapURL); voice.preload = 'auto'; voice.volume = .8; return voice; });
-  let index = 0;
-  function sound() {
-    const voice = voices[index++ % voices.length];
-    voice.currentTime = 0; voice.play().catch(() => {});
-  }
+  const sound = createClickSound();
   function ripple(x, y) {
     const ring = document.createElement('span'); ring.className = 'click-ring'; ring.setAttribute('aria-hidden', 'true');
     ring.style.left = x + 'px'; ring.style.top = y + 'px';

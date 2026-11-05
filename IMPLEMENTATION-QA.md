@@ -2,11 +2,17 @@
 
 Latest verification: 2026-11-05.
 
+## November 5 supplied click synthesis
+
+- The owner supplied the requested site's JavaScript in `sounds-BL9XApyC.zip`. Its sound is generated with Web Audio. `click-sound.js` matches the source's sine sweep, noise buffer, filter, envelopes, pitch variation, compressor, pan clamp and 30ms retrigger limit. Source hash and values are documented in `assets/audio/README.md`; the old WAV is removed.
+- Audio initializes lazily after a trusted primary click, resumes when needed and reuses one context. Keyboard activation produces sound without a ring; hovering, touch scrolling and synthetic clicks produce neither. The existing click-only ring and reduced-motion behavior remain intact. Audio failures do not block navigation.
+- `npm test` passes all 37 checks and builds both deployment targets. All 10 targeted Chromium scenarios in `click-sound.spec.mjs` and `pointer-floating.spec.mjs` pass. Six seeded offline render comparisons match the reference within 0.0000001 at 44.1/48kHz across different volumes/pans. Checks also cover the 30ms limit, one lazy context, no audio-file requests, missing/blocked audio and rejected/still-suspended resume, keyboard input, real mobile taps/scrolling, reduced motion and the bilingual floating menu.
+
 ## November 5 click-only pointer feedback
 
 - The persistent pointer-following halo and its hover/press listeners are removed. A completed trusted primary click now creates the temporary 480ms ring at its position; hovering, pressing without release and touch scrolling create no ring. Keyboard activation plays audio without placing a ring at artificial coordinates, and reduced motion keeps audio while suppressing the ring.
 - `npm run build:site` succeeds and all seven scenarios in `tests/browser/pointer-floating.spec.mjs` pass. Checks cover idle/hover/press absence, ring position and removal, repeated clicks, keyboard and synthetic activation, local audio decoding, real touch scrolling versus tapping, reduced motion and existing bilingual floating navigation. The desktop click screenshot was reviewed.
-- The requested `eduardoalba.com` sound could not be identified or downloaded: the managed environment's destination policy blocks direct access and the web tool cannot open the page. The existing user-supplied 220ms sample remains unchanged pending the actual reference sound or a recording; no claim of matching the new reference is made.
+- At that stage direct reference access was blocked. The subsequently supplied source resolves the sound replacement, as recorded above.
 
 ## November 5 compact mobile navigation
 
@@ -43,7 +49,7 @@ Latest verification: 2026-11-05.
 - Section tabs remain one horizontally scrolling row on mobile. A fixed bottom capsule appears when the source navigation leaves the viewport, mirrors the active section and RTL direction, and hides on interior case/book/collection pages. Hidden duplicates are inert.
 - Experience follows `Rec 0040.mp4`: a vertical timeline with blue dots and scroll progress, year/date, the original supplied company logo above a role-first heading, a smaller muted company name beside it, and the existing bullet points. The MORS, Nibex and Remocapp JPEGs are copied byte-for-byte from the supplied ZIP; their original filenames and hashes are recorded under `assets/companies/`. No hover project previews were added.
 - A four-layer masked backdrop blur remains visible at the bottom at all scroll positions, including the very top, adapts to the theme, ignores pointer input, and leaves the bottom navigation and footer readable.
-- `Rec 0042.mp4` informed the blur/vertical text entrance, short departure transition, and interior Back button with an Escape shortcut. Temporary click rings ignore pointer input; no persistent hover halo is mounted, and reduced motion skips the ripple and transitions. The 220 ms WAV is cut from the owner-supplied click recording and plays only after user input.
+- `Rec 0042.mp4` informed the blur/vertical text entrance, short departure transition, and interior Back button with an Escape shortcut. Temporary click rings ignore pointer input; no persistent hover halo is mounted, and reduced motion skips the ripple and transitions. Click audio uses the subsequently supplied `eduardoalba.com` synthesis and plays only after user input.
 
 ## Typography and book detail revision
 

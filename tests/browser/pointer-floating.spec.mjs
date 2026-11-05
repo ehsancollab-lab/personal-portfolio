@@ -4,6 +4,21 @@ const site = 'http://localhost:4173';
 const work = resolve(import.meta.dirname, '../../../work/portfolio-browser');
 test.beforeEach(async ({ request }) => { await request.post(site + '/__test/reset'); });
 
+function observeClickAudio() {
+  window.__taps = []; window.__audioContexts = 0; window.__mediaPlays = 0;
+  const NativeAudioContext = window.AudioContext;
+  window.AudioContext = class extends NativeAudioContext {
+    constructor(...args) { super(...args); window.__audioContexts++; }
+    createOscillator() {
+      const oscillator = super.createOscillator(), start = oscillator.start.bind(oscillator);
+      oscillator.start = at => { window.__taps.push(at); return start(at); };
+      return oscillator;
+    }
+  };
+  const play = HTMLMediaElement.prototype.play;
+  HTMLMediaElement.prototype.play = function() { window.__mediaPlays++; return play.call(this); };
+}
+
 test('floating capsule appears only after the original tabs leave view and navigates all four sections', async ({ page }) => {
   const documents = []; const errors = [];
   page.on('request', request => { if (request.isNavigationRequest()) documents.push(request.url()); });
@@ -107,18 +122,16 @@ test('compact floating navigation keeps all four labels visible without overlap 
   expect(await nav.locator('a').allTextContents()).toEqual(await page.locator('.primary-nav a').allTextContents());
 });
 
-test('pointer has no hover halo and only a completed click emits a temporary ring and local audio', async ({ page }) => {
+test('pointer has no hover halo and only a completed click emits a temporary ring and synthesized audio', async ({ page }) => {
   const errors = []; page.on('pageerror', error => errors.push(error.message));
-  await page.addInitScript(() => {
-    window.__taps = [];
-    const play = HTMLMediaElement.prototype.play;
-    HTMLMediaElement.prototype.play = function() { window.__taps.push(this.src); return play.call(this); };
-  });
+  const audioRequests = []; page.on('request', request => { if (/\.(wav|mp3|ogg)(?:\?|$)/i.test(request.url())) audioRequests.push(request.url()); });
+  await page.addInitScript(observeClickAudio);
   await page.goto(site + '/experience.html');
   await page.mouse.move(260, 180);
   const halo = page.locator('.cursor-halo');
   await expect(halo).toHaveCount(0);
   await expect(page.locator('.click-ring')).toHaveCount(0);
+  expect(await page.evaluate(() => window.__audioContexts)).toBe(0);
   const target = page.locator('[data-language="fa"]'); await target.hover();
   await expect(halo).toHaveCount(0);
   await expect(page.locator('.click-ring')).toHaveCount(0);
@@ -135,26 +148,21 @@ test('pointer has no hover halo and only a completed click emits a temporary rin
   await page.screenshot({ path: resolve(work, 'pointer-click-ring.png') });
   await expect(page.locator('.click-ring')).toHaveCount(0);
   await expect(halo).toHaveCount(0);
-  expect(await page.evaluate(() => window.__taps)).toEqual([site + '/assets/audio/tap.wav']);
-  const response = await page.request.get(site + '/assets/audio/tap.wav');
-  expect(response.ok()).toBe(true);
-  expect((await response.body()).subarray(0, 4).toString()).toBe('RIFF');
-  const duration = await page.evaluate(async () => {
-    const context = new AudioContext();
-    const bytes = await (await fetch('/assets/audio/tap.wav')).arrayBuffer();
-    const buffer = await context.decodeAudioData(bytes); await context.close(); return buffer.duration;
-  });
-  expect(duration).toBeCloseTo(.22, 2);
+  await expect.poll(() => page.evaluate(() => window.__taps.length)).toBe(1);
   await target.focus(); await page.keyboard.press('Enter');
   await expect(page.locator('html')).toHaveAttribute('lang', 'fa');
-  expect(await page.evaluate(() => window.__taps.length)).toBe(2);
+  await expect.poll(() => page.evaluate(() => window.__taps.length)).toBe(2);
   await expect(page.locator('.click-ring')).toHaveCount(0);
   await expect(halo).toHaveCount(0);
   await target.evaluate(button => button.click());
   expect(await page.evaluate(() => window.__taps.length)).toBe(2);
-  for (let index = 0; index < 3; index++) await page.mouse.click(260, 180);
-  expect(await page.evaluate(() => window.__taps.length)).toBe(5);
+  for (let index = 0; index < 3; index++) {
+    await page.mouse.click(260, 180, { delay: 50 });
+    await expect.poll(() => page.evaluate(() => window.__taps.length)).toBe(3 + index);
+  }
   await expect(page.locator('.click-ring')).toHaveCount(0);
+  expect(await page.evaluate(() => ({ contexts: window.__audioContexts, mediaPlays: window.__mediaPlays }))).toEqual({ contexts: 1, mediaPlays: 0 });
+  expect(audioRequests).toEqual([]);
   expect(errors).toEqual([]);
 });
 
@@ -162,10 +170,9 @@ test('touch scrolling emits neither ring nor audio while a completed tap emits b
   const context = await browser.newContext({ viewport: { width: 350, height: 700 }, isMobile: true, hasTouch: true });
   const page = await context.newPage();
   try {
+    await page.addInitScript(observeClickAudio);
     await page.addInitScript(() => {
-      window.__taps = []; window.__rings = 0;
-      const play = HTMLMediaElement.prototype.play;
-      HTMLMediaElement.prototype.play = function() { window.__taps.push(this.src); return play.call(this); };
+      window.__rings = 0;
       new MutationObserver(records => {
         for (const record of records) for (const node of record.addedNodes) if (node.classList?.contains('click-ring')) window.__rings++;
       }).observe(document, { childList: true, subtree: true });
@@ -186,10 +193,7 @@ test('touch scrolling emits neither ring nor audio while a completed tap emits b
 });
 
 test('reduced motion keeps click audio and suppresses ripple and page motion; Escape follows the styled Back link', async ({ page }) => {
-  await page.addInitScript(() => {
-    window.__taps = 0;
-    HTMLMediaElement.prototype.play = function() { window.__taps++; return Promise.resolve(); };
-  });
+  await page.addInitScript(observeClickAudio);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(site + '/book.html?id=self-compassion');
   await expect(page.locator('.library-back')).toHaveCSS('border-top-left-radius', '9px');
@@ -197,7 +201,7 @@ test('reduced motion keeps click audio and suppresses ripple and page motion; Es
   await page.mouse.click(260, 180);
   await expect(page.locator('.click-ring')).toHaveCount(0);
   await expect(page.locator('.cursor-halo')).toHaveCount(0);
-  expect(await page.evaluate(() => window.__taps)).toBe(1);
+  await expect.poll(() => page.evaluate(() => window.__taps.length)).toBe(1);
   await page.keyboard.press('Escape');
   await expect(page.locator('.collection-panel h1')).toHaveText('Psychology & relationships');
   await page.keyboard.press('Escape');
