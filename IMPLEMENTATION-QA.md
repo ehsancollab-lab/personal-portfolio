@@ -1,6 +1,12 @@
 # Portfolio and story editor verification
 
-Latest verification: 2026-11-04.
+Latest verification: 2026-11-05.
+
+## November 5 annotated sizes and permanent blur
+
+- Personal book quotation text is 17px and Ehsan’s name is 15px, in English and Persian at desktop and mobile breakpoints.
+- The fixed four-layer bottom blur is always visible, including at scroll position zero. Scroll-dependent visibility and the opacity fade were removed; theme adaptation and pointer passthrough remain verified.
+- `npm run build:site` succeeds. Three focused Chromium scenarios pass: public heading/body metrics, book detail quotation/name sizes and layout, and permanent blur at the top and bottom in desktop/mobile light/dark states.
 
 ## Changes
 
@@ -25,13 +31,13 @@ Latest verification: 2026-11-04.
 - The public EN/FA segmented control sits between CV and theme, updates `lang`, `dir`, copy, route titles and the matching CV download for the current visit. A reload starts English/light even with legacy stored preferences. All public headings use 19px Bold at every breakpoint and in both languages. Persian 18px body copy uses On SemiBold with exactly 25px line height; headings use the genuine On Bold webfont. Persian translations cover all current profile/About/experience/case-study strings and all 50 book summaries and takeaways; the source content remains unchanged.
 - Section tabs remain one horizontally scrolling row on mobile. A fixed bottom capsule appears when the source navigation leaves the viewport, mirrors the active section and RTL direction, and hides on interior case/book/collection pages. Hidden duplicates are inert.
 - Experience follows `Rec 0040.mp4`: a vertical timeline with blue dots and scroll progress, year/date, the original supplied company logo above a role-first heading, a smaller muted company name beside it, and the existing bullet points. The MORS, Nibex and Remocapp JPEGs are copied byte-for-byte from the supplied ZIP; their original filenames and hashes are recorded under `assets/companies/`. No hover project previews were added.
-- A four-layer masked backdrop blur appears at the bottom after scrolling, adapts to the theme, ignores pointer input, and leaves the bottom navigation and footer readable.
+- A four-layer masked backdrop blur remains visible at the bottom at all scroll positions, including the very top, adapts to the theme, ignores pointer input, and leaves the bottom navigation and footer readable.
 - `Rec 0042.mp4` informed the blur/vertical text entrance, short departure transition, and interior Back button with an Escape shortcut. Click rings and the hover halo ignore pointer input; touch omits the halo, and reduced motion skips the ripple and transitions. The 220 ms WAV is cut from the owner-supplied click recording and plays only after user input.
 
 ## Typography and book detail revision
 
 - Headings across all seven public route types remain exactly 19px Bold in English and Persian at 1440/390/320px. Persian 18px body text is SemiBold with a 25px line height, and the genuine On Bold file is included in deployment.
-- Personal book takeaways match the supplied testimonial reference: a 19px Bold quotation and name sized to match About the book, then Ehsan’s portrait and the Product Designer/طراح محصول caption. The section has no background and aligns left for English and right for Persian. The header includes only the book title and author; category/topic labels are omitted. Back reads Back/بازگشت, with SemiBold Persian text. The language pill has no border. English reads LTR and Persian RTL. The book-source link is removed from the rendered page; research metadata remains available in the source data.
+- Personal book takeaways match the supplied testimonial reference: a 17px Bold quotation and 15px Bold name, as specified in the red annotations, then Ehsan’s portrait and the Product Designer/طراح محصول caption. The section has no background and aligns left for English and right for Persian. The header includes only the book title and author; category/topic labels are omitted. Back reads Back/بازگشت, with SemiBold Persian text. The language pill has no border. English reads LTR and Persian RTL. The book-source link is removed from the rendered page; research metadata remains available in the source data.
 - Detail covers have no CSS rotation in either locale. Collection fans retain their existing layout and shared-cover transitions.
 - `npm test` passes all 37 checks. The revised bilingual/library suites pass all 18 browser scenarios, including the new typography and testimonial scenarios, all 50 book details and shared-cover navigation. A separate targeted 10-scenario run also passed for typography, responsive collection/Selected Work layouts, mobile artwork and floating navigation. Checks cover 1440/390/320px, both languages, portrait loading, upright covers, the missing source link and dark testimonial styling.
 

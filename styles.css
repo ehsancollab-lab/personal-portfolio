@@ -89,8 +89,7 @@ button { font: inherit; }
   display: flex;
   align-items: center;
 }
-.viewport-blur { position: fixed; z-index: 4; inset-inline: 0; bottom: 0; height: clamp(84px, 12vh, 150px); pointer-events: none; opacity: 0; transition: opacity 180ms ease; }
-.viewport-blur.is-visible { opacity: 1; }
+.viewport-blur { position: fixed; z-index: 4; inset-inline: 0; bottom: 0; height: clamp(84px, 12vh, 150px); pointer-events: none; opacity: 1; }
 .viewport-blur > span { position: absolute; inset: 0; -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); -webkit-mask-image: linear-gradient(transparent, #000 35%); mask-image: linear-gradient(transparent, #000 35%); }
 .viewport-blur > span:nth-child(2) { -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px); -webkit-mask-image: linear-gradient(transparent 20%, #000 65%); mask-image: linear-gradient(transparent 20%, #000 65%); }
 .viewport-blur > span:nth-child(3) { -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); -webkit-mask-image: linear-gradient(transparent 40%, #000 85%); mask-image: linear-gradient(transparent 40%, #000 85%); }

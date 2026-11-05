@@ -101,7 +101,7 @@ test('all public headings stay 19px Bold and 18px body copy is SemiBold with 25p
       for (const width of [1440, 390, 320]) {
         await page.setViewportSize({ width, height: 844 });
         await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
-        const headings = await page.locator('h1, h2, h3, h4, h5, h6, .experience-role, .book-quote-text, .book-quote-name').evaluateAll(nodes => nodes.map(node => {
+        const headings = await page.locator('h1, h2, h3, h4, h5, h6, .experience-role').evaluateAll(nodes => nodes.map(node => {
           const css = getComputedStyle(node);
           return { text: node.textContent, size: css.fontSize, weight: css.fontWeight };
         }));
@@ -187,7 +187,7 @@ test('book details keep a minimal header, plain aligned quotation, short Back an
     const attribution = page.locator('.book-quote-attribution');
     await expect(quote).toHaveText(locale === 'fa' ? faBooks['self-compassion'].takeaway : bookById('self-compassion').takeaway);
     await expect(quote).toHaveCSS('direction', locale === 'fa' ? 'rtl' : 'ltr');
-    await expect(quote).toHaveCSS('font-size', '19px');
+    await expect(quote).toHaveCSS('font-size', '17px');
     await expect(quote).toHaveCSS('font-weight', '700');
     await expect(page.locator('.book-quote')).toHaveCSS('text-align', 'start');
     await expect(page.locator('.book-takeaway')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
@@ -200,9 +200,8 @@ test('book details keep a minimal header, plain aligned quotation, short Back an
     if (locale === 'fa') await expect(page.locator('.library-back')).toHaveCSS('font-weight', '600');
     await expect(page.locator('.book-detail-copy > .library-eyebrow, .book-detail-copy > .book-topics')).toHaveCount(0);
     await expect(page.locator('.language-switch')).toHaveCSS('border-top-width', '0px');
-    const titleSize = await page.locator('.book-summary h2').evaluate(node => getComputedStyle(node).fontSize);
-    await expect(quote).toHaveCSS('font-size', titleSize);
-    await expect(page.locator('.book-quote-name')).toHaveCSS('font-size', titleSize);
+    await expect(page.locator('.book-summary h2')).toHaveCSS('font-size', '19px');
+    await expect(page.locator('.book-quote-name')).toHaveCSS('font-size', '15px');
     await expect(attribution.locator('img')).toHaveAttribute('src', './assets/figma/profile.png');
     await expect.poll(() => attribution.locator('img').evaluate(node => node.complete && node.naturalWidth > 0)).toBe(true);
     await expect(page.locator('.book-source')).toHaveCount(0);
@@ -210,6 +209,8 @@ test('book details keep a minimal header, plain aligned quotation, short Back an
     for (const width of [1440, 390, 320]) {
       await page.setViewportSize({ width, height: 1000 });
       await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+      await expect(quote).toHaveCSS('font-size', '17px');
+      await expect(page.locator('.book-quote-name')).toHaveCSS('font-size', '15px');
       await expect(page.locator('.book-detail-art > .book-cover')).toHaveCSS('transform', 'none');
       const quoteBox = await quote.boundingBox(), captionBox = await attribution.boundingBox();
       expect(captionBox.y).toBeGreaterThan(quoteBox.y + quoteBox.height);
@@ -286,14 +287,14 @@ test('Experience follows the timeline with role first, smaller inline company, o
   expect(errors).toEqual([]);
 });
 
-test('progressive bottom blur appears on scroll, adapts to theme and leaves footer links usable', async ({ page }) => {
+test('progressive bottom blur stays visible at the top and bottom, adapts to theme and leaves footer links usable', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(site + '/experience.html');
   const veil = page.locator('.viewport-blur');
   await expect(veil).toHaveCount(1);
   await expect(veil).toHaveAttribute('aria-hidden', 'true');
   await expect(veil).toHaveCSS('pointer-events', 'none');
-  await expect(veil).toHaveCSS('opacity', '0');
+  await expect(veil).toHaveCSS('opacity', '1');
   await expect(veil.locator('span')).toHaveCount(4);
   expect(await veil.locator('span').last().evaluate(node => getComputedStyle(node).backdropFilter)).toBe('blur(18px)');
   await page.evaluate(() => scrollTo({ top: 600, behavior: 'instant' }));
@@ -305,8 +306,17 @@ test('progressive bottom blur appears on scroll, adapts to theme and leaves foot
   expect(dark).not.toBe(light);
   await page.screenshot({ path: resolve(work, 'viewport-blur-dark.png') });
   await page.locator('.site-footer').scrollIntoViewIfNeeded();
+  await expect(veil).toHaveCSS('opacity', '1');
   const footerLink = page.locator('#footer-contact-links a').first();
   expect(await footerLink.evaluate(node => { const rect = node.getBoundingClientRect(); return node.contains(document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2)); })).toBe(true);
   await page.evaluate(() => scrollTo({ top: 0, behavior: 'instant' }));
-  await expect(veil).toHaveCSS('opacity', '0');
+  await expect(veil).toHaveCSS('opacity', '1');
+  for (const width of [390, 320]) {
+    await page.setViewportSize({ width, height: 844 });
+    await expect(veil).toHaveCSS('opacity', '1');
+    await page.evaluate(() => scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }));
+    await expect(veil).toHaveCSS('opacity', '1');
+    await page.evaluate(() => scrollTo({ top: 0, behavior: 'instant' }));
+    await expect(veil).toHaveCSS('opacity', '1');
+  }
 });
