@@ -1,9 +1,4 @@
-.cursor-halo, .click-ring { position: fixed; z-index: 1500; width: 30px; height: 30px; border: 1px solid color-mix(in srgb, var(--text) 40%, transparent); border-radius: 50%; pointer-events: none; }
-.cursor-halo { opacity: 0; transform: translate(-50%, -50%); transition: opacity 140ms ease, width 200ms ease, height 200ms ease, background-color 200ms ease, scale 140ms ease; }
-.cursor-halo.is-visible { opacity: 1; }
-.cursor-halo.is-interactive { width: 40px; height: 40px; background: color-mix(in srgb, var(--text) 4%, transparent); }
-.cursor-halo.is-pressed { scale: .72; }
-.click-ring { width: 36px; height: 36px; border-color: color-mix(in srgb, var(--text) 50%, transparent); }
+.click-ring { position: fixed; z-index: 1500; width: 36px; height: 36px; border: 1px solid color-mix(in srgb, var(--text) 50%, transparent); border-radius: 50%; pointer-events: none; }
 .floating-nav { position: fixed; z-index: 70; bottom: max(20px, env(safe-area-inset-bottom)); left: 50%; display: flex; align-items: center; gap: 3px; max-width: calc(100% - 24px); padding: 5px; border: 1px solid #ffffff20; border-radius: 999px; background: #151515ed; color: #d1d1d1; box-shadow: 0 5px 24px #00000016; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); opacity: 0; visibility: hidden; pointer-events: none; transform: translate(-50%, 14px); transition: opacity 240ms ease, transform 320ms cubic-bezier(.2,.8,.2,1), visibility 240ms; overflow-x: auto; scrollbar-width: none; }
 .floating-nav::-webkit-scrollbar { display: none; }
 .lenis .floating-nav[data-scroll-native] { overscroll-behavior-x: contain; overscroll-behavior-y: auto; }
@@ -29,5 +24,4 @@ body .site-footer { padding-block-end: 100px; }
   .floating-nav { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2px; width: calc(100% - 16px); max-width: 400px; overflow: visible; }
   .floating-nav .nav-tab { min-width: 0; min-height: 44px; padding-inline: 6px; }
 }
-@media (hover: none), (pointer: coarse) { .cursor-halo { display: none; } }
-@media (prefers-reduced-motion: reduce) { .cursor-halo, .floating-nav, .library-back, .case-back-link { transition: none !important; } }
+@media (prefers-reduced-motion: reduce) { .floating-nav, .library-back, .case-back-link { transition: none !important; } }
