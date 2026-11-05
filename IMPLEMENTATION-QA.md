@@ -2,6 +2,11 @@
 
 Latest verification: 2026-11-05.
 
+## November 5 compact mobile navigation
+
+- At 420px and below, the bottom capsule uses four equal columns and shorter English/Persian labels. All four buttons remain visible without scrolling, with 44px minimum touch height and 8px outer gutters. Accessible names retain the full section titles; wider layouts show the full labels.
+- `npm run build:site` succeeds. All six scenarios in `tests/browser/pointer-floating.spec.mjs` pass. The new scenario checks both languages at 320, 350, 360, 374, 375, 390 and 420px for clipped text, overlapping buttons, touch size and bounds, navigates all four destinations at 320/350px, and verifies full labels return at 1440px. The 350px English and Persian screenshots were reviewed.
+
 ## November 5 annotated sizes and permanent blur
 
 - Personal book quotation text is 17px and Ehsan’s name is 15px, in English and Persian at desktop and mobile breakpoints.

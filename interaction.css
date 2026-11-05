@@ -25,5 +25,9 @@ body .site-footer { padding-block-end: 100px; }
 :root:lang(fa) :is(.library-toolbar .library-back, .case-detail-toolbar .case-back-link) { font-size: 16px; }
 @media (max-width: 700px) { .back-shortcut { display: none; } }
 @media (max-width: 420px) { .floating-nav { bottom: max(14px, env(safe-area-inset-bottom)); } .floating-nav .nav-tab { font-size: 12px; padding-inline: 10px; } :root:lang(fa) .floating-nav .nav-tab { font-size: 16px; } }
+@media (max-width: 420px) {
+  .floating-nav { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2px; width: calc(100% - 16px); max-width: 400px; overflow: visible; }
+  .floating-nav .nav-tab { min-width: 0; min-height: 44px; padding-inline: 6px; }
+}
 @media (hover: none), (pointer: coarse) { .cursor-halo { display: none; } }
 @media (prefers-reduced-motion: reduce) { .cursor-halo, .floating-nav, .library-back, .case-back-link { transition: none !important; } }

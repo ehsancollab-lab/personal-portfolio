@@ -39,7 +39,7 @@ test('floating navigation fits mobile, mirrors Persian and disappears on book an
     await page.evaluate(() => scrollTo({ top: 900, behavior: 'instant' }));
     await expect(page.locator('.floating-nav')).toHaveAttribute('aria-hidden', 'false');
     const box = await page.locator('.floating-nav').boundingBox();
-    expect(box.x).toBeGreaterThanOrEqual(10); expect(box.x + box.width).toBeLessThanOrEqual(width - 10);
+    expect(box.x).toBeGreaterThanOrEqual(8); expect(box.x + box.width).toBeLessThanOrEqual(width - 8);
     await expect(page.locator('.floating-nav')).toHaveCSS('direction', 'rtl');
     await page.screenshot({ path: resolve(work, `floating-fa-${width}.png`) });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -50,6 +50,61 @@ test('floating navigation fits mobile, mirrors Persian and disappears on book an
   await page.goto(site + '/case-study.html?id=mohtavachi-content-calendar');
   await page.evaluate(() => scrollTo({ top: 900, behavior: 'instant' }));
   await expect(page.locator('.floating-nav')).toHaveAttribute('aria-hidden', 'true');
+});
+
+test('compact floating navigation keeps all four labels visible without overlap at 350px and 320px', async ({ page }) => {
+  test.setTimeout(90000);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(site + '/about.html');
+  const nav = page.locator('.floating-nav');
+  const show = async () => {
+    await page.evaluate(() => scrollTo({ top: document.querySelector('.primary-nav').getBoundingClientRect().bottom + scrollY + 12, behavior: 'instant' }));
+    await expect(nav).toHaveAttribute('aria-hidden', 'false');
+  };
+  for (const locale of ['en', 'fa']) {
+    await page.locator('[data-language="' + locale + '"]').click();
+    await page.evaluate(() => document.fonts.ready);
+    const expected = locale === 'fa' ? ['کارها', 'کیس‌ها', 'سوابق', 'درباره'] : ['Work', 'Cases', 'Career', 'About'];
+    for (const width of [420, 390, 375, 374, 360, 350, 320]) {
+      await page.setViewportSize({ width, height: 700 });
+      await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+      await show();
+      expect(await nav.locator('a').allTextContents()).toEqual(expected);
+      expect(await nav.evaluate(node => node.scrollWidth <= node.clientWidth)).toBe(true);
+      const frame = await nav.boundingBox();
+      const links = await nav.locator('a').evaluateAll(nodes => nodes.map(node => {
+        const rect = node.getBoundingClientRect();
+        return { x: rect.x, y: rect.y, width: rect.width, height: rect.height, fits: node.scrollWidth <= node.clientWidth, label: node.getAttribute('aria-label') };
+      }));
+      const originalLabels = await page.locator('.primary-nav a').allTextContents();
+      expect(links.map(link => link.label)).toEqual(originalLabels);
+      for (const link of links) {
+        expect(link.fits).toBe(true);
+        expect(link.width).toBeGreaterThanOrEqual(44);
+        expect(link.height).toBeGreaterThanOrEqual(44);
+        expect(link.x).toBeGreaterThanOrEqual(frame.x + 4);
+        expect(link.x + link.width).toBeLessThanOrEqual(frame.x + frame.width - 4);
+      }
+      expect(Math.max(...links.map(link => link.y)) - Math.min(...links.map(link => link.y))).toBeLessThan(1);
+      const ordered = [...links].sort((a, b) => a.x - b.x);
+      for (let index = 1; index < ordered.length; index++) expect(ordered[index].x).toBeGreaterThan(ordered[index - 1].x + ordered[index - 1].width);
+      if (width === 350) await page.screenshot({ path: resolve(work, `floating-${locale}-350-fixed.png`) });
+    }
+    for (const width of [350, 320]) {
+      await page.setViewportSize({ width, height: 700 });
+      for (const destination of ['selected-work', 'case-studies', 'experience', 'about']) {
+        await show();
+        await nav.locator('[data-page-link="' + destination + '"]').click();
+        await expect(page.locator('body')).toHaveAttribute('data-page', destination);
+        await expect(nav.locator('[aria-current="page"]')).toHaveAttribute('data-page-link', destination);
+        expect(await nav.locator('a').allTextContents()).toEqual(expected);
+      }
+    }
+  }
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  await show();
+  expect(await nav.locator('a').allTextContents()).toEqual(await page.locator('.primary-nav a').allTextContents());
 });
 
 test('pointer halo presses, emits a short-lived click ring and plays the actual local video sample', async ({ page }) => {

@@ -1,12 +1,29 @@
-import { localizeText } from './i18n.js';
+import { getLocale, localizeText } from './i18n.js';
+
+const compactLabels = {
+  en: { 'selected-work': 'Work', 'case-studies': 'Cases', experience: 'Career', about: 'About' },
+  fa: { 'selected-work': 'کارها', 'case-studies': 'کیس‌ها', experience: 'سوابق', about: 'درباره' }
+};
 
 export function createFloatingNavigation(source) {
   const nav = document.createElement('nav');
   nav.className = 'floating-nav'; nav.dataset.scrollNative = '';
   for (const link of source.querySelectorAll('a')) nav.append(link.cloneNode(true));
   document.body.append(nav);
+  const compact = matchMedia('(max-width: 420px)');
   let enabled = false;
+  function syncLabels() {
+    for (const link of nav.querySelectorAll('a')) {
+      const original = source.querySelector('[data-page-link="' + link.dataset.pageLink + '"]');
+      const full = original.textContent;
+      const label = compact.matches ? compactLabels[getLocale()][link.dataset.pageLink] : full;
+      if (link.textContent !== label) link.textContent = label;
+      if (link.getAttribute('aria-label') !== full) link.setAttribute('aria-label', full);
+    }
+    if (compact.matches && nav.scrollLeft !== 0) nav.scrollLeft = 0;
+  }
   function update() {
+    if (enabled && source.isConnected) syncLabels();
     const visible = enabled && source.isConnected && source.getBoundingClientRect().bottom <= 0;
     nav.classList.toggle('is-visible', visible);
     nav.inert = !visible;
@@ -23,6 +40,7 @@ export function createFloatingNavigation(source) {
   }
   const observer = new IntersectionObserver(update);
   observer.observe(source);
+  compact.addEventListener('change', update);
   // A route can restore scroll twice within one observer frame; always use the
   // current tab geometry when scrolling as well as on intersection changes.
   window.addEventListener('scroll', update, { passive: true });
