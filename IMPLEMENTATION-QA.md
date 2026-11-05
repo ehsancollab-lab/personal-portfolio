@@ -2,6 +2,12 @@
 
 Latest verification: 2026-11-05.
 
+## November 5 restore plain backgrounds
+
+- The owner discarded the complete decorative day/night treatment. The sky mount/import, stylesheet, build entries and sky-only assets are deleted, including clouds, stars, birds, sun and moon. Removing those overrides restores the original opaque page backgrounds, header spacing and footer layout: white light pages, `#131315` dark pages and `#fdfdfd` light case details.
+- The separate theme toggle, permanent bottom blur, revised Experience timeline and fitted Persian CV control are retained. The floating bottom menu remains removed. Existing detail-background expectations are restored and obsolete sky-only scenarios removed; Experience/CV scenarios remain in `tests/browser/experience-timeline.spec.mjs`.
+- No local tests were added or run for this revision. The public build is prepared for publication; deployment verification is recorded through the commit's hosting checks. Earlier sky reports below are historical and superseded.
+
 ## November 5 paler, cloudier sky refinement
 
 - The latest screenshot requests a paler daytime sky, more white clouds behind the central text, more visible nighttime clouds and a smaller sun. Two new local WebP assets replace the original skies with fresh filenames; provenance and hashes are documented in `assets/sky/README.md`. The fallback color is now `#c5d6e9`. The sun is 16px on desktop and 13px on mobile, with a more restrained glow; the moon is unchanged.

@@ -1,4 +1,12 @@
-# Paler, cloudier sky — November 5, 2026
+# Plain background restoration — November 5, 2026
+
+The owner subsequently discarded the complete sky treatment. Its runtime, stylesheet, build entries and dedicated assets are removed. Existing opaque theme backgrounds and pre-sky header/footer geometry are restored. The theme toggle, permanent bottom blur, Experience timeline, CV sizing and other content are retained; the floating bottom menu stays removed.
+
+No local browser or automated test run was performed for this removal. The public build is used for publication. The cloudier-sky evidence below documents the superseded version and does not describe the current result.
+
+---
+
+# Historical: paler, cloudier sky — November 5, 2026
 
 ## Target and scope
 

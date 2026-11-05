@@ -14,10 +14,8 @@ import { initSmoothScroll, scrollToPosition, scrollToSection } from './smooth-sc
 import { getLocale, setLocale, localizeText, number, phrase, syncLanguageControls } from './i18n.js';
 import { mountViewportBlur } from './viewport-blur.js';
 import { mountPointerFeedback } from './pointer-feedback.js';
-import { mountSkyBackground } from './sky-background.js';
 
 const root = document.documentElement;
-mountSkyBackground();
 let page = document.body.dataset.page || "selected-work";
 const projectAssets = [...projects];
 const companyLogos = {
