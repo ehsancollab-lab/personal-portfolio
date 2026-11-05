@@ -10,8 +10,8 @@ test('Experience cursor smoothly follows the solid progress line, updates gray s
   const track = page.locator('.experience-track'), cursor = page.locator('.experience-cursor');
   await page.evaluate(() => document.fonts.ready);
   await expect.poll(() => page.locator('main').evaluate(node => node.style.transform)).toBe('');
-  await expect(cursor).toHaveCSS('background-color', 'rgb(34, 85, 255)');
-  await expect(page.locator('.experience-entry').last().locator('.experience-dot')).not.toHaveCSS('background-color', 'rgb(34, 85, 255)');
+  await expect(cursor).toHaveCSS('background-color', 'rgb(0, 0, 0)');
+  await expect(page.locator('.experience-entry').last().locator('.experience-dot')).not.toHaveCSS('background-color', 'rgb(0, 0, 0)');
   const range = await track.evaluate(node => ({ start: node.getBoundingClientRect().top + scrollY - innerHeight * .58, length: node.clientHeight }));
   const samples = await page.evaluate(async ({ start, length }) => {
     const samples = [];

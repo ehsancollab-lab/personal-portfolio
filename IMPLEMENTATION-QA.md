@@ -2,6 +2,11 @@
 
 Latest verification: 2026-11-05.
 
+## November 5 monochrome Experience timeline
+
+- The timeline's progress line and active dots are black in light mode; dark mode uses the existing light foreground. Station and moving dots shrink from 8px to 6px, with offsets adjusted to preserve their center alignment. The moving cursor uses a low-opacity shadow with 10px blur; nearby station shadows also have soft edges.
+- Existing motion, scroll interpolation and RTL geometry are retained. The existing color expectations are updated; no local tests were added or run. Publication uses the normal builds and hosting checks.
+
 ## November 5 restore plain backgrounds
 
 - The owner discarded the complete decorative day/night treatment. The sky mount/import, stylesheet, build entries and sky-only assets are deleted, including clouds, stars, birds, sun and moon. Removing those overrides restores the original opaque page backgrounds, header spacing and footer layout: white light pages, `#131315` dark pages and `#fdfdfd` light case details.
