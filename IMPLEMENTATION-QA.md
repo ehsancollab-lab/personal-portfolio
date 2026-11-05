@@ -2,6 +2,12 @@
 
 Latest verification: 2026-11-05.
 
+## November 5 paler, cloudier sky refinement
+
+- The latest screenshot requests a paler daytime sky, more white clouds behind the central text, more visible nighttime clouds and a smaller sun. Two new local WebP assets replace the original skies with fresh filenames; provenance and hashes are documented in `assets/sky/README.md`. The fallback color is now `#c5d6e9`. The sun is 16px on desktop and 13px on mobile, with a more restrained glow; the moon is unchanged.
+- Day-image sampling across the middle 40% gives mean linear luminance 0.844 versus 0.664 previously, with average blue-minus-red reduced from 0.256 to 0.081. The night center's mean luminance increases from 0.005 to 0.017 while remaining dark. These measurements describe the visual direction, not cloud segmentation or a complete accessibility audit.
+- `npm test` passes all 39 checks and builds both targets. The four affected Chromium scenarios pass: sky/theme/mobile geometry, cloud/bird motion and reduced motion, all seven public routes in both languages/themes, and transparent case details. Image evidence waits for asynchronous image decoding and two rendered frames. Desktop 1920px and mobile 350/320px evidence, including the equal-scale before/after comparison, is recorded in `design-qa.md`.
+
 ## November 5 floating bottom menu removal
 
 - The owner's latest request removes the floating bottom menu completely. Its runtime module, app initialization/route updates, scroll/intersection/resize listeners and all capsule styles are deleted. The build no longer copies the module, and the footer's menu-specific 100px bottom reservation is removed.

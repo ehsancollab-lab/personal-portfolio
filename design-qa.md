@@ -1,41 +1,38 @@
-# Direct sky background — November 5, 2026
+# Paler, cloudier sky — November 5, 2026
 
 ## Target and scope
 
-The owner's latest annotated screenshot requests removal of the central 88% reading overlay in light and dark mode. The current portfolio is the layout/content target; the sky reference videos remain the atmosphere reference. The previous reading-panel treatment is intentionally superseded.
-
-The subsequent navigation revision removes the floating bottom menu completely, including its code/styles and reserved footer padding. Verified screenshots: `/workspace/work/portfolio-browser/no-floating-navigation-en-350.png` and `no-floating-navigation-fa-350.png`. All five affected pointer/navigation scenarios and all 37 unit/build checks pass; the original header tabs navigate all four sections and no bottom menu appears at any tested scroll position.
+The owner requests a lighter, less blue day sky with more white clouds behind the central text, a smaller sun, and more visible night clouds. The latest supplied screenshot and `Rec 0045.mp4` remain the atmosphere references; `/workspace/work/sky-reference/frame-03.jpg` is the extracted video reference. The existing portfolio remains the layout/content target.
 
 ## Evidence
 
-- Before: `/workspace/work/sky-no-surface/before/light-1920.png` and `dark-1920.png`, captured from the prior verified implementation.
-- After: `/workspace/work/portfolio-browser/sky-no-surface-light-1920.png` and `sky-no-surface-dark-1920.png`.
-- Combined, equal-scale before/after comparison: `/workspace/work/sky-no-surface/comparison.png`. All four original desktop captures are 1920×1080 at device scale 1, fitted without stretching into the review cells. The combined image and native-size current renders were opened and compared.
-- Mobile: `sky-no-surface-light-350.png`, `sky-no-surface-dark-350.png`, and corresponding 320px images, at 800px height and scale 1.
-- Focused page evidence: `sky-no-surface-work-{en,fa}-{light,dark}.png`, `sky-no-surface-book-{en,fa}-{light,dark}.png`, and `sky-no-surface-experience-{en,fa}-{light,dark}.png` in the same directory. These cover project imagery, small metadata and book text at native desktop size.
+- Before: `/workspace/work/cloudier-sky/before/light-1920.png` and `dark-1920.png`.
+- After: `/workspace/work/portfolio-browser/sky-cloudier-light-1920.png` and `sky-cloudier-dark-1920.png`.
+- Equal-scale comparison: `/workspace/work/cloudier-sky/comparison.png`. All four desktop captures are 1920×1080 at scale 1, fitted without stretching into review cells. The final combined image and native desktop renders were opened and compared.
+- Mobile: `sky-cloudier-{light,dark}-{350,320}.png` under `/workspace/work/portfolio-browser/`, at 800px height and scale 1. The 350px light/dark renders were opened and reviewed.
+- Route evidence: `sky-no-surface-{work,book,experience}-{en,fa}-{light,dark}.png` in the same directory, captured with the new sky assets. These include project artwork, book copy and small Experience metadata.
+- Captures now wait for image decoding and two rendered frames. An earlier capture showing only the fallback color was replaced before final comparison.
 
 ## Required fidelity surfaces
 
-- **Typography:** the existing Inter/On families, heading sizes/weights, body leading and Persian CV weight are retained. Experience company names use the shared muted text color; date ranges have opacity 1.
-- **Layout:** header, main, project sizing and footer retain their geometry. The overlay was absolutely positioned, so removing it creates no content shift. No horizontal overflow at 350/320px.
-- **Colors/readability:** light content uses the existing dark text directly on the blue cloud sky; dark content uses light text directly on the night sky. Day image sampling gives a conservative 5.53:1 minimum for body/muted text across that image. This prompted the two Experience metadata adjustments. Night text was checked in rendered screenshots, including sparse stars. This is not a full WCAG audit or a claim about every transitional pixel.
-- **Assets:** original sky, cloud, bird, celestial, book and project assets are unchanged. The central panel and its border/shadow are absent. Existing project/card surfaces remain part of their components or artwork.
-- **Copy/content:** biography, book notes, projects, roles, dates and resume files are unchanged.
+- **Typography:** Inter/On, existing weights, heading sizes, body leading and locale alignment retain their prior settings. The day center is much whiter; light text remains legible over the darker night field.
+- **Layout:** content, tabs, cards and footer retain their geometry. No horizontal overflow at 350/320px. Text continues directly over the sky, with the permanent bottom blur. The central panel and floating bottom menu remain absent.
+- **Colors:** the new day image has mean linear luminance 0.844 across its middle 40% (previously 0.664); mean blue-minus-red falls from 0.256 to 0.081. Night central luminance rises from 0.005 to 0.017. These are direction checks, not a count of clouds or a complete WCAG audit.
+- **Assets:** two locally generated, optimized WebP images provide abundant central day clouds and more visible silver-blue night clouds. Fresh filenames avoid reusing cached older skies. Provenance, dimensions and hashes are in `assets/sky/README.md`. The sun is 16px on desktop and 13px on mobile with restrained glow; the moon, bird flock and project/book assets are unchanged.
+- **Content:** biography, book notes, project descriptions, experience bullets, dates and resume files are retained.
 
-## Findings and checks
+## Findings and verification
 
-No actionable P0/P1/P2 visual findings remain for this scoped change. Main text and project artwork remain clear, and the continuous sky is more visually integrated. The lighter Experience metadata needed stronger contrast and was corrected before the final review.
+No actionable P0/P1/P2 findings remain for this scoped change. Daytime central text sits over a paler, cloudier field; night clouds are visibly fuller without dominating the text. The sun is closer to the reference size on desktop and mobile.
 
-Browser checks verify the missing overlay and transparent main/body on all seven public route types in English/Persian and light/dark, plus scene switching, clouds/birds, reduced motion, timeline movement/reversal and the fitted Persian CV. Console errors are checked in the sky/timeline scenarios. Physical Safari/iOS testing was not performed.
-
-`npm test`: 37 checks passed, with both builds successful. The affected browser run: all six scenarios passed. This revision did not rerun the entire historical browser suite.
+`npm test`: all 39 checks pass and both builds succeed. All four affected Chromium scenarios pass: sky/theme/mobile geometry, animated clouds/birds and reduced motion, seven public route types in English/Persian and both themes, and transparent case details on direct/SPA navigation. Sky scenarios check console errors. The complete historical browser suite was not rerun for this asset refinement. Physical Safari/iOS and production FPS were not measured.
 
 ## Checklist
 
-- [x] Remove central panel, border and shadow from both themes.
-- [x] Keep content directly over the sky on all public routes.
-- [x] Improve the two small Experience metadata styles for readability.
-- [x] Compare native desktop/mobile renders and equal-scale before/after evidence.
-- [x] Preserve theme, navigation, project imagery, motion and resume control behavior.
+- [x] Paler day sky with more white central clouds.
+- [x] More visible night clouds with a dark field for light text.
+- [x] Smaller desktop/mobile sun and softer glow.
+- [x] Equal-scale before/after and native mobile review.
+- [x] Preserve navigation, content, direct sky treatment and reduced motion behavior.
 
 final result: passed

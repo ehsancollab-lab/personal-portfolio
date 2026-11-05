@@ -2,6 +2,10 @@ import { test, expect } from '@playwright/test';
 import { resolve } from 'node:path';
 const site = 'http://localhost:4173';
 const work = resolve(import.meta.dirname, '../../../work/portfolio-browser');
+async function decodeSky(page) {
+  await page.locator('.sky-background img').evaluateAll(nodes => Promise.all(nodes.map(node => node.decode())));
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+}
 test.beforeEach(async ({ request }) => { await request.post(site + '/__test/reset'); });
 
 test('day and night sky sit directly behind readable content without a central overlay', async ({ page }) => {
@@ -11,7 +15,10 @@ test('day and night sky sit directly behind readable content without a central o
   await page.goto(site + '/about.html');
   await expect(page.locator('.sky-background')).toHaveCount(1);
   await expect(page.locator('.sky-background')).toHaveAttribute('aria-hidden', 'true');
+  await expect(page.locator('.sky-day .sky-cloud-image')).toHaveAttribute('src', /day-sky-cloudy\.webp$/);
+  await expect(page.locator('.sky-night .sky-cloud-image')).toHaveAttribute('src', /night-sky-cloudy\.webp$/);
   await expect.poll(() => page.locator('.sky-background img').evaluateAll(nodes => nodes.every(n => n.complete && n.naturalWidth > 0))).toBe(true);
+  await decodeSky(page);
   for (const theme of ['light', 'dark']) {
     if (theme === 'dark') await page.locator('.theme-toggle').click();
     await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
@@ -24,11 +31,18 @@ test('day and night sky sit directly behind readable content without a central o
     await expect(page.locator('.bio a').first()).toHaveCSS('color', theme === 'light' ? 'rgb(63, 63, 63)' : 'rgb(198, 198, 203)');
     const celestial = await page.locator(theme === 'light' ? '.sky-sun' : '.sky-moon').boundingBox();
     expect(theme === 'light' ? celestial.x > 960 : celestial.x < 960).toBe(true);
-    await page.screenshot({ path: resolve(work, `sky-no-surface-${theme}-1920.png`) });
+    if (theme === 'light') { expect(celestial.width).toBe(16); expect(celestial.height).toBe(16); }
+    await page.screenshot({ path: resolve(work, `sky-cloudier-${theme}-1920.png`) });
     for (const width of [350, 320]) {
       await page.setViewportSize({ width, height: 800 });
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-      await page.screenshot({ path: resolve(work, `sky-no-surface-${theme}-${width}.png`) });
+      if (theme === 'light') {
+        await expect(page.locator('.sky-sun')).toHaveCSS('width', '13px');
+        await expect(page.locator('.sky-sun')).toHaveCSS('height', '13px');
+        const sun = await page.locator('.sky-sun').boundingBox();
+        expect(sun.width).toBe(13); expect(sun.height).toBe(13);
+      }
+      await page.screenshot({ path: resolve(work, `sky-cloudier-${theme}-${width}.png`) });
     }
     await page.setViewportSize({ width: 1920, height: 1080 });
   }
@@ -70,6 +84,7 @@ test('all public routes keep the sky exposed in both languages and themes with r
   await page.setViewportSize({ width: 1920, height: 1080 });
   for (const route of ['/', '/about.html', '/experience.html', '/case-studies.html', '/books.html?category=psychology', '/book.html?id=self-compassion', '/case-study.html?id=mohtavachi-content-calendar']) {
     await page.goto(site + route);
+    await decodeSky(page);
     for (const locale of ['en', 'fa']) {
       await page.locator('[data-language="' + locale + '"]').click();
       for (const theme of ['light', 'dark']) {

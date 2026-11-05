@@ -13,8 +13,8 @@ export function mountSkyBackground() {
   };
   const day = document.createElement('div'), night = document.createElement('div');
   day.className = 'sky-day'; night.className = 'sky-night';
-  day.append(image('day-sky.webp', 'sky-cloud-image'), image('sun.svg', 'sky-sun'), image('birds.png', 'sky-flock'));
-  night.append(image('night-sky.webp', 'sky-cloud-image'), image('moon.svg', 'sky-moon'));
+  day.append(image('day-sky-cloudy.webp', 'sky-cloud-image'), image('sun.svg', 'sky-sun'), image('birds.png', 'sky-flock'));
+  night.append(image('night-sky-cloudy.webp', 'sky-cloud-image'), image('moon.svg', 'sky-moon'));
   sky.append(day, night);
   document.body.prepend(sky);
   document.body.classList.add('sky-enabled');
