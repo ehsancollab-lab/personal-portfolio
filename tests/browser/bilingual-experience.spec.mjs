@@ -276,9 +276,10 @@ test('Experience follows the timeline with role first, smaller inline company, o
       await page.setViewportSize({ width, height: 844 });
       await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
       const entry = page.locator('.experience-entry').first();
-      const dot = await entry.locator('.experience-dot').boundingBox(), body = await entry.locator('.experience-body').boundingBox(), date = await entry.locator('.experience-dates').boundingBox();
-      if (locale === 'en') { expect(dot.x).toBeLessThan(body.x); expect(date.x).toBeLessThan(dot.x); }
-      else { expect(dot.x).toBeGreaterThan(body.x + body.width); expect(date.x).toBeGreaterThan(dot.x); }
+      await expect.poll(() => entry.evaluate((node, locale) => {
+        const dot = node.querySelector('.experience-dot').getBoundingClientRect(), body = node.querySelector('.experience-body').getBoundingClientRect(), date = node.querySelector('.experience-dates').getBoundingClientRect();
+        return locale === 'en' ? dot.x < body.x && date.x < dot.x : dot.x > body.right && date.x > dot.x;
+      }, locale)).toBe(true);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     }
   }

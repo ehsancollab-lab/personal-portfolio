@@ -29,6 +29,7 @@
 :root:lang(fa) :is(.nav-tab, .cv-link, .library-back, .case-back-link, .library-eyebrow) { font-family: On, Tahoma, sans-serif; letter-spacing: 0; }
 :root:lang(fa) :is(.nav-tab, .cv-link, .library-back, .case-back-link, .library-eyebrow, .collection-card-meta) { font-weight: 400; }
 :root:lang(fa) :is(.library-back, .case-back-link) { font-weight: 600; }
+:root:lang(fa) .cv-link { width: auto; flex: 0 0 auto; font-weight: 600; }
 :root:lang(fa) .nav-tab[aria-current="page"] { font-weight: 600; }
 :root:lang(fa) .library-back-icon { transform: rotate(180deg); }
 :root:lang(fa) .case-back-icon img { transform: rotate(180deg); }

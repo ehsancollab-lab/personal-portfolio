@@ -43,22 +43,20 @@ test('case cards zoom smoothly and their title becomes #2255FF on hover and keyb
   await expect(title).toHaveCSS('color', 'rgb(34, 85, 255)');
 });
 
-test('the complete light detail page uses #FDFDFD on direct load and SPA navigation', async ({ page }) => {
+test('case details use the shared translucent reading surface on direct load and SPA navigation', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(site + '/case-study.html');
-  for (const selector of ['html', 'body', '.case-detail-section', '.case-detail']) await expect(page.locator(selector)).toHaveCSS('background-color', 'rgb(253, 253, 253)');
-  const effective = await page.locator('.case-detail-title, .case-article-body, .site-footer').evaluateAll(elements => elements.map(element => {
-    for (let parent = element; parent; parent = parent.parentElement) { const color = getComputedStyle(parent).backgroundColor; if (color !== 'rgba(0, 0, 0, 0)' && color !== 'transparent') return color; }
-  }));
-  expect(effective.every(color => color === 'rgb(253, 253, 253)')).toBe(true);
+  for (const selector of ['body', '.case-detail-section', '.case-detail']) await expect(page.locator(selector)).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect(page.locator('.site-backdrop')).toHaveCSS('background-color', 'rgba(255, 255, 255, 0.88)');
   await page.screenshot({ path: resolve(work, 'case-detail-background-refined.png') });
   await page.getByRole('button', { name: 'Switch to dark theme' }).click();
-  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(19, 19, 21)');
+  await expect(page.locator('.site-backdrop')).toHaveCSS('background-color', 'rgba(19, 19, 24, 0.88)');
   await page.getByRole('button', { name: 'Switch to light theme' }).click();
   await page.getByRole('link', { name: 'Back to Home' }).click();
-  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+  await expect(page.locator('.site-backdrop')).toHaveCSS('background-color', 'rgba(255, 255, 255, 0.88)');
   await page.locator('.primary-nav').getByRole('link', { name: 'Case Studies', exact: true }).click();
   await page.locator('a.case-study-card').first().click();
-  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(253, 253, 253)');
+  await expect(page.locator('.site-backdrop')).toHaveCSS('background-color', 'rgba(255, 255, 255, 0.88)');
 });
 
 test('existing article image replacement changes the displayed image and survives saving', async ({ page }) => {

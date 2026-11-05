@@ -1,5 +1,6 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { createExperienceTimeline } from './experience-timeline.js';
 
 gsap.registerPlugin(ScrollTrigger);
 export const motionRuntime = { ticker: gsap.ticker, scrollTrigger: ScrollTrigger };
@@ -26,22 +27,18 @@ export function mountPageMotion(main, page) {
   cleanup();
   const token = ++generation;
   let stage;
+  let timelineCleanup = () => {};
   let frame;
   const invalidate = () => stage?.invalidate();
   const context = gsap.context(() => {
+    if (page === 'experience') timelineCleanup = createExperienceTimeline(main, reduced.matches);
     if (reduced.matches) return;
     // The bookshelf already shares its actual surfaces and covers between views.
     if (!['about', 'books', 'book'].includes(page)) {
       gsap.fromTo(main, { opacity: 0, y: 14, filter: 'blur(5px)' }, {
         opacity: 1, y: 0, filter: 'blur(0px)', duration: .6, ease: 'power3.out',
-        clearProps: 'opacity,transform,filter', onUpdate: invalidate
-      });
-    }
-    if (page === 'experience') {
-      const track = main.querySelector('.experience-track > span');
-      if (track) gsap.fromTo(track, { scaleY: 0 }, {
-        scaleY: 1, ease: 'none',
-        scrollTrigger: { trigger: '.experience-list', start: 'top 65%', end: 'bottom 65%', scrub: .35 }
+        clearProps: 'opacity,transform,filter', onUpdate: invalidate,
+        onComplete() { if (page === 'experience') ScrollTrigger.refresh(); invalidate(); }
       });
     }
     if (page === 'selected-work') {
@@ -65,6 +62,7 @@ export function mountPageMotion(main, page) {
   cleanup = () => {
     cancelAnimationFrame(frame);
     reduced.removeEventListener('change', change);
+    timelineCleanup();
     context.revert();
     stage?.dispose();
   };

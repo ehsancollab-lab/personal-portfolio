@@ -64,6 +64,14 @@ test('public tabs preserve the document and header; back, forward and detail lin
 });
 
 test('responsive images, local fonts, dark icons, text animation and small screens', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.__experienceEntrances = [];
+    const animate = Element.prototype.animate;
+    Element.prototype.animate = function(frames, options) {
+      if (this.matches('.experience-entry h3')) window.__experienceEntrances.push({ frames, options });
+      return animate.call(this, frames, options);
+    };
+  });
   await page.goto(site + '/case-studies.html');
   const image = page.locator('.case-study-card-media > img').first();
   await expect(image).toHaveAttribute('srcset', /320w.*640w/);
@@ -80,7 +88,7 @@ test('responsive images, local fonts, dark icons, text animation and small scree
   await page.getByRole('button', { name: 'Switch to dark theme' }).click();
   await page.locator('.primary-nav').getByRole('link', { name: 'Experience', exact: true }).click();
   await expect(page.locator('.experience-entry h3').first()).toHaveClass(/text-reveal/);
-  expect(await page.locator('.experience-entry h3').first().evaluate(element => element.getAnimations().length)).toBeGreaterThan(0);
+  expect(await page.evaluate(() => window.__experienceEntrances.some(animation => animation.frames.some(frame => frame.filter === 'blur(5px)')))).toBe(true);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.locator('.primary-nav').getByRole('link', { name: 'Case Studies', exact: true }).click();
   expect(await page.locator('.case-study-card-title').first().evaluate(element => getComputedStyle(element).animationName)).toBe('none');

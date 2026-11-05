@@ -15,7 +15,7 @@ const files = target === 'site'
   : ['admin.js', 'admin.css', 'content.js', 'case-content.js', 'assets', 'login.html', 'login.css', 'login.js'];
 files.push('typography.js', 'story-model.js', 'story-render.js', 'images.js', 'image-manifest.js', 'case-cards.js', 'case-cards.css', 'published-content.js', 'site-shell.js');
 if (target === 'admin') files.push('case-editor.js', 'case-editor.css');
-if (target === 'site') files.push('motion.js', 'work-scene.js', 'smooth-scroll.js', 'i18n.js', 'i18n.css', 'content-fa.js', 'books-fa.js', 'viewport-blur.js', 'floating-navigation.js', 'pointer-feedback.js', 'click-sound.js', 'interaction.css');
+if (target === 'site') files.push('motion.js', 'experience-timeline.js', 'work-scene.js', 'smooth-scroll.js', 'i18n.js', 'i18n.css', 'content-fa.js', 'books-fa.js', 'viewport-blur.js', 'floating-navigation.js', 'pointer-feedback.js', 'click-sound.js', 'interaction.css', 'sky-background.js', 'sky.css');
 for (const file of files) await cp(resolve(root, file), resolve(output, file), { recursive: true });
 await optimizeImages(root, output);
 await mkdir(resolve(output, 'assets/fonts'), { recursive: true });

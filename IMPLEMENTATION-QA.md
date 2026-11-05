@@ -2,6 +2,14 @@
 
 Latest verification: 2026-11-05.
 
+## November 5 sky, Experience cursor and Persian CV control
+
+- `Rec 0045.mp4` supplies the sky reference. Local generated day/night images and a transparent bird flock create the atmosphere, with small Phosphor sun/moon assets positioned independently for mobile and desktop. The existing theme control crossfades scenes; one persistent sky remains across SPA routes. The shared reading surface is 88% opaque and adapts to the theme; case details use it too. The footer fits inside the surface. Sky assets and license are documented in `assets/sky/README.md`.
+- Cloud drift and a short bird flight during each 64-second cycle use compositor transforms; no permanent sky animation loop or extra WebGL context is added. Inactive scenes and hidden pages pause. Reduced motion and data saving retain static skies and omit the bird flight. High contrast/reduced transparency increase the reading surface to 98%.
+- `Rec 0046.mp4` supplies the revised Experience motion. The 2px pale dashed route fills blue as a single 8px blue cursor with a soft halo travels from the first station to the last. Future stations are gray, passed stations turn blue, and nearby stations receive a faint halo. A GSAP scrub of 0.85 seconds smooths movement in both directions; reduced motion follows scroll immediately. Geometry refreshes for wrapping, locale changes and resizing, and route changes clean up the observer and trigger.
+- Persian Download CV now uses On SemiBold (600), matching the selected section tab, and its width follows the text, icon, gap and padding at every breakpoint.
+- Verification: `npm test` passes all 37 checks and builds both targets. The full 65-scenario Chromium run passes 61 and exposes four timing/motion cases; after cloud-step/geometry adjustments and atomic animation/layout assertions, all 15 affected scenarios pass, covering all four cases. All 65 scenarios have passing results across these runs. Visual comparisons and the exact capture scope are recorded in `design-qa.md`; final result is passed.
+
 ## November 5 supplied click synthesis
 
 - The owner supplied the requested site's JavaScript in `sounds-BL9XApyC.zip`. Its sound is generated with Web Audio. `click-sound.js` matches the source's sine sweep, noise buffer, filter, envelopes, pitch variation, compressor, pan clamp and 30ms retrigger limit. Source hash and values are documented in `assets/audio/README.md`; the old WAV is removed.

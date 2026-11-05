@@ -15,8 +15,10 @@ import { getLocale, setLocale, localizeText, number, phrase, syncLanguageControl
 import { mountViewportBlur } from './viewport-blur.js';
 import { createFloatingNavigation } from './floating-navigation.js';
 import { mountPointerFeedback } from './pointer-feedback.js';
+import { mountSkyBackground } from './sky-background.js';
 
 const root = document.documentElement;
+mountSkyBackground();
 let page = document.body.dataset.page || "selected-work";
 const projectAssets = [...projects];
 const companyLogos = {
@@ -229,7 +231,9 @@ function renderExperience() {
   list.setAttribute('aria-label', localizeText('Experience'));
   const track = document.createElement('span');
   track.className = 'experience-track'; track.setAttribute('aria-hidden', 'true');
-  track.append(document.createElement('span'));
+  const progress = document.createElement('span'); progress.className = 'experience-progress';
+  const cursor = document.createElement('span'); cursor.className = 'experience-cursor';
+  track.append(progress, cursor);
   list.append(track);
   items.forEach((item) => {
     const entry = document.createElement("article");
