@@ -4,6 +4,8 @@
 
 The owner's latest annotated screenshot requests removal of the central 88% reading overlay in light and dark mode. The current portfolio is the layout/content target; the sky reference videos remain the atmosphere reference. The previous reading-panel treatment is intentionally superseded.
 
+The subsequent navigation revision removes the floating bottom menu completely, including its code/styles and reserved footer padding. Verified screenshots: `/workspace/work/portfolio-browser/no-floating-navigation-en-350.png` and `no-floating-navigation-fa-350.png`. All five affected pointer/navigation scenarios and all 37 unit/build checks pass; the original header tabs navigate all four sections and no bottom menu appears at any tested scroll position.
+
 ## Evidence
 
 - Before: `/workspace/work/sky-no-surface/before/light-1920.png` and `dark-1920.png`, captured from the prior verified implementation.

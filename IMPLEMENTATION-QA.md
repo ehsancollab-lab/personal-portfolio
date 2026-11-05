@@ -2,6 +2,11 @@
 
 Latest verification: 2026-11-05.
 
+## November 5 floating bottom menu removal
+
+- The owner's latest request removes the floating bottom menu completely. Its runtime module, app initialization/route updates, scroll/intersection/resize listeners and all capsule styles are deleted. The build no longer copies the module, and the footer's menu-specific 100px bottom reservation is removed.
+- Navigation continues through the original header tabs. `npm test` passes all 37 checks and builds both targets. All five pointer/navigation browser scenarios pass. The removal check covers all four main sections, English/Persian, widths 1440/350/320px and top/middle/bottom scroll positions, plus book/case detail pages. Header navigation, click-only ring/audio, mobile touch scrolling, reduced motion, Escape and page transitions remain verified.
+
 ## November 5 direct sky background experiment
 
 - The owner's latest request removes the central 88% overlay in both themes. Its DOM node, background, border, shadow, responsive width tokens and transparency overrides are removed. Header, main and footer retain their positions; content sits directly over the existing sky on all seven public route types.
@@ -61,7 +66,7 @@ Latest verification: 2026-11-05.
 - Locally hosted Lenis 1.3.11 starts after fonts are ready, with `lerp: 0.085`, `wheelMultiplier: 0.92`, smooth wheel input and native touch scrolling. It uses the GSAP ticker and updates ScrollTrigger; layout refreshes resize its measurements. Same-view anchors use a 1.3-second quartic ease, 35px desktop / 20px small-screen offsets, destination focus and a replaced URL hash. Skip links and route/history scroll restoration are immediate. Dialogs and `[data-scroll-native]` areas scroll independently; modal background motion stops. Reduced motion, page hide/show and chunk-loading failures cleanly restore or retain native scrolling. The dashboard does not load Lenis.
 
 - The public EN/FA segmented control sits between CV and theme, updates `lang`, `dir`, copy, route titles and the matching CV download for the current visit. A reload starts English/light even with legacy stored preferences. All public headings use 19px Bold at every breakpoint and in both languages. Persian 18px body copy uses On SemiBold with exactly 25px line height; headings use the genuine On Bold webfont. Persian translations cover all current profile/About/experience/case-study strings and all 50 book summaries and takeaways; the source content remains unchanged.
-- Section tabs remain one horizontally scrolling row on mobile. A fixed bottom capsule appears when the source navigation leaves the viewport, mirrors the active section and RTL direction, and hides on interior case/book/collection pages. Hidden duplicates are inert.
+- Section navigation uses the original header tabs, with one horizontally scrolling row on mobile. The floating bottom menu was removed at the owner's later request.
 - Experience follows `Rec 0040.mp4`: a vertical timeline with blue dots and scroll progress, year/date, the original supplied company logo above a role-first heading, a smaller muted company name beside it, and the existing bullet points. The MORS, Nibex and Remocapp JPEGs are copied byte-for-byte from the supplied ZIP; their original filenames and hashes are recorded under `assets/companies/`. No hover project previews were added.
 - A four-layer masked backdrop blur remains visible at the bottom at all scroll positions, including the very top, adapts to the theme, ignores pointer input, and leaves the bottom navigation and footer readable.
 - `Rec 0042.mp4` informed the blur/vertical text entrance, short departure transition, and interior Back button with an Escape shortcut. Temporary click rings ignore pointer input; no persistent hover halo is mounted, and reduced motion skips the ripple and transitions. Click audio uses the subsequently supplied `eduardoalba.com` synthesis and plays only after user input.

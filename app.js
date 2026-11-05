@@ -13,7 +13,6 @@ import { mountPageMotion, motionRuntime, transitionPage, cancelPageTransition } 
 import { initSmoothScroll, scrollToPosition, scrollToSection } from './smooth-scroll.js';
 import { getLocale, setLocale, localizeText, number, phrase, syncLanguageControls } from './i18n.js';
 import { mountViewportBlur } from './viewport-blur.js';
-import { createFloatingNavigation } from './floating-navigation.js';
 import { mountPointerFeedback } from './pointer-feedback.js';
 import { mountSkyBackground } from './sky-background.js';
 
@@ -413,7 +412,6 @@ document.addEventListener("click", (event) => {
 const pageViews = new Map();
 const scrollPositions = new Map();
 const sharedHeader = document.querySelector('.site-header') || createSiteHeader();
-const floatingNavigation = createFloatingNavigation(sharedHeader.querySelector('.primary-nav'));
 const initialMain = document.querySelector('main');
 const routeKey = (url = new URL(location.href)) => routeFor(url) + url.search + '::' + getLocale();
 function routeFor(url) {
@@ -447,7 +445,6 @@ function renderPage(next, fresh = false) {
   if (newView) { main = fresh ? makePage(next) : pageViews.size === 0 ? initialMain : makePage(next); pageViews.set(key, main); }
   if (document.querySelector('main') !== main) document.querySelector('main').replaceWith(main);
   renderHeaderAndFooter();
-  floatingNavigation.update(!['case-study', 'books', 'book'].includes(next));
   if (newView) {
     if (next === 'selected-work') renderProjects();
     if (next === 'case-studies') renderCaseStudies();

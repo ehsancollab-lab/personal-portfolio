@@ -19,107 +19,37 @@ function observeClickAudio() {
   HTMLMediaElement.prototype.play = function() { window.__mediaPlays++; return play.call(this); };
 }
 
-test('floating capsule appears only after the original tabs leave view and navigates all four sections', async ({ page }) => {
-  const documents = []; const errors = [];
-  page.on('request', request => { if (request.isNavigationRequest()) documents.push(request.url()); });
-  page.on('pageerror', error => errors.push(error.message));
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.setViewportSize({ width: 1440, height: 700 });
-  await page.goto(site + '/about.html');
-  const floating = page.locator('.floating-nav');
-  await expect(floating).toHaveAttribute('aria-hidden', 'true');
-  for (const [destination, selected] of [['experience', 'Experience'], ['case-studies', 'Case Studies'], ['selected-work', 'Selected Work'], ['about', 'About Me']]) {
-    await page.evaluate(() => scrollTo({ top: document.querySelector('.primary-nav').getBoundingClientRect().bottom + scrollY + 10, behavior: 'instant' }));
-    await expect(floating).toHaveAttribute('aria-hidden', 'false');
-    await expect(floating).toHaveClass(/is-visible/);
-    await expect(floating.locator('a')).toHaveCount(4);
-    const bounds = await floating.boundingBox();
-    expect(Math.abs(bounds.x + bounds.width / 2 - 720)).toBeLessThan(1);
-    expect(bounds.y + bounds.height).toBeLessThan(700);
-    await floating.getByRole('link', { name: selected, exact: true }).click();
-    await expect(page.locator('body')).toHaveAttribute('data-page', destination);
-    await expect(page.locator('.primary-nav [aria-current="page"]')).toHaveText(selected);
-  }
-  await page.evaluate(() => scrollTo({ top: 0, behavior: 'instant' }));
-  await expect(floating).toHaveAttribute('aria-hidden', 'true');
-  expect(documents).toHaveLength(1); expect(errors).toEqual([]);
-});
-
-test('floating navigation fits mobile, mirrors Persian and disappears on book and case detail routes', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto(site + '/about.html');
-  await page.locator('[data-language="fa"]').click();
-  for (const width of [390, 320]) {
-    await page.setViewportSize({ width, height: 844 });
-    await page.evaluate(() => scrollTo({ top: 900, behavior: 'instant' }));
-    await expect(page.locator('.floating-nav')).toHaveAttribute('aria-hidden', 'false');
-    const box = await page.locator('.floating-nav').boundingBox();
-    expect(box.x).toBeGreaterThanOrEqual(8); expect(box.x + box.width).toBeLessThanOrEqual(width - 8);
-    await expect(page.locator('.floating-nav')).toHaveCSS('direction', 'rtl');
-    await page.screenshot({ path: resolve(work, `floating-fa-${width}.png`) });
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  }
-  await page.locator('.book-collection-card').first().click();
-  await expect(page.locator('body')).toHaveAttribute('data-page', 'books');
-  await expect(page.locator('.floating-nav')).toHaveAttribute('aria-hidden', 'true');
-  await page.goto(site + '/case-study.html?id=mohtavachi-content-calendar');
-  await page.evaluate(() => scrollTo({ top: 900, behavior: 'instant' }));
-  await expect(page.locator('.floating-nav')).toHaveAttribute('aria-hidden', 'true');
-});
-
-test('compact floating navigation keeps all four labels visible without overlap at 350px and 320px', async ({ page }) => {
+test('bottom navigation is absent at every scroll position while header tabs still navigate', async ({ page }) => {
   test.setTimeout(90000);
+  const errors = []; page.on('pageerror', error => errors.push(error.message));
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(site + '/about.html');
-  const nav = page.locator('.floating-nav');
-  const show = async () => {
-    await page.evaluate(() => scrollTo({ top: document.querySelector('.primary-nav').getBoundingClientRect().bottom + scrollY + 12, behavior: 'instant' }));
-    await expect(nav).toHaveAttribute('aria-hidden', 'false');
-  };
   for (const locale of ['en', 'fa']) {
+    await page.evaluate(() => scrollTo({ top: 0, behavior: 'instant' }));
     await page.locator('[data-language="' + locale + '"]').click();
-    await page.evaluate(() => document.fonts.ready);
-    const expected = locale === 'fa' ? ['کارها', 'کیس‌ها', 'سوابق', 'درباره'] : ['Work', 'Cases', 'Career', 'About'];
-    for (const width of [420, 390, 375, 374, 360, 350, 320]) {
-      await page.setViewportSize({ width, height: 700 });
-      await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
-      await show();
-      expect(await nav.locator('a').allTextContents()).toEqual(expected);
-      expect(await nav.evaluate(node => node.scrollWidth <= node.clientWidth)).toBe(true);
-      const frame = await nav.boundingBox();
-      const links = await nav.locator('a').evaluateAll(nodes => nodes.map(node => {
-        const rect = node.getBoundingClientRect();
-        return { x: rect.x, y: rect.y, width: rect.width, height: rect.height, fits: node.scrollWidth <= node.clientWidth, label: node.getAttribute('aria-label') };
-      }));
-      const originalLabels = await page.locator('.primary-nav a').allTextContents();
-      expect(links.map(link => link.label)).toEqual(originalLabels);
-      for (const link of links) {
-        expect(link.fits).toBe(true);
-        expect(link.width).toBeGreaterThanOrEqual(44);
-        expect(link.height).toBeGreaterThanOrEqual(44);
-        expect(link.x).toBeGreaterThanOrEqual(frame.x + 4);
-        expect(link.x + link.width).toBeLessThanOrEqual(frame.x + frame.width - 4);
-      }
-      expect(Math.max(...links.map(link => link.y)) - Math.min(...links.map(link => link.y))).toBeLessThan(1);
-      const ordered = [...links].sort((a, b) => a.x - b.x);
-      for (let index = 1; index < ordered.length; index++) expect(ordered[index].x).toBeGreaterThan(ordered[index - 1].x + ordered[index - 1].width);
-      if (width === 350) await page.screenshot({ path: resolve(work, `floating-${locale}-350-fixed.png`) });
-    }
-    for (const width of [350, 320]) {
-      await page.setViewportSize({ width, height: 700 });
+    for (const width of [1440, 350, 320]) {
+      await page.setViewportSize({ width, height: 800 });
       for (const destination of ['selected-work', 'case-studies', 'experience', 'about']) {
-        await show();
-        await nav.locator('[data-page-link="' + destination + '"]').click();
+        await page.evaluate(() => scrollTo({ top: 0, behavior: 'instant' }));
+        await page.locator('.primary-nav [data-page-link="' + destination + '"]').click();
         await expect(page.locator('body')).toHaveAttribute('data-page', destination);
-        await expect(nav.locator('[aria-current="page"]')).toHaveAttribute('data-page-link', destination);
-        expect(await nav.locator('a').allTextContents()).toEqual(expected);
+        await expect(page.locator('.primary-nav')).toHaveCount(1);
+        await expect(page.locator('.primary-nav a')).toHaveCount(4);
+        for (const position of ['top', 'middle', 'bottom']) {
+          await page.evaluate(position => scrollTo({ top: position === 'top' ? 0 : position === 'middle' ? document.documentElement.scrollHeight / 2 : document.documentElement.scrollHeight, behavior: 'instant' }), position);
+          await expect(page.locator('.floating-nav')).toHaveCount(0);
+        }
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       }
+      if (width === 350) await page.screenshot({ path: resolve(work, `no-floating-navigation-${locale}-350.png`) });
     }
   }
-  await page.setViewportSize({ width: 1440, height: 1000 });
-  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
-  await show();
-  expect(await nav.locator('a').allTextContents()).toEqual(await page.locator('.primary-nav a').allTextContents());
+  for (const path of ['/book.html?id=self-compassion', '/case-study.html']) {
+    await page.goto(site + path);
+    await page.evaluate(() => scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }));
+    await expect(page.locator('.floating-nav')).toHaveCount(0);
+  }
+  expect(errors).toEqual([]);
 });
 
 test('pointer has no hover halo and only a completed click emits a temporary ring and synthesized audio', async ({ page }) => {
