@@ -1,28 +1,9 @@
 body.sky-enabled {
-  --reading-surface: rgb(255 255 255 / .88);
-  --reading-border: rgb(255 255 255 / .55);
-  --reading-width: min(1040px, calc(100% - 80px));
   position: relative;
   isolation: isolate;
   min-height: 100svh;
   padding-block: 32px 24px;
   background: transparent;
-}
-:root[data-theme="dark"] body.sky-enabled { --reading-surface: rgb(19 19 24 / .88); --reading-border: rgb(255 255 255 / .07); }
-body.sky-enabled[data-page="selected-work"] { --reading-width: min(1440px, calc(70.8% + 80px)); }
-body.sky-enabled[data-page="case-study"] { --reading-width: min(1600px, calc(100% - 80px)); }
-.site-backdrop {
-  position: absolute;
-  z-index: -1;
-  inset: 32px 0 24px;
-  width: var(--reading-width);
-  margin-inline: auto;
-  border: 1px solid var(--reading-border);
-  border-radius: 28px;
-  background: var(--reading-surface);
-  box-shadow: 0 16px 64px #16283d0a;
-  pointer-events: none;
-  transition: background-color 220ms ease, border-color 1200ms ease;
 }
 .sky-background { position: fixed; z-index: -2; inset: 0; overflow: hidden; pointer-events: none; background: #a9cce9; }
 .sky-day, .sky-night { position: absolute; inset: 0; transition: opacity 1600ms cubic-bezier(.4,0,.2,1); }
@@ -41,6 +22,8 @@ body.sky-enabled[data-page="case-study"] { --reading-width: min(1600px, calc(100
 .sky-background[data-motion="still"] .sky-cloud-image { animation: none; }
 .sky-background[data-motion="still"] .sky-flock { display: none; animation: none; }
 body.sky-enabled :is(.case-detail-section, .case-detail) { background: transparent; }
+body.sky-enabled .experience-company { color: var(--muted); }
+body.sky-enabled .experience-date-range { opacity: 1; }
 body.sky-enabled .site-footer { width: min(960px, calc(100% - 48px)); max-width: none; padding-inline: 0; flex-wrap: wrap; }
 body.sky-enabled[data-page="selected-work"] .site-footer { width: min(1360px, 70.8%); }
 body.sky-enabled[data-page="case-study"] .site-footer { width: min(1536px, calc(100% - 96px)); }
@@ -52,9 +35,7 @@ body.sky-enabled[data-page="case-study"] .site-footer { width: min(1536px, calc(
   26%, 100% { opacity: 0; transform: translate3d(calc(100vw + 145px), -8px, 0) rotate(3deg); }
 }
 @media (max-width: 700px) {
-  body.sky-enabled { --reading-width: calc(100% - 16px); padding-block-start: 56px; }
-  body.sky-enabled:is([data-page="selected-work"], [data-page="case-study"]) { --reading-width: calc(100% - 16px); }
-  .site-backdrop { top: 56px; border-radius: 22px; }
+  body.sky-enabled { padding-block-start: 56px; }
   .sky-sun { top: 22px; right: 30px; width: 17px; height: 17px; }
   .sky-moon { top: 22px; left: 30px; width: 15px; height: 15px; }
   .sky-flock { top: 7px; width: 68px; }
@@ -64,10 +45,6 @@ body.sky-enabled[data-page="case-study"] .site-footer { width: min(1536px, calc(
 @media (prefers-reduced-motion: reduce) {
   .sky-cloud-image, .sky-flock { animation: none !important; }
   .sky-flock { display: none; }
-  .sky-day, .sky-night, .site-backdrop { transition: none; }
+  .sky-day, .sky-night { transition: none; }
 }
-@media (prefers-contrast: more), (prefers-reduced-transparency: reduce) {
-  body.sky-enabled { --reading-surface: rgb(255 255 255 / .98); }
-  :root[data-theme="dark"] body.sky-enabled { --reading-surface: rgb(19 19 24 / .98); }
-}
-@media (forced-colors: active) { .sky-background, .site-backdrop { display: none; } body.sky-enabled { background: Canvas; } }
+@media (forced-colors: active) { .sky-background { display: none; } body.sky-enabled { background: Canvas; } }

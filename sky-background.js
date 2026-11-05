@@ -16,9 +16,7 @@ export function mountSkyBackground() {
   day.append(image('day-sky.webp', 'sky-cloud-image'), image('sun.svg', 'sky-sun'), image('birds.png', 'sky-flock'));
   night.append(image('night-sky.webp', 'sky-cloud-image'), image('moon.svg', 'sky-moon'));
   sky.append(day, night);
-  const surface = document.createElement('div');
-  surface.className = 'site-backdrop'; surface.setAttribute('aria-hidden', 'true');
-  document.body.prepend(sky, surface);
+  document.body.prepend(sky);
   document.body.classList.add('sky-enabled');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const update = () => {

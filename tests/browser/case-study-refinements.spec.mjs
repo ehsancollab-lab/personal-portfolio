@@ -43,20 +43,20 @@ test('case cards zoom smoothly and their title becomes #2255FF on hover and keyb
   await expect(title).toHaveCSS('color', 'rgb(34, 85, 255)');
 });
 
-test('case details use the shared translucent reading surface on direct load and SPA navigation', async ({ page }) => {
+test('case details stay transparent over the sky on direct load and SPA navigation', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(site + '/case-study.html');
   for (const selector of ['body', '.case-detail-section', '.case-detail']) await expect(page.locator(selector)).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-  await expect(page.locator('.site-backdrop')).toHaveCSS('background-color', 'rgba(255, 255, 255, 0.88)');
+  await expect(page.locator('.site-backdrop')).toHaveCount(0);
   await page.screenshot({ path: resolve(work, 'case-detail-background-refined.png') });
   await page.getByRole('button', { name: 'Switch to dark theme' }).click();
-  await expect(page.locator('.site-backdrop')).toHaveCSS('background-color', 'rgba(19, 19, 24, 0.88)');
+  await expect(page.locator('.site-backdrop')).toHaveCount(0);
   await page.getByRole('button', { name: 'Switch to light theme' }).click();
   await page.getByRole('link', { name: 'Back to Home' }).click();
-  await expect(page.locator('.site-backdrop')).toHaveCSS('background-color', 'rgba(255, 255, 255, 0.88)');
+  await expect(page.locator('.site-backdrop')).toHaveCount(0);
   await page.locator('.primary-nav').getByRole('link', { name: 'Case Studies', exact: true }).click();
   await page.locator('a.case-study-card').first().click();
-  await expect(page.locator('.site-backdrop')).toHaveCSS('background-color', 'rgba(255, 255, 255, 0.88)');
+  await expect(page.locator('.site-backdrop')).toHaveCount(0);
 });
 
 test('existing article image replacement changes the displayed image and survives saving', async ({ page }) => {

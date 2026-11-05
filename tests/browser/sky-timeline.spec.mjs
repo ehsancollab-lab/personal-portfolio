@@ -4,7 +4,7 @@ const site = 'http://localhost:4173';
 const work = resolve(import.meta.dirname, '../../../work/portfolio-browser');
 test.beforeEach(async ({ request }) => { await request.post(site + '/__test/reset'); });
 
-test('day and night sky follow the existing theme with a readable 88% central surface', async ({ page }) => {
+test('day and night sky sit directly behind readable content without a central overlay', async ({ page }) => {
   const errors = []; page.on('pageerror', error => errors.push(error.message));
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.setViewportSize({ width: 1920, height: 1080 });
@@ -17,16 +17,18 @@ test('day and night sky follow the existing theme with a readable 88% central su
     await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
     await expect(page.locator('.sky-day')).toHaveCSS('opacity', theme === 'light' ? '1' : '0');
     await expect(page.locator('.sky-night')).toHaveCSS('opacity', theme === 'dark' ? '1' : '0');
-    await expect(page.locator('.site-backdrop')).toHaveCSS('background-color', theme === 'light' ? 'rgba(255, 255, 255, 0.88)' : 'rgba(19, 19, 24, 0.88)');
+    await expect(page.locator('.site-backdrop')).toHaveCount(0);
+    await expect(page.locator('body')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+    await expect(page.locator('main')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
     await expect(page.locator('body')).toHaveCSS('color', theme === 'light' ? 'rgb(51, 51, 51)' : 'rgb(241, 241, 243)');
     await expect(page.locator('.bio a').first()).toHaveCSS('color', theme === 'light' ? 'rgb(63, 63, 63)' : 'rgb(198, 198, 203)');
     const celestial = await page.locator(theme === 'light' ? '.sky-sun' : '.sky-moon').boundingBox();
     expect(theme === 'light' ? celestial.x > 960 : celestial.x < 960).toBe(true);
-    await page.screenshot({ path: resolve(work, `sky-${theme}-1920.png`) });
+    await page.screenshot({ path: resolve(work, `sky-no-surface-${theme}-1920.png`) });
     for (const width of [350, 320]) {
       await page.setViewportSize({ width, height: 800 });
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-      await page.screenshot({ path: resolve(work, `sky-${theme}-${width}.png`) });
+      await page.screenshot({ path: resolve(work, `sky-no-surface-${theme}-${width}.png`) });
     }
     await page.setViewportSize({ width: 1920, height: 1080 });
   }
@@ -43,7 +45,7 @@ test('day and night sky follow the existing theme with a readable 88% central su
 test('clouds and occasional bird flights animate, pause when reduced motion is selected and never intercept input', async ({ page }) => {
   await page.goto(site + '/experience.html');
   await expect(page.locator('.sky-background')).toHaveCSS('pointer-events', 'none');
-  await expect(page.locator('.site-backdrop')).toHaveCSS('pointer-events', 'none');
+  await expect(page.locator('.site-backdrop')).toHaveCount(0);
   await expect(page.locator('.sky-day .sky-cloud-image')).toHaveCSS('animation-name', 'sky-cloud-drift');
   const flock = page.locator('.sky-flock');
   await flock.evaluate(node => { const a = node.getAnimations()[0]; a.pause(); a.currentTime = 7000; });
@@ -62,6 +64,31 @@ test('clouds and occasional bird flights animate, pause when reduced motion is s
   await expect(page.locator('body')).toHaveAttribute('data-page', 'about');
 });
 
+test('all public routes keep the sky exposed in both languages and themes with readable Experience metadata', async ({ page }) => {
+  test.setTimeout(90000);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  for (const route of ['/', '/about.html', '/experience.html', '/case-studies.html', '/books.html?category=psychology', '/book.html?id=self-compassion', '/case-study.html?id=mohtavachi-content-calendar']) {
+    await page.goto(site + route);
+    for (const locale of ['en', 'fa']) {
+      await page.locator('[data-language="' + locale + '"]').click();
+      for (const theme of ['light', 'dark']) {
+        if (await page.locator('html').getAttribute('data-theme') !== theme) await page.locator('.theme-toggle').click();
+        await expect(page.locator('.site-backdrop')).toHaveCount(0);
+        await expect(page.locator('body')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+        await expect(page.locator('main')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+        if (route === '/experience.html') {
+          await expect(page.locator('.experience-company').first()).toHaveCSS('color', theme === 'light' ? 'rgb(63, 63, 63)' : 'rgb(198, 198, 203)');
+          await expect(page.locator('.experience-date-range').first()).toHaveCSS('opacity', '1');
+        }
+        if (route === '/' || route.startsWith('/book.html') || route === '/experience.html') {
+          await page.screenshot({ path: resolve(work, `sky-no-surface-${route === '/' ? 'work' : route.startsWith('/book.html') ? 'book' : 'experience'}-${locale}-${theme}.png`) });
+        }
+      }
+    }
+  }
+});
+
 test('Experience cursor smoothly follows the solid progress line, updates gray stations and reverses cleanly', async ({ page }) => {
   const errors = []; page.on('pageerror', error => errors.push(error.message));
   await page.goto(site + '/experience.html');
@@ -78,7 +105,7 @@ test('Experience cursor smoothly follows the solid progress line, updates gray s
     return samples;
   }, range);
   await test.info().attach('timeline-motion-samples', { body: JSON.stringify({ range, samples }), contentType: 'application/json' });
-  expect(samples.some(value => value > .005 && value < .5)).toBe(true);
+  expect(samples.some(value => value > .005 && value < .55 - .001)).toBe(true);
   await expect.poll(async () => Number(await track.getAttribute('data-progress'))).toBeCloseTo(.55, 1);
   const aligned = await track.evaluate(node => {
     const t = node.getBoundingClientRect(), c = node.querySelector('.experience-cursor').getBoundingClientRect();

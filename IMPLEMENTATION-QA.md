@@ -2,6 +2,13 @@
 
 Latest verification: 2026-11-05.
 
+## November 5 direct sky background experiment
+
+- The owner's latest request removes the central 88% overlay in both themes. Its DOM node, background, border, shadow, responsive width tokens and transparency overrides are removed. Header, main and footer retain their positions; content sits directly over the existing sky on all seven public route types.
+- Daytime sampling of the original sky image shows body text `#3f3f3f` at a worst-case 5.53:1 contrast. The earlier lighter Experience company text and translucent dates had lower contrast, so companies now use the shared muted color and dates are fully opaque. Night renders were checked visually with the existing light text. This is a focused readability check, not a complete accessibility audit.
+- Before/after evidence is in `/workspace/work/sky-no-surface/comparison.png`; current renders use the `sky-no-surface-` prefix under `/workspace/work/portfolio-browser/`. The latest scoped visual report is `design-qa.md`.
+- `npm test` passes all 37 checks and builds both targets. The six affected Chromium scenarios pass, including the seven-route English/Persian light/dark sweep, direct/SPA case pages, mobile 350/320px, sky motion, timeline interpolation/reversal and the fitted Persian CV. Timeline sampling accepts genuine late intermediate positions below the 0.55 destination, accommodating software-rendered frame coalescing.
+
 ## November 5 sky, Experience cursor and Persian CV control
 
 - `Rec 0045.mp4` supplies the sky reference. Local generated day/night images and a transparent bird flock create the atmosphere, with small Phosphor sun/moon assets positioned independently for mobile and desktop. The existing theme control crossfades scenes; one persistent sky remains across SPA routes. The shared reading surface is 88% opaque and adapts to the theme; case details use it too. The footer fits inside the surface. Sky assets and license are documented in `assets/sky/README.md`.
