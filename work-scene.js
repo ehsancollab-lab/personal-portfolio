@@ -63,7 +63,7 @@ export function createWorkScene(main) {
   } catch { return null; }
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.5));
   renderer.outputColorSpace = SRGBColorSpace;
-  renderer.setClearColor(0x000000, 0);
+  renderer.setClearColor(0x282828, 0);
   let shaderFailed = false;
   renderer.debug.onShaderError = () => { shaderFailed = true; };
   document.body.append(canvas);

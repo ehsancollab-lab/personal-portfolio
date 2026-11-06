@@ -35,6 +35,11 @@ for (const scenario of [
       return node.textContent === expected;
     })).toBe(true);
     await expect(page.locator('.folder-count, .portal-page-title')).toHaveCount(0);
+    if (scenario.theme === 'light') {
+      await expect(page.locator('body')).toHaveCSS('color', 'rgb(40, 40, 40)');
+      await expect(page.locator('#greeting')).toHaveCSS('color', 'rgb(40, 40, 40)');
+      await expect(page.locator('#cv-link')).toHaveCSS('background-color', 'rgb(40, 40, 40)');
+    }
     for (const logo of await page.locator('.folder-button[data-section="experience"] .folder-thumb').all()) {
       await expect(logo).toHaveCSS('border-radius', '50%');
       await expect(logo).toHaveCSS('border-top-color', 'rgb(255, 255, 255)');
@@ -55,6 +60,21 @@ for (const scenario of [
       await expect(page.locator('.portal-back')).toHaveCSS('border-radius', '999px');
       await expect(page.locator('#cv-label')).toHaveCSS('font-size', '13px');
       await expect(page.locator('.tehran-clock')).toBeHidden();
+      await expect(page.locator('.site-footer')).toHaveCSS('text-align', 'center');
+      await expect(page.locator('.site-footer')).toHaveCSS('justify-content', 'center');
+      await expect(page.locator('.footer-links')).toHaveCSS('justify-content', 'center');
+      if (scenario.width <= 700) await expect(page.locator('.site-footer')).toHaveCSS('align-items', 'center');
+      const footerDrift = await page.locator('.site-footer').evaluate(node => {
+        const box = node.getBoundingClientRect(), center = box.x + box.width / 2;
+        const children = [...node.children].map(child => child.getBoundingClientRect());
+        return getComputedStyle(node).flexDirection === 'column'
+          ? Math.max(...children.map(box => Math.abs(box.x + box.width / 2 - center)))
+          : Math.abs((Math.min(...children.map(box => box.x)) + Math.max(...children.map(box => box.right))) / 2 - center);
+      });
+      expect(footerDrift).toBeLessThan(1);
+      if (route.startsWith('books.html')) {
+        for (const title of await page.locator('.library-book-copy h3').all()) await expect(title).toHaveCSS('font-size', '15px');
+      }
       if (route === 'experience.html') {
         await expect(page.locator('.experience-logo')).toHaveCount(3);
         for (const logo of await page.locator('.experience-logo').all()) {
@@ -88,6 +108,7 @@ for (const scenario of [
     await card.evaluate(node => node.scrollIntoView({ block: 'center', behavior: 'instant' }));
     await page.evaluate(() => document.fonts.ready);
     await card.screenshot({ path: resolve(output, `shelf-${scenario.locale}-${scenario.theme}-${scenario.width}.png`) });
+    await page.locator('.site-footer').screenshot({ path: resolve(output, `footer-${scenario.locale}-${scenario.theme}-${scenario.width}.png`) });
     expect(errors).toEqual([]);
   });
 }

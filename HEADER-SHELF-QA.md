@@ -10,6 +10,8 @@
 - Home return fades reserve the native scrollbar lane. The owner-supplied video was reviewed and the original 7.5px content shift was reproduced with visible Chromium scrollbars before applying the fix.
 - Timeline scroll start/end are clamped to the document range so the shorter header does not leave the cursor partway down at the top of the page. The original smooth scrub, halo, gray stops, and reverse motion are retained.
 
+- The later palette update replaces public pure-black text/actions/focus/icons and shadow colors with `#282828`. Collection book-list titles are 15px in both languages at every breakpoint; visible footers center both their text and link groups. These checks are included in the four viewport/locale/theme scenarios.
+
 ## Verification
 
 The production site build succeeded. The final focused Chromium run passed all ten tests, covering English/light and Persian/dark at 1440px, English/dark and Persian/light at 350px, every interior route, real scrolling, clock updates/timezone, pill corners, text sizes, icon alpha, six shelf cards, original book fan motion, folder layers/growth, reduced motion, the live timeline scrub/reverse behavior, and home-return stability with visible native scrollbars. The return tests measured zero horizontal movement of the content, portrait, and CV controls across all four section round-trips in both English and Persian. No page errors or horizontal overflow were reported. Desktop/mobile shelves and 3× folder screenshots were inspected; a hover-edge rasterization defect found during the first visual review was corrected and the suite rerun.

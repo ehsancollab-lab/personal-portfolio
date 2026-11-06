@@ -46,7 +46,7 @@
 .book-cover > img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
 .book-cover-viewport { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; }
 .book-cover-viewport > img { position: absolute; display: block; width: 100%; height: 100%; max-width: none; }
-.sample-cover { --cover-paper: var(--surface); --cover-ink: var(--text); position: absolute; inset: 0; display: flex; flex-direction: column; overflow: hidden; padding: 12% 12% 9% 16%; border: 1px solid var(--border); border-radius: inherit; background: var(--cover-paper); color: var(--cover-ink); box-shadow: inset 5px 0 4px #00000012, inset 8px 0 1px #ffffff24; }
+.sample-cover { --cover-paper: var(--surface); --cover-ink: var(--text); position: absolute; inset: 0; display: flex; flex-direction: column; overflow: hidden; padding: 12% 12% 9% 16%; border: 1px solid var(--border); border-radius: inherit; background: var(--cover-paper); color: var(--cover-ink); box-shadow: inset 5px 0 4px #28282812, inset 8px 0 1px #ffffff24; }
 .sample-cover-label { display: block; padding-bottom: 10%; border-bottom: 1px solid currentColor; font-size: 4.2cqw; font-weight: 500; line-height: 1.5; letter-spacing: .13em; opacity: .8; }
 .sample-cover-title { display: block; margin-top: 14%; font-size: 11cqw; font-weight: 500; line-height: 1.12; letter-spacing: -.045em; overflow-wrap: anywhere; text-wrap: balance; }
 .sample-cover-author { display: block; margin-top: auto; padding-top: 10%; font-size: 5.5cqw; line-height: 1.4; }
@@ -76,7 +76,7 @@
   padding: 28px var(--shelf-inset) 0;
   border-radius: 12px 12px 4px 4px;
   background: radial-gradient(ellipse at 50% 0, #ffffff80, transparent 75%), var(--shelf-back);
-  box-shadow: inset 0 9px 16px #00000012, inset 0 0 0 1px var(--shelf-side);
+  box-shadow: inset 0 9px 16px #28282812, inset 0 0 0 1px var(--shelf-side);
 }
 :root[data-theme="dark"] .bookshelf-alcove { --shelf-back: #282828; --shelf-side: #141414; --shelf-top: #4a4a4a; --shelf-front: #333333; --shelf-edge: #1e1e1e; background: radial-gradient(ellipse at 50% 0, #ffffff0d, transparent 75%), var(--shelf-back); }
 .bookshelf-alcove::before, .bookshelf-alcove::after { position: absolute; top: 0; bottom: 0; width: 16px; background: linear-gradient(90deg, var(--shelf-side), var(--shelf-back)); clip-path: polygon(0 0, 100% 14px, 100% calc(100% - 14px), 0 100%); pointer-events: none; content: ''; }
@@ -85,7 +85,7 @@
 .featured-book-shelf { --shelf-gap: 34px; container-type: inline-size; position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; gap: var(--shelf-gap); margin: 0 auto; padding: 0 0 26px; }
 .featured-book-shelf::before, .featured-book-shelf::after { position: absolute; right: calc(-1 * var(--shelf-inset)); left: calc(-1 * var(--shelf-inset)); pointer-events: none; content: ''; }
 .featured-book-shelf::before { bottom: 12px; height: 18px; background: linear-gradient(var(--shelf-back), var(--shelf-top)); clip-path: polygon(16px 0, calc(100% - 16px) 0, 100% 100%, 0 100%); }
-.featured-book-shelf::after { bottom: 0; height: 14px; border-bottom: 1px solid var(--shelf-edge); background: linear-gradient(var(--shelf-top), var(--shelf-front) 25%, var(--shelf-front) 80%, var(--shelf-edge)); box-shadow: 0 6px 9px #0000001a; }
+.featured-book-shelf::after { bottom: 0; height: 14px; border-bottom: 1px solid var(--shelf-edge); background: linear-gradient(var(--shelf-top), var(--shelf-front) 25%, var(--shelf-front) 80%, var(--shelf-edge)); box-shadow: 0 6px 9px #2828281a; }
 .shelf-book { position: relative; z-index: 1; display: flex; align-items: end; justify-content: center; height: min(280px, calc((100cqw - var(--shelf-gap) - var(--shelf-gap)) / 2.55)); color: inherit; text-decoration: none; }
 .shelf-book:focus-visible { outline: 2px solid var(--focus); outline-offset: 5px; border-radius: 4px; }
 .shelf-book > .book-cover { flex: none; height: 100%; width: auto; }
