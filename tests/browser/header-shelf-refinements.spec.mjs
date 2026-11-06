@@ -74,6 +74,17 @@ for (const scenario of [
       expect(footerDrift).toBeLessThan(1);
       if (route.startsWith('books.html')) {
         for (const title of await page.locator('.library-book-copy h3').all()) await expect(title).toHaveCSS('font-size', '15px');
+        for (const card of await page.locator('.library-book-card').all()) {
+          await expect(card.locator('.library-book-copy')).toHaveCSS('text-align', 'center');
+          const offset = await card.evaluate(node => {
+            const cover = node.querySelector('.book-cover').getBoundingClientRect();
+            const title = node.querySelector('h3').getBoundingClientRect();
+            const author = node.querySelector('.library-book-author').getBoundingClientRect();
+            return Math.max(Math.abs(cover.x + cover.width / 2 - title.x - title.width / 2), Math.abs(cover.x + cover.width / 2 - author.x - author.width / 2));
+          });
+          expect(offset).toBeLessThan(1);
+        }
+        await page.locator('.library-book-grid').screenshot({ path: resolve(output, `book-captions-${scenario.locale}-${scenario.width}.png`) });
       }
       if (route === 'experience.html') {
         await expect(page.locator('.experience-logo')).toHaveCount(3);
@@ -137,7 +148,7 @@ test('wood shelf preserves the overlapping three-book fan and its original hover
   }
 });
 
-test('clean vector folder layers grow 0.3% on hover while content lifts; reduced motion suppresses the growth', async ({ browser }) => {
+test('original silver folder artwork retains clean clipped layers, subtle hover growth, and lifted content', async ({ browser }) => {
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 3 });
   const page = await context.newPage();
   await page.goto(site + '/');
@@ -145,9 +156,9 @@ test('clean vector folder layers grow 0.3% on hover while content lifts; reduced
   await expect(page.locator('.folder-button')).toHaveCount(4);
   const folders = page.locator('.folder-button');
   for (const folder of await folders.all()) {
-    await expect(folder.locator('.folder-back')).toHaveAttribute('src', /folder-back\.svg$/);
-    await expect(folder.locator('.folder-front')).toHaveAttribute('src', /folder-front\.svg$/);
-    await expect(folder.locator('.folder-front')).toHaveCSS('clip-path', 'none');
+    await expect(folder.locator('.folder-back > img')).toHaveAttribute('src', /folder\.webp$/);
+    await expect(folder.locator('.folder-front > img')).toHaveAttribute('src', /folder\.webp$/);
+    await expect(folder.locator('.folder-front > img')).not.toHaveCSS('clip-path', 'none');
     const thumb = folder.locator('.folder-thumb').first();
     await page.mouse.move(0, 0);
     await page.waitForTimeout(700);

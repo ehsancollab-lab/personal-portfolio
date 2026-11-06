@@ -102,7 +102,7 @@
 .library-book-card:nth-child(3n+1) .book-cover { transform: rotate(-2deg); }
 .library-book-card:nth-child(3n+3) .book-cover { transform: rotate(2deg); }
 .library-book-card:hover .book-cover, .library-book-card:focus-visible .book-cover { transform: translateY(-5px); box-shadow: var(--card-shadow); }
-.library-book-copy { display: grid; gap: 5px; }
+.library-book-copy { display: grid; gap: 5px; text-align: center; }
 .library-book-copy h3 { margin: 0; font-size: 15px; font-weight: 500; line-height: 1.5; letter-spacing: -.015em; }
 .library-book-author { color: var(--muted); font-size: 12px; line-height: 1.6; }
 .library-not-found { padding: 40px 12px; color: var(--muted); font-size: 15px; line-height: 1.7; text-align: center; }

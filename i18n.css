@@ -36,7 +36,7 @@
 :root:lang(fa) .case-back-icon img { transform: rotate(180deg); }
 :root:lang(fa) .book-fan > .book-cover:nth-child(1) { transform: translateX(var(--fan-spread)) rotate(7deg); }
 :root:lang(fa) .book-fan > .book-cover:nth-child(3) { transform: translateX(calc(-1 * var(--fan-spread))) rotate(-7deg); }
-:root:lang(fa) .book-detail-copy, :root:lang(fa) .library-book-copy { text-align: start; }
+:root:lang(fa) .book-detail-copy { text-align: start; }
 :root:lang(fa) .experience-dates { font-family: On, Tahoma, sans-serif; }
 @media (hover: hover) {
   :root:lang(fa) .book-collection-card:hover .book-fan > .book-cover:nth-child(1) { transform: translate(var(--fan-hover-spread), -9px) rotate(11deg); }

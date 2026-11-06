@@ -38,11 +38,14 @@ body:not([data-page="home"]) .tehran-clock { display: none; }
 .folder-button { position: relative; flex: 1 1 0; display: flex; flex-direction: column; align-items: center; min-width: 0; gap: 5px; padding: 0 2px 6px; border-radius: 12px; color: var(--muted); font-size: 12px; line-height: 1.45; text-decoration: none; -webkit-tap-highlight-color: transparent; }
 .folder-button:is(:hover, :focus-visible) { z-index: 5; color: var(--text); }
 .folder-visual { position: relative; display: block; width: 106px; max-width: 100%; height: 100px; isolation: isolate; transform-origin: 50% 80%; transition: transform 550ms cubic-bezier(.2,.8,.2,1); }
+.folder-clip-definitions { position: absolute; width: 0; height: 0; overflow: hidden; pointer-events: none; }
 .folder-button:is(:hover, :focus-visible) .folder-visual { transform: scale(1.003); }
 .folder-button :is(.folder-back, .folder-front) { position: absolute; left: 0; bottom: 0; display: block; width: 106px; height: 84px; max-width: 100%; object-fit: contain; filter: drop-shadow(0 7px 6px #28282812); transition: transform 550ms cubic-bezier(.2,.8,.2,1), filter 400ms ease; }
 .folder-back { z-index: 0; }
+.folder-button :is(.folder-back, .folder-front) > img { display: block; width: 100%; height: 100%; object-fit: fill; }
+.folder-back > img { clip-path: url('#original-folder-back'); }
+.folder-front > img { clip-path: url('#original-folder-front'); }
 .folder-button .folder-front { z-index: 3; transform-origin: 50% 95%; }
-.folder-button:is(:hover, :focus-visible) .folder-front { transform: translateY(1px); }
 .folder-items { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
 .folder-button .folder-thumb { --offset: 0px; --lift: -18px; --angle: -2deg; position: absolute; bottom: 18px; left: 50%; display: block; width: 62px; height: 48px; max-width: none; border: 3px solid #fff; border-radius: 6px; object-fit: cover; background: #fff; box-shadow: 0 2px 5px #28282833; transform: translateX(calc(-50% + var(--offset))) translateY(var(--lift)) rotate(var(--angle)); transition: transform 650ms cubic-bezier(.18,.9,.25,1.2); }
 .folder-button .folder-thumb:first-child { --offset: -22px; --lift: -9px; --angle: -14deg; }
