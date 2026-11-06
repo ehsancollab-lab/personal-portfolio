@@ -35,6 +35,10 @@ for (const scenario of [
       return node.textContent === expected;
     })).toBe(true);
     await expect(page.locator('.folder-count, .portal-page-title')).toHaveCount(0);
+    for (const logo of await page.locator('.folder-button[data-section="experience"] .folder-thumb').all()) {
+      await expect(logo).toHaveCSS('border-radius', '50%');
+      await expect(logo).toHaveCSS('border-top-color', 'rgb(255, 255, 255)');
+    }
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     const icon = await request.get(site + '/assets/figma/download-cv.svg');
     expect(icon.ok()).toBe(true);
@@ -51,6 +55,17 @@ for (const scenario of [
       await expect(page.locator('.portal-back')).toHaveCSS('border-radius', '999px');
       await expect(page.locator('#cv-label')).toHaveCSS('font-size', '13px');
       await expect(page.locator('.tehran-clock')).toBeHidden();
+      if (route === 'experience.html') {
+        await expect(page.locator('.experience-logo')).toHaveCount(3);
+        for (const logo of await page.locator('.experience-logo').all()) {
+          await expect(logo).toHaveCSS('border-radius', '50%');
+          await expect(logo).toHaveCSS('border-top-width', '3px');
+          await expect(logo).toHaveCSS('border-top-color', 'rgb(255, 255, 255)');
+          await expect(logo).not.toHaveCSS('box-shadow', 'none');
+        }
+        await expect(page.locator('.experience-cursor')).toHaveCSS('background-color', scenario.theme === 'light' ? 'rgb(40, 40, 40)' : 'rgb(250, 250, 250)');
+        await expect(page.locator('.experience-progress')).toHaveCSS('background-color', scenario.theme === 'light' ? 'rgb(40, 40, 40)' : 'rgb(250, 250, 250)');
+      }
       await page.evaluate(async () => { scrollTo({ top: 450, behavior: 'instant' }); await new Promise(requestAnimationFrame); await new Promise(requestAnimationFrame); });
       const position = await page.locator('.portal-header').evaluate(node => ({ y: node.getBoundingClientRect().top, scroll: scrollY }));
       expect(Math.abs(position.y + position.scroll)).toBeLessThan(1);

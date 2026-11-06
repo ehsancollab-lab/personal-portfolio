@@ -35,7 +35,9 @@ export function createExperienceTimeline(main, reduced) {
   const tween = gsap.to(state, {
     progress: 1, ease: 'none', onUpdate: draw,
     scrollTrigger: {
-      trigger: track, start: 'top 58%', end: 'bottom 58%', scrub: reduced ? true : .85,
+      // A short page header can put the first station above the trigger line
+      // before scrolling begins. Clamp the range to the actual scrollable page.
+      trigger: track, start: 'clamp(top 58%)', end: 'clamp(bottom 58%)', scrub: reduced ? true : .85,
       onRefresh() { measure(); draw(); }
     }
   });

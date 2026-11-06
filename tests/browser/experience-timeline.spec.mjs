@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { resolve } from 'node:path';
-const site = 'http://localhost:4173';
+const site = process.env.PORTFOLIO_REFINEMENTS_URL || 'http://localhost:4173';
 const work = resolve(import.meta.dirname, '../../../work/portfolio-browser');
-test.beforeEach(async ({ request }) => { await request.post(site + '/__test/reset'); });
+test.beforeEach(async ({ request }) => { if (!process.env.PORTFOLIO_REFINEMENTS_URL) await request.post(site + '/__test/reset'); });
 
 test('Experience cursor smoothly follows the solid progress line, updates gray stations and reverses cleanly', async ({ page }) => {
   const errors = []; page.on('pageerror', error => errors.push(error.message));
@@ -10,9 +10,15 @@ test('Experience cursor smoothly follows the solid progress line, updates gray s
   const track = page.locator('.experience-track'), cursor = page.locator('.experience-cursor');
   await page.evaluate(() => document.fonts.ready);
   await expect.poll(() => page.locator('main').evaluate(node => node.style.transform)).toBe('');
-  await expect(cursor).toHaveCSS('background-color', 'rgb(0, 0, 0)');
-  await expect(page.locator('.experience-entry').last().locator('.experience-dot')).not.toHaveCSS('background-color', 'rgb(0, 0, 0)');
-  const range = await track.evaluate(node => ({ start: node.getBoundingClientRect().top + scrollY - innerHeight * .58, length: node.clientHeight }));
+  await expect(cursor).toHaveCSS('background-color', 'rgb(40, 40, 40)');
+  await expect(page.locator('.experience-entry').last().locator('.experience-dot')).not.toHaveCSS('background-color', 'rgb(40, 40, 40)');
+  await expect.poll(async () => Number(await track.getAttribute('data-progress'))).toBeCloseTo(0, 2);
+  const range = await track.evaluate(node => {
+    const top = node.getBoundingClientRect().top + scrollY;
+    const start = Math.max(0, top - innerHeight * .58);
+    const end = Math.min(document.documentElement.scrollHeight - innerHeight, top + node.clientHeight - innerHeight * .58);
+    return { start, length: end - start };
+  });
   const samples = await page.evaluate(async ({ start, length }) => {
     const samples = [];
     scrollTo({ top: start + length * .55, behavior: 'instant' });
@@ -41,7 +47,9 @@ test('Experience cursor smoothly follows the solid progress line, updates gray s
   await expect(page.locator('.experience-track')).toHaveCount(1);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({ path: resolve(work, 'experience-timeline-fa-350.png') });
-  await page.locator('.primary-nav [data-page-link="about"]').click();
+  await page.locator('.portal-back').click();
+  await expect(page.locator('body')).toHaveAttribute('data-page', 'home');
+  await page.locator('.folder-button[data-section="about"]').click();
   await expect(page.locator('body')).toHaveAttribute('data-page', 'about');
   expect(errors).toEqual([]);
 });
