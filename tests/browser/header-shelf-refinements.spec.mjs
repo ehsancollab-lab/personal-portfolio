@@ -27,6 +27,14 @@ for (const scenario of [
     if (scenario.theme === 'dark') await page.locator('.theme-toggle').click();
     await expect(page.locator('.tehran-clock')).toHaveCSS('font-size', '11px');
     await expect(page.locator('#cv-label')).toHaveCSS('font-size', '13px');
+    await expect(page.locator('#greeting')).toHaveCSS('font-size', scenario.locale === 'fa' ? '19px' : '17px');
+    await expect(page.locator('#greeting')).toHaveCSS('font-weight', scenario.locale === 'fa' ? '700' : '500');
+    for (const link of await page.locator('#header-contact-links a').all()) {
+      await expect(link).toHaveCSS('font-weight', scenario.locale === 'fa' ? '700' : '400');
+      if (scenario.locale === 'fa') await expect(link).toHaveCSS('font-size', '16px');
+      await expect(link).toHaveCSS('color', scenario.theme === 'light' ? 'rgb(40, 40, 40)' : 'rgb(250, 250, 250)');
+    }
+    if (scenario.locale === 'fa') await page.locator('.centered-intro').screenshot({ path: resolve(output, `persian-intro-${scenario.width}.png`) });
     await expect(page.locator('#tehran-time')).toHaveText(/^\d{2}:\d{2}:\d{2}$/);
     const before = await page.locator('#tehran-time').textContent();
     await expect.poll(() => page.locator('#tehran-time').textContent()).not.toBe(before);
@@ -73,6 +81,17 @@ for (const scenario of [
       });
       expect(footerDrift).toBeLessThan(1);
       if (route.startsWith('books.html')) {
+        await expect(page.locator('.collection-panel')).toHaveCSS('background-color', 'rgb(237, 237, 237)');
+        await expect(page.locator('.collection-panel')).toHaveCSS('background-image', 'none');
+        await expect(page.locator('.collection-page-heading h1')).toHaveCSS('color', 'rgb(40, 40, 40)');
+        await expect(page.locator('.collection-page-heading .library-eyebrow, .library-result-count')).toHaveCount(0);
+        for (const selector of ['.bookshelf-alcove', '.featured-book-shelf']) {
+          const decoration = await page.locator(selector).evaluate(node => ['::before', '::after'].map(pseudo => getComputedStyle(node, pseudo).content));
+          expect(decoration).toEqual(['none', 'none']);
+          await expect(page.locator(selector)).toHaveCSS('background-image', 'none');
+          await expect(page.locator(selector)).toHaveCSS('box-shadow', 'none');
+        }
+        await page.locator('.collection-panel').screenshot({ path: resolve(output, `collection-${scenario.locale}-${scenario.width}.png`) });
         for (const title of await page.locator('.library-book-copy h3').all()) await expect(title).toHaveCSS('font-size', '15px');
         for (const card of await page.locator('.library-book-card').all()) {
           await expect(card.locator('.library-book-copy')).toHaveCSS('text-align', 'center');
@@ -85,6 +104,15 @@ for (const scenario of [
           expect(offset).toBeLessThan(1);
         }
         await page.locator('.library-book-grid').screenshot({ path: resolve(output, `book-captions-${scenario.locale}-${scenario.width}.png`) });
+      }
+      if (route.startsWith('book.html')) {
+        const portrait = page.locator('.book-quote-portrait');
+        await expect(portrait).toHaveAttribute('src', './assets/home/portrait.webp');
+        await expect.poll(() => portrait.evaluate(image => image.complete && image.naturalWidth > 0)).toBe(true);
+        await expect(page.locator('.book-quote-avatar')).toHaveCSS('width', '40px');
+        await expect(page.locator('.book-quote-avatar')).toHaveCSS('height', '40px');
+        await expect(page.locator('.book-quote-avatar')).toHaveCSS('border-radius', '50%');
+        await page.locator('.book-quote-attribution').screenshot({ path: resolve(output, `book-attribution-${scenario.locale}-${scenario.width}.png`) });
       }
       if (route === 'experience.html') {
         await expect(page.locator('.experience-logo')).toHaveCount(3);
@@ -112,8 +140,11 @@ for (const scenario of [
     await expect(page.locator('.book-collection-card')).toHaveCount(6);
     for (const card of await page.locator('.book-collection-card').all()) {
       await expect(card.locator('.book-cover')).toHaveCount(3);
-      await expect(card).toHaveCSS('background-image', /walnut-grain\.svg/);
-      await expect(card).toHaveCSS('color', 'rgb(255, 248, 239)');
+      await expect(card).toHaveCSS('background-image', 'none');
+      await expect(card).toHaveCSS('background-color', 'rgb(237, 237, 237)');
+      await expect(card).toHaveCSS('color', 'rgb(40, 40, 40)');
+      await expect(card.locator('.collection-card-meta')).toHaveCount(0);
+      expect(await card.evaluate(node => ['::before', '::after'].map(pseudo => getComputedStyle(node, pseudo).content))).toEqual(['none', 'none']);
     }
     const card = page.locator('.book-collection-card').first();
     await card.evaluate(node => node.scrollIntoView({ block: 'center', behavior: 'instant' }));
@@ -124,7 +155,7 @@ for (const scenario of [
   });
 }
 
-test('wood shelf preserves the overlapping three-book fan and its original hover movement in both languages', async ({ page }) => {
+test('plain shelf preserves the overlapping three-book fan and its original hover movement in both languages', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto(site + '/about.html');
   await page.evaluate(() => document.fonts.ready);

@@ -1,6 +1,6 @@
 import { aboutIntro, bookCategories, books, booksInCategory, categoryById, bookById } from './library-content.js';
 import { responsiveImage } from './images.js';
-import { getLocale, localizeText, localizeBook, number, phrase } from './i18n.js';
+import { getLocale, localizeText, localizeBook, phrase } from './i18n.js';
 
 const element = (tag, className, text) => {
   const node = document.createElement(tag);
@@ -67,16 +67,13 @@ function toolbar(main, href, text, showShortcut = true) {
   theme.append(icon); bar.append(backLink(href, text, showShortcut), theme); main.append(bar);
 }
 export { cover as createBookCover };
-function categoryCard(category, index) {
-  const items = booksInCategory(category.id);
+function categoryCard(category) {
   const link = element('a', 'book-collection-card'); link.href = categoryURL(category.id); link.dataset.categoryId = category.id;
-  link.setAttribute('aria-label', phrase('{title}, {count} books', '{title}، {count} کتاب', { title: localizeText(category.title), count: number(items.length) }));
-  const meta = element('div', 'collection-card-meta');
-  meta.append(element('span', '', phrase('{n} / COLLECTION', 'مجموعهٔ {n}', { n: getLocale() === 'en' ? String(index + 1).padStart(2, '0') : number(index + 1) })), element('span', '', phrase('{count} books', '{count} کتاب', { count: number(items.length) })));
+  link.setAttribute('aria-label', localizeText(category.title));
   const title = element('h3', 'collection-card-title', category.title); title.dataset.categoryTitle = category.id;
   const fan = element('span', 'book-fan');
   category.featured.map(bookById).forEach(book => fan.append(cover(book)));
-  link.append(meta, title, element('p', 'collection-card-description', category.description), fan);
+  link.append(title, element('p', 'collection-card-description', category.description), fan);
   return link;
 }
 function bookCard(book) {
@@ -108,7 +105,6 @@ function renderCollection(main, params) {
   main.dataset.categoryId = category.id;
   const panel = element('section', 'collection-panel'); panel.dataset.categorySurface = category.id;
   const heading = element('div', 'collection-page-heading');
-  heading.append(element('p', 'library-eyebrow', 'MY BOOKSHELF'));
   const title = element('h1', '', category.title); title.dataset.categoryTitle = category.id;
   heading.append(title, element('p', '', category.description));
   const shelf = element('div', 'featured-book-shelf');
@@ -122,9 +118,8 @@ function renderCollection(main, params) {
   panel.append(heading, alcove);
   const list = element('section', 'collection-book-list'); list.setAttribute('aria-label', localizeText('Books in this collection'));
   const items = booksInCategory(category.id);
-  const count = element('p', 'library-result-count', phrase('Showing all {count} books', 'همهٔ {count} کتاب این دسته', { count: number(items.length) }));
   const grid = element('div', 'library-book-grid'); const cards = items.map(bookCard); grid.append(...cards);
-  list.append(count, grid); main.append(panel, list);
+  list.append(grid); main.append(panel, list);
   document.title = localizeText(category.title) + ' · ' + phrase('My Bookshelf', 'قفسهٔ کتاب‌های من') + ' — ' + localizeText('Ehsan Masoomi');
   document.querySelector('meta[name="description"]').content = phrase('{description} Books read by Ehsan Masoomi, with short summaries and personal takeaways.', '{description} کتاب‌هایی که احسان معصومی خوانده است، همراه با معرفی کوتاه و برداشت شخصی.', { description: localizeText(category.description) });
 }
@@ -153,9 +148,11 @@ function renderBook(main, params) {
   const quote = element('blockquote', 'book-quote-text', book.takeaway);
   quote.dir = getLocale() === 'fa' ? 'rtl' : 'ltr';
   const attribution = element('figcaption', 'book-quote-attribution');
+  const avatar = element('span', 'book-quote-avatar');
   const portrait = element('img', 'book-quote-portrait');
-  portrait.src = './assets/figma/profile.png'; portrait.alt = ''; portrait.width = 40; portrait.height = 40; portrait.decoding = 'async';
-  attribution.append(portrait, element('span', 'book-quote-name', 'Ehsan Masoomi'), element('span', 'book-quote-role', 'Product Designer'));
+  portrait.src = './assets/home/portrait.webp'; portrait.alt = ''; portrait.width = 989; portrait.height = 1100; portrait.decoding = 'async';
+  avatar.append(portrait);
+  attribution.append(avatar, element('span', 'book-quote-name', 'Ehsan Masoomi'), element('span', 'book-quote-role', 'Product Designer'));
   quotation.append(quote, attribution); takeaway.append(quotation);
   copy.append(title, author, summary, takeaway);
   article.append(art, copy); main.append(article);

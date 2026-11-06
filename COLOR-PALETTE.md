@@ -30,4 +30,4 @@ Tokens live in `styles.css`. Public component styles consume them in `library.cs
 
 The owner's subsequent desktop Blossom screenshot supplies the card finish: an 18px radius, fine neutral edge and compact layered shadow (`--card-radius` / `--card-shadow`). Public project cards, case previews, story images/videos and collection panels use the shared finish. Book covers keep their physical corner shape and use the shared shadow.
 
-Collection heroes place their existing three linked books in a recessed painted-gray shelf. Its back panel, angled side walls, top surface and beveled front edge separate white book covers from the white outer card. Light mode uses a `#e6e6e6` back wall and `#cecece` side walls; dark mode uses `#282828` and `#141414`. The shelf is CSS decoration around the original links; no new image, animation loop or WebGL scene is required.
+Collection cards and open collection heroes use the owner's plain `#EDEDED` background in both themes, with `#282828` titles and `#737373` descriptions. Wooden grain, inset walls, shelf ledges, collection numbers and count labels are removed. The original covers, overlapping card fan and hover movement remain.

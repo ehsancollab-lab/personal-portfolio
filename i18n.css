@@ -21,6 +21,7 @@
 :root:lang(fa) :is(.bio, .contact-prompt, .about-introduction p, .book-summary p, .case-study-card-summary, .experience-bullets, .case-article-body) { font-size: 18px; font-weight: 600; line-height: 25px; }
 :root:lang(fa) :is(.case-article-body p, .case-article-body li) { line-height: 25px; }
 :root:lang(fa) :is(.contact-links, .copyright, .collection-card-description, .library-book-author, .book-detail-author, .book-quote-role) { font-size: 16px; }
+:root:lang(fa) .contact-links a { font-weight: 700; }
 :root:lang(fa) .book-quote-text { letter-spacing: 0; quotes: '«' '»'; }
 :root:lang(fa) :is(.collection-card-meta, .library-eyebrow, .book-topics) { font-size: 13px; }
 :root:lang(fa) .experience-year { font-size: 19px; font-weight: 400; letter-spacing: 0; }
