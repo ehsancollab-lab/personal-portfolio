@@ -10,7 +10,7 @@ test.beforeEach(async ({ request }) => {
 });
 
 for (const width of [1440, 390, 320]) {
-  test('minimal portrait intro lands in navigation at ' + width + 'px', async ({ page }) => {
+  test('minimal portrait intro fades without moving at ' + width + 'px', async ({ page }) => {
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
     await page.setViewportSize({ width, height: 900 });
@@ -60,21 +60,20 @@ for (const width of [1440, 390, 320]) {
     expect(Math.abs(center.x)).toBeLessThan(1);
     expect(Math.abs(center.y)).toBeLessThan(1);
     await page.waitForTimeout(900);
+    const initialPortrait = await page.locator('.intro-avatar').boundingBox();
     await page.screenshot({ path: resolve(output, 'minimal-intro-' + width + '.png') });
     await page.waitForFunction(() => document.querySelector('.intro-percentage')?.textContent === '100%', null, { polling: 'raf', timeout: 5000 });
-    await page.waitForFunction(() => !!document.querySelector('.intro-avatar-flight'), null, { polling: 'raf', timeout: 5000 });
-    await expect(page.locator('.nav-home-avatar')).toHaveCSS('visibility', 'hidden');
-    if (width === 1440) {
-      await page.waitForTimeout(180);
-      await page.screenshot({ path: resolve(output, 'portrait-handoff-midflight.png') });
-    }
+    const finalPortrait = await page.locator('.intro-avatar').boundingBox();
+    expect(Math.abs(finalPortrait.x - initialPortrait.x)).toBeLessThan(.1);
+    expect(Math.abs(finalPortrait.y - initialPortrait.y)).toBeLessThan(.1);
+    await expect(page.locator('.nav-home-avatar')).toHaveCSS('visibility', 'visible');
     await expect(overlay).toHaveCount(0, { timeout: 5000 });
     await expect(page.locator('.intro-avatar-flight, .is-intro-target')).toHaveCount(0);
     await expect(page.locator('.nav-home-avatar')).toBeVisible();
     await expect(page.locator('html')).toHaveAttribute('data-preloader', 'complete');
     const trace = await page.evaluate(() => window.__introTrace);
     const duration = trace.finished - trace.started;
-    expect(duration).toBeGreaterThan(3750);
+    expect(duration).toBeGreaterThan(3350);
     expect(duration).toBeLessThan(5000);
     expect(trace.progress[0].value).toBe(0);
     expect(trace.progress.at(-1).value).toBe(100);
@@ -82,13 +81,10 @@ for (const width of [1440, 390, 320]) {
     const fillingTime = trace.progress.find(entry => entry.value === 100).time - trace.started;
     expect(fillingTime).toBeGreaterThan(2950);
     expect(fillingTime).toBeLessThan(3800);
-    expect(trace.motion.length).toBeGreaterThan(5);
-    expect(trace.motion[0].distance).toBeGreaterThan(50);
-    expect(trace.motion.at(-1).distance).toBeLessThan(3);
-    expect(trace.motion.every(entry => entry.visibility === 'visible')).toBe(true);
+    expect(trace.motion).toEqual([]);
     expect(await page.evaluate(() => [...document.querySelectorAll('body > [inert]')].length)).toBe(0);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    await writeFile(resolve(output, 'portrait-handoff-' + width + '.json'), JSON.stringify({ duration, fillingTime, ...trace }, null, 2));
+    await writeFile(resolve(output, 'portrait-fade-' + width + '.json'), JSON.stringify({ duration, fillingTime, ...trace }, null, 2));
     await page.screenshot({ path: resolve(output, 'minimal-home-' + width + '.png') });
     expect(errors).toEqual([]);
   });
@@ -115,10 +111,8 @@ test('intro remains finished during section navigation and replays on a fresh re
 
 test('reduced motion has no forced duration or portrait flight', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.route('**/app.js', async route => { await new Promise(resolve => setTimeout(resolve, 600)); await route.continue(); });
+  await page.route('**/app.js*', async route => { await new Promise(resolve => setTimeout(resolve, 600)); await route.continue(); });
   await page.goto(site + '/', { waitUntil: 'commit' });
-  await expect(page.locator('#site-preloader')).toBeVisible();
-  await expect(page.locator('.intro-avatar')).toHaveCSS('animation-name', 'none');
   await expect(page.locator('#site-preloader')).toHaveCount(0, { timeout: 2500 });
   await expect(page.locator('.intro-avatar-flight')).toHaveCount(0);
   await expect(page.locator('.nav-home-avatar')).toBeVisible();
@@ -133,20 +127,20 @@ test('keyboard users can skip the introduction immediately', async ({ page }) =>
   expect(await page.locator('main').evaluate(node => node.inert)).toBe(false);
 });
 
-test('resizing during the portrait handoff reveals the correctly placed navigation avatar', async ({ page }) => {
+test('resizing during loading keeps the navigation avatar correctly placed', async ({ page }) => {
   await page.goto(site + '/', { waitUntil: 'domcontentloaded' });
-  await page.waitForFunction(() => !!document.querySelector('.intro-avatar-flight'), null, { polling: 'raf', timeout: 6000 });
+  await page.waitForFunction(() => Number(document.querySelector('.intro-percentage')?.textContent.replace('%', '')) >= 30, null, { polling: 'raf', timeout: 6000 });
   await page.setViewportSize({ width: 320, height: 800 });
-  await expect(page.locator('#site-preloader, .intro-avatar-flight, .is-intro-target')).toHaveCount(0);
+  await expect(page.locator('#site-preloader, .intro-avatar-flight, .is-intro-target')).toHaveCount(0, { timeout: 5000 });
   await expect(page.locator('.nav-home-avatar')).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
 test('a failed application bundle cannot strand the visitor behind the loader', async ({ page }) => {
-  await page.route('**/app.js', route => route.abort());
+  await page.route('**/app.js*', route => route.abort());
   await page.goto(site + '/', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('#site-preloader')).toBeVisible();
-  await expect(page.locator('#site-preloader')).toHaveCount(0, { timeout: 9000 });
+  await expect(page.locator('#site-preloader')).toHaveCount(0, { timeout: 5000 });
   await expect(page.locator('.nav-home-avatar')).toBeVisible();
   await expect(page.locator('#greeting')).toBeVisible();
   expect(await page.locator('main').evaluate(node => node.inert)).toBe(false);

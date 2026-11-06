@@ -69,6 +69,10 @@ test('portrait navigation stays on one row from 320px to desktop in both languag
         await expect(page.locator('#cv-link, #cv-label')).toHaveCount(0);
         await expect(page.locator('.nav-home-avatar')).toHaveCSS('border-radius', '50%');
         await expect(page.locator('.nav-home-avatar')).toHaveCSS('border-top-width', '3px');
+        await expect(page.locator('.nav-home-avatar')).toHaveCSS('width', '40px');
+        await expect(page.locator('.nav-home-avatar')).toHaveCSS('height', '40px');
+        await expect(page.locator('.nav-divider')).toHaveCSS('font-size', '14px');
+        await expect(page.locator('.nav-divider')).toHaveCSS('color', 'rgb(115, 115, 115)');
         const metrics = await page.locator('.portal-header').evaluate(node => {
           const header = node.getBoundingClientRect();
           const left = node.querySelector('.portal-header-left').getBoundingClientRect();

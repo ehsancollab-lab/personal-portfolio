@@ -1,4 +1,4 @@
-// A minimal document-entry portrait that becomes the navigation avatar.
+// A minimal document-entry portrait and counter with a bounded fade-out.
 (() => {
   'use strict';
   if (window.portfolioPreloader) return;
@@ -6,10 +6,9 @@
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const previousBusy = root.getAttribute('aria-busy');
   const inertNodes = new Map();
-  const progressStartsAt = 100, progressDuration = 3000, handoffAt = 3200, flightDuration = 800;
+  const progressStartsAt = 100, progressDuration = 3000, revealAt = 3200;
   let overlay, mountedAt, ready = false, revealing = false, complete = false;
   let revealTimer, exitTimer, progressFrame, progressCompletedAt, lastPercent = -1;
-  let floatingAvatar, landingTarget, flight;
   root.classList.add('is-preloading');
   root.dataset.preloader = 'loading';
   root.setAttribute('aria-busy', 'true');
@@ -24,9 +23,6 @@
     complete = true;
     clearTimeout(deadline); clearTimeout(revealTimer); clearTimeout(exitTimer);
     cancelAnimationFrame(progressFrame);
-    flight?.cancel();
-    landingTarget?.classList.remove('is-intro-target');
-    floatingAvatar?.remove();
     restorePage();
     overlay?.remove();
     root.dataset.preloader = 'complete';
@@ -43,41 +39,17 @@
     revealing = true;
     clearTimeout(revealTimer);
     if (!overlay || immediate || reduced.matches) { finish(); return; }
-    const source = overlay.querySelector('.intro-avatar');
-    const target = document.querySelector('.nav-home-avatar');
-    const start = source?.getBoundingClientRect();
-    const end = target?.getBoundingClientRect();
-    if (!source || !target || !end.width || end.bottom <= 0 || end.top >= innerHeight || typeof source.animate !== 'function') {
-      restorePage(); overlay.dataset.phase = 'handoff';
-      exitTimer = setTimeout(finish, 420);
-      return;
-    }
-    landingTarget = target;
-    target.classList.add('is-intro-target');
-    const placeholder = document.createElement('span');
-    placeholder.className = 'intro-avatar-placeholder';
-    source.replaceWith(placeholder);
-    floatingAvatar = source;
-    source.classList.add('intro-avatar-flight');
-    source.style.transform = 'translate(' + start.x + 'px, ' + start.y + 'px)';
-    document.body.append(source);
     restorePage();
-    root.dataset.preloader = 'handoff';
-    overlay.dataset.phase = 'handoff';
-    flight = source.animate([
-      { transform: 'translate(' + start.x + 'px, ' + start.y + 'px) scale(' + start.width / 44 + ', ' + start.height / 44 + ')' },
-      { transform: 'translate(' + end.x + 'px, ' + end.y + 'px) scale(' + end.width / 44 + ', ' + end.height / 44 + ')' }
-    ], { duration: flightDuration, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'forwards' });
-    flight.finished.then(finish, finish);
-    // Cleanup also survives interrupted or suspended browser animations.
-    exitTimer = setTimeout(finish, flightDuration + 100);
+    root.dataset.preloader = 'revealing';
+    overlay.dataset.phase = 'exit';
+    exitTimer = setTimeout(finish, 420);
   }
   function scheduleReveal() {
     if (!overlay || !ready || complete || revealing) return;
     clearTimeout(revealTimer);
     if (!reduced.matches && progressCompletedAt === undefined) return;
     const now = performance.now();
-    const delay = reduced.matches ? 0 : Math.max(0, mountedAt + handoffAt - now, progressCompletedAt + 100 - now);
+    const delay = reduced.matches ? 0 : Math.max(0, mountedAt + revealAt - now, progressCompletedAt + 100 - now);
     revealTimer = setTimeout(() => reveal(), delay);
   }
   function updateProgress(now) {
@@ -121,11 +93,14 @@
     overlay.addEventListener('touchmove', event => { if (!revealing) event.preventDefault(); }, { passive: false });
     document.body.append(overlay);
     progressFrame = requestAnimationFrame(updateProgress);
+    // The loader never depends on the large application download.
+    Promise.race([document.fonts?.ready, new Promise(resolve => setTimeout(resolve, 600))])
+      .then(() => { ready = true; scheduleReveal(); });
     scheduleReveal();
   }
 
   // Fail open even when the application bundle cannot load.
-  const deadline = setTimeout(() => reveal(true), 8000);
+  const deadline = setTimeout(finish, 4500);
   document.addEventListener('keydown', onKey);
   window.addEventListener('resize', onResize);
   reduced.addEventListener('change', onMotionChange);

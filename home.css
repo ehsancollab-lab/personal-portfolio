@@ -19,10 +19,9 @@ body { min-width: 0; }
 }
 .portal-header-left { grid-area: left; display: flex; align-items: center; gap: 12px; min-width: 0; }
 .portal-header-right { grid-area: right; justify-self: end; display: flex; align-items: center; gap: 12px; }
-.nav-home-avatar { flex: 0 0 44px; text-decoration: none; }
+.nav-home-avatar { flex: 0 0 40px; width: 40px; height: 40px; text-decoration: none; }
 .nav-home-avatar:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; }
-.nav-home-avatar.is-intro-target { visibility: hidden; }
-.nav-divider { flex: 0 0 auto; color: var(--muted); font: 400 18px/1 Inter, sans-serif; user-select: none; }
+.nav-divider { flex: 0 0 auto; color: #737373; font: 400 14px/1 Inter, sans-serif; user-select: none; }
 .tehran-clock { margin: 0; color: var(--muted); font: 400 11px/1.5 'DM Mono', monospace; white-space: nowrap; font-variant-numeric: tabular-nums; }
 body:not([data-page="home"]) .tehran-clock { display: none; }
 .portal-header .display-controls { flex: 0 0 auto; }
