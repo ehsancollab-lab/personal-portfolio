@@ -9,13 +9,13 @@ let cleanup = () => {};
 let generation = 0;
 let departure;
 export function cancelPageTransition() { departure?.cancel(); departure = null; }
-export function transitionPage(main, commit) {
+export function transitionPage(main, commit, { slow = false } = {}) {
   cancelPageTransition();
   if (reduced.matches || !main?.isConnected) { commit(); return; }
   const animation = main.animate([
     { opacity: 1, transform: 'translateY(0)', filter: 'blur(0px)' },
     { opacity: 0, transform: 'translateY(-8px)', filter: 'blur(5px)' }
-  ], { duration: 160, easing: 'cubic-bezier(.4,0,1,1)', fill: 'forwards' });
+  ], { duration: slow ? 700 : 160, easing: 'cubic-bezier(.4,0,1,1)', fill: 'forwards' });
   departure = animation;
   animation.finished.then(() => {
     if (departure !== animation) return;
@@ -23,7 +23,7 @@ export function transitionPage(main, commit) {
   }).catch(() => {});
 }
 
-export function mountPageMotion(main, page) {
+export function mountPageMotion(main, page, { portalEntry = false } = {}) {
   cleanup();
   const token = ++generation;
   let stage;
@@ -34,9 +34,9 @@ export function mountPageMotion(main, page) {
     if (page === 'experience') timelineCleanup = createExperienceTimeline(main, reduced.matches);
     if (reduced.matches) return;
     // The bookshelf already shares its actual surfaces and covers between views.
-    if (!['about', 'books', 'book'].includes(page)) {
+    if (portalEntry || !['about', 'books', 'book'].includes(page)) {
       gsap.fromTo(main, { opacity: 0, y: 14, filter: 'blur(5px)' }, {
-        opacity: 1, y: 0, filter: 'blur(0px)', duration: .6, ease: 'power3.out',
+        opacity: 1, y: 0, filter: 'blur(0px)', duration: portalEntry || page === 'home' ? .9 : .6, ease: 'power3.out',
         clearProps: 'opacity,transform,filter', onUpdate: invalidate,
         onComplete() { if (page === 'experience') ScrollTrigger.refresh(); invalidate(); }
       });

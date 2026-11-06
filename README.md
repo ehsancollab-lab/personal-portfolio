@@ -2,7 +2,7 @@
 
 Responsive English/Persian portfolio based on the supplied Figma frames, with independent GitHub Pages hosting and a password-protected Cloudflare Pages dashboard.
 
-The site includes Selected Work, Case Studies, an Experience timeline, About Me, and a 50-book library.
+The homepage introduces Ehsan with a centered biography, the approved cap-and-hoodie portrait, and four compact folders. Each folder shows its current content count and lifts actual project images, case banners, company logos, or book covers on hover and keyboard focus. The folders open Selected Work, Case Studies, the Experience timeline, and About Me with its 50-book library.
 
 ## Build and hosting
 
@@ -26,16 +26,17 @@ Browser integration checks use `npm run test:browser`. They run Chromium against
 ## Content and assets
 
 - content.js contains the English copy, external links, and the Selected Work image order.
+- `home.js`, `home.css`, and `assets/home/` contain the approved folder homepage and its two supplied preview assets. The homepage uses the same Inter/On styles, managed profile copy, and clickable company links as the rest of the live site. `work.html` is the full original project gallery; existing `index.html#selected-work` links still open it.
 - case-content.js contains the Case Studies article, its local screenshot assets, and the Experience entries taken from the supplied Figma designs.
 - case-studies.html, case-study.html, and experience.html are responsive public pages that use the shared header, theme control, CV download, and footer.
 - assets/projects/ contains the 20 supplied Figma exports in the same order as the Selected Work frame.
 - The November 2026 English and Persian PDFs under `assets/Ehsan-Masoomi-CV-{EN,FA}-November-2026.pdf` are the supplied downloadable resumes. The active website language determines the download. The superseded PDF is removed.
 - assets/figma/ contains the profile portrait and header icons exported from the Figma frame.
-- The CV download and theme control sit in the top header row, as shown in Figma. The theme control uses the Figma moon icon in light mode and a filled sun icon in dark mode.
+- The shared top bar places the CV download on the physical right and the language/theme controls on the physical left in both languages. Interior pages add the original Back component and a centered section title. The theme control uses the Figma moon icon in light mode and a filled sun icon in dark mode.
 - The public portfolio switches between English/LTR and Persian/RTL. Every fresh public document starts in English and light mode. Language and theme choices last through internal navigation in that visit and reset on reload. Persian uses the supplied On webfonts: 19px Bold headings and 18px SemiBold body copy with 25px line height; the dashboard remains English/LTR.
 - `i18n.js`, `content-fa.js`, and `books-fa.js` contain UI labels and the Persian versions of the current published copy. Future English copy edits keep their source text until a corresponding translation is added.
 - Book detail covers stand upright. Book headers show the title and author, with a short Back/بازگشت action. Personal takeaways have no panel background, align to the start of the chosen language, and show Ehsan’s portrait, localized name and Product Designer/طراح محصول caption. Quotation text is 17px and Ehsan’s name is 15px in both languages and at every breakpoint. Research sources remain in the metadata and are not shown as external links.
-- Section navigation uses the original header tabs, which scroll horizontally on mobile. The owner-requested floating bottom menu has been removed, including its runtime module, scroll observer, styles and reserved footer space.
+- Section navigation uses the four homepage folders and the interior Back action. Homepage navigation fades out over 700ms and the destination fades in over 900ms; reduced motion removes those effects. The owner-requested floating bottom menu remains removed. The homepage portrait has its own lower blur, while interior pages retain the permanent bottom blur.
 - Experience follows the supplied vertical timeline reference and keeps the existing bullet points. The role leads each entry, followed inline by a smaller muted company name; narrow layouts wrap that metadata. The three original owner-supplied company logos are served locally under `assets/companies/`.
 - Completed pointer clicks use the Web Audio click synthesis from the owner-supplied `eduardoalba.com` source and a temporary expanding ring at the click position. The tone, filtered noise and compressor settings match the source; audio initializes on the first user click and reuses one context without downloading sound files. Moving or hovering the pointer shows no halo; touch scrolling also produces no ring or audio. Keyboard activation keeps the sound without a ring, and reduced motion suppresses the ring. Interior Back links have an Escape shortcut. A permanent, theme-aware progressive bottom blur stays visible at every scroll position behind usable navigation and footer links.
 - Public colors follow the owner's Blossom screenshots: `#fafafa` pages, white surfaces, black headings/actions, neutral gray supporting copy, pale borders and soft shadows. Dark mode uses the same neutral hierarchy with light actions on dark surfaces. All public routes share these tokens, including interior pages, hover/focus feedback, language/theme controls and the neutral bookshelf. See `COLOR-PALETTE.md`. The sky scenes remain removed; the permanent bottom blur uses the current page color.

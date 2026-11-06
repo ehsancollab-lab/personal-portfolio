@@ -15,50 +15,48 @@
     <script src="./theme-init.js"></script>
     <link rel="stylesheet" href="./styles.css" />
     <link rel="stylesheet" href="./library.css" />
+    <link rel="stylesheet" href="./home.css" />
     <script type="module" src="./app.js"></script>
   </head>
-  <body data-page="selected-work">
-    <a class="skip-link" href="#selected-work">Skip to selected work</a>
+  <body data-page="home">
+    <a class="skip-link" href="#home-content">Skip to main content</a>
 
-    <header class="site-header" id="top">
-      <div class="header-top">
-        <a class="avatar-mark" href="./index.html" aria-label="Ehsan Masoomi">
-          <img src="./assets/figma/profile.png" width="40" height="40" alt="" />
+    <header class="site-header portal-header" id="top">
+      <div class="portal-header-left">
+        <a class="library-back portal-back" href="./index.html" data-restore-scroll aria-keyshortcuts="Escape" hidden>
+          <span class="library-back-icon" aria-hidden="true"></span>
+          <span class="portal-back-label">Back to Home</span>
+          <kbd class="back-shortcut" aria-hidden="true">ESC</kbd>
         </a>
         <div class="display-controls" aria-label="Display settings">
-          <a class="cv-link" id="cv-link" href="./assets/Ehsan-Masoomi-CV-EN-November-2026.pdf" download="Ehsan-Masoomi-CV-EN-November-2026.pdf">
-            <img src="./assets/figma/download-cv.svg" width="20" height="20" alt="" />
-            <span id="cv-label">Download CV</span>
-          </a>
           <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
             <img src="./assets/ui/moon-fill.svg" width="20" height="20" alt="" />
           </button>
         </div>
       </div>
-
-      <section class="profile-intro" aria-labelledby="greeting">
-        <h1 id="greeting">Hi, I’m Ehsan 👋🏻</h1>
-        <p class="bio" id="bio"></p>
-      </section>
-
-      <section class="contact-block" aria-labelledby="contact-prompt">
-        <p class="contact-prompt" id="contact-prompt">
-          Feel free to reach out to me through any of the channels below.
-        </p>
-        <nav class="contact-links" id="header-contact-links" aria-label="Contact links"></nav>
-      </section>
-
-      <nav class="primary-nav" aria-label="Portfolio sections">
-        <a class="nav-tab" href="./index.html#selected-work" data-page-link="selected-work">Selected Work</a>
-        <a class="nav-tab" href="./case-studies.html" data-page-link="case-studies">Case Studies</a>
-        <a class="nav-tab" href="./experience.html" data-page-link="experience">Experience</a>
-        <a class="nav-tab" href="./about.html" data-page-link="about">About Me</a>
-      </nav>
+      <p class="portal-page-title"></p>
+      <a class="cv-link" id="cv-link" href="./assets/Ehsan-Masoomi-CV-EN-November-2026.pdf" download="Ehsan-Masoomi-CV-EN-November-2026.pdf">
+        <img src="./assets/figma/download-cv.svg" width="20" height="20" alt="" />
+        <span id="cv-label">Download CV</span>
+      </a>
     </header>
 
-    <main class="work-section" id="selected-work" tabindex="-1">
-      <h2 class="visually-hidden">Selected Work</h2>
-      <div class="project-grid" id="project-grid" aria-label="Selected work"></div>
+    <main class="home-scene" id="home-content" tabindex="-1">
+      <section class="centered-intro" aria-labelledby="greeting">
+        <h1 id="greeting">Hi, I’m Ehsan 👋🏻</h1>
+        <p class="bio" id="bio"></p>
+        <section class="contact-block" aria-labelledby="contact-prompt">
+          <p class="contact-prompt" id="contact-prompt">Feel free to reach out to me through any of the channels below.</p>
+          <nav class="contact-links" id="header-contact-links" aria-label="Contact links"></nav>
+        </section>
+      </section>
+      <nav class="folder-navigation" id="folders" aria-label="Portfolio sections">
+        <a class="folder-button" href="./work.html" data-page-link="selected-work" data-section="selected-work"><span class="folder-visual" aria-hidden="true"><img class="folder-back" src="./assets/home/folder.webp" width="106" height="84" alt="" /><span class="folder-items"></span><img class="folder-front" src="./assets/home/folder.webp" width="106" height="84" alt="" /></span><span class="folder-caption">Selected Work</span><span class="folder-count"></span></a>
+        <a class="folder-button" href="./case-studies.html" data-page-link="case-studies" data-section="case-studies"><span class="folder-visual" aria-hidden="true"><img class="folder-back" src="./assets/home/folder.webp" width="106" height="84" alt="" /><span class="folder-items"></span><img class="folder-front" src="./assets/home/folder.webp" width="106" height="84" alt="" /></span><span class="folder-caption">Case Studies</span><span class="folder-count"></span></a>
+        <a class="folder-button" href="./experience.html" data-page-link="experience" data-section="experience"><span class="folder-visual" aria-hidden="true"><img class="folder-back" src="./assets/home/folder.webp" width="106" height="84" alt="" /><span class="folder-items"></span><img class="folder-front" src="./assets/home/folder.webp" width="106" height="84" alt="" /></span><span class="folder-caption">Experience</span><span class="folder-count"></span></a>
+        <a class="folder-button" href="./about.html" data-page-link="about" data-section="about"><span class="folder-visual" aria-hidden="true"><img class="folder-back" src="./assets/home/folder.webp" width="106" height="84" alt="" /><span class="folder-items"></span><img class="folder-front" src="./assets/home/folder.webp" width="106" height="84" alt="" /></span><span class="folder-caption">About Me</span><span class="folder-count"></span></a>
+      </nav>
+      <div class="portrait-stage" aria-hidden="true"><img class="home-portrait" src="./assets/home/portrait.webp" width="989" height="1100" fetchpriority="high" alt="" /><span class="portrait-blur"></span></div>
     </main>
 
     <footer class="site-footer">

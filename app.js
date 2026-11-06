@@ -8,6 +8,8 @@ import { renderStory } from "./story-render.js";
 import { publishedContent } from "./published-content.js";
 import { animateTypography } from "./typography.js";
 import { createSiteHeader } from "./site-shell.js";
+import { createHomePage, renderHomeFolders } from './home.js';
+import { bookById } from './library-content.js';
 import { renderLibrary, transitionLibrary, cancelLibraryTransition, libraryPages } from './library.js';
 import { mountPageMotion, motionRuntime, transitionPage, cancelPageTransition } from './motion.js';
 import { initSmoothScroll, scrollToPosition, scrollToSection } from './smooth-scroll.js';
@@ -16,7 +18,7 @@ import { mountViewportBlur } from './viewport-blur.js';
 import { mountPointerFeedback } from './pointer-feedback.js';
 
 const root = document.documentElement;
-let page = document.body.dataset.page || "selected-work";
+let page = document.body.dataset.page || 'home';
 const projectAssets = [...projects];
 const companyLogos = {
   'experience-mors': './assets/companies/mors.jpg',
@@ -316,7 +318,7 @@ function renderCaseStudyDetails() {
   themeIcon.alt = "";
   themeToggle.append(themeIcon);
   toolbar.append(back, themeToggle);
-  host.append(toolbar);
+  if (!document.querySelector('.portal-header')) host.append(toolbar);
 
   if (!item) {
     const empty = document.createElement("p");
@@ -371,7 +373,8 @@ function renderHeaderAndFooter() {
 
   const current = page === "case-study" ? "case-studies" : libraryPages.has(page) ? 'about' : page;
   document.querySelectorAll("[data-page-link]").forEach((link) => {
-    link.textContent = localizeText({ 'selected-work': 'Selected Work', 'case-studies': 'Case Studies', experience: 'Experience', about: 'About Me' }[link.dataset.pageLink]);
+    const label = link.querySelector('.folder-caption') || link;
+    label.textContent = localizeText({ 'selected-work': 'Selected Work', 'case-studies': 'Case Studies', experience: 'Experience', about: 'About Me' }[link.dataset.pageLink]);
     const selected = link.dataset.pageLink === current;
     link.classList.toggle("is-current", selected);
     if (selected) link.setAttribute("aria-current", "page");
@@ -382,6 +385,20 @@ function renderHeaderAndFooter() {
   document.querySelector('.contact-block')?.setAttribute('aria-label', localizeText('Contact information'));
   document.querySelector('.display-controls')?.setAttribute('aria-label', localizeText('Display settings'));
   document.querySelectorAll('.contact-links').forEach(nav => nav.setAttribute('aria-label', localizeText('Contact links')));
+  const back = document.querySelector('.portal-back');
+  back.hidden = page === 'home';
+  back.href = './index.html';
+  let backText = localizeText('Back to Home');
+  if (page === 'case-study') { back.href = './case-studies.html'; backText = localizeText('Back'); }
+  if (page === 'books') { back.href = './about.html#my-books'; backText = localizeText('All collections'); }
+  if (page === 'book') {
+    const book = bookById(new URL(location.href).searchParams.get('id'));
+    back.href = book ? './books.html?category=' + encodeURIComponent(book.category) : './about.html#my-books';
+    backText = localizeText('Back');
+  }
+  back.querySelector('.portal-back-label').textContent = backText;
+  document.querySelector('.portal-page-title').textContent = page === 'home' ? '' : page === 'case-studies' || page === 'case-study'
+    ? phrase('Case Study', 'کیس‌استادی') : localizeText({ 'selected-work': 'Selected Work', experience: 'Experience', about: 'About Me', books: 'MY BOOKSHELF', book: 'MY BOOKSHELF' }[page]);
 }
 
 function updateTheme() {
@@ -411,12 +428,15 @@ const pageViews = new Map();
 const scrollPositions = new Map();
 const sharedHeader = document.querySelector('.site-header') || createSiteHeader();
 const initialMain = document.querySelector('main');
+const initialPage = page;
 const routeKey = (url = new URL(location.href)) => routeFor(url) + url.search + '::' + getLocale();
 function routeFor(url) {
   const filename = url.pathname.replace(/\/$/, '').split('/').pop().replace(/\.html$/, '');
-  return ({ '': 'selected-work', index: 'selected-work', 'case-studies': 'case-studies', experience: 'experience', 'case-study': 'case-study', about: 'about', books: 'books', book: 'book' })[filename] || null;
+  if (['', 'index'].includes(filename) && url.hash === '#selected-work') return 'selected-work';
+  return ({ '': 'home', index: 'home', work: 'selected-work', 'selected-work': 'selected-work', 'case-studies': 'case-studies', experience: 'experience', 'case-study': 'case-study', about: 'about', books: 'books', book: 'book' })[filename] || null;
 }
 function makePage(next) {
+  if (next === 'home') return createHomePage();
   const main = document.createElement('main');
   main.tabIndex = -1;
   const config = {
@@ -431,18 +451,18 @@ function makePage(next) {
   main.className = config[0]; main.id = config[1]; main.innerHTML = config[2];
   return main;
 }
-function renderPage(next, fresh = false) {
+function renderPage(next, fresh = false, portalEntry = false) {
   page = next;
   root.dataset.page = next;
   document.body.dataset.page = next;
-  if (['case-study', 'books', 'book'].includes(next)) sharedHeader.remove();
-  else if (!sharedHeader.isConnected) document.querySelector('main').before(sharedHeader);
+  if (!sharedHeader.isConnected) document.querySelector('main').before(sharedHeader);
   const key = routeKey();
   let main = pageViews.get(key);
   const newView = !main || fresh;
-  if (newView) { main = fresh ? makePage(next) : pageViews.size === 0 ? initialMain : makePage(next); pageViews.set(key, main); }
+  if (newView) { main = !fresh && pageViews.size === 0 && next === initialPage ? initialMain : makePage(next); pageViews.set(key, main); }
   if (document.querySelector('main') !== main) document.querySelector('main').replaceWith(main);
   renderHeaderAndFooter();
+  if (next === 'home') renderHomeFolders(main, content(), { assetPath, companyLogos });
   if (newView) {
     if (next === 'selected-work') renderProjects();
     if (next === 'case-studies') renderCaseStudies();
@@ -456,7 +476,7 @@ function renderPage(next, fresh = false) {
     main.dataset.documentTitle = document.title;
     main.dataset.documentDescription = document.querySelector('meta[name="description"]').content;
   } else if (next !== 'case-study') {
-    document.title = next === 'selected-work' ? localizeText('Ehsan Masoomi') + ' — ' + localizeText('Senior AI Product Designer') : localizeText(next === 'case-studies' ? 'Case Studies' : 'Experience') + ' — ' + localizeText('Ehsan Masoomi');
+    document.title = next === 'home' ? localizeText('Ehsan Masoomi') + ' — ' + localizeText('Senior AI Product Designer') : localizeText({ 'selected-work': 'Selected Work', 'case-studies': 'Case Studies', experience: 'Experience' }[next]) + ' — ' + localizeText('Ehsan Masoomi');
     document.querySelector('meta[name="description"]').content = document.title;
   } else if (!newView) renderCaseStudyDetails();
   const skip = document.querySelector('.skip-link');
@@ -467,7 +487,7 @@ function renderPage(next, fresh = false) {
   syncLanguageControls();
   updateTheme();
   animateTypography(main);
-  mountPageMotion(main, next);
+  mountPageMotion(main, next, { portalEntry });
   requestAnimationFrame(ensureActiveNavVisible);
   return main;
 }
@@ -483,7 +503,7 @@ document.fonts?.addEventListener('loadingdone', ensureActiveNavVisible);
 let currentRoute = routeKey();
 let currentURL = new URL(location.href);
 let navigationVersion = 0;
-renderPage(page);
+renderPage(routeFor(new URL(location.href)) || page);
 animateTypography(sharedHeader);
 document.addEventListener('click', event => {
   const button = event.target.closest('[data-language]');
@@ -499,12 +519,13 @@ function navigate(url, push = true, trigger = null) {
   const next = routeFor(url);
   if (!next || (push && url.href === location.href && next === page)) return;
   const version = ++navigationVersion;
+  const portalEntry = page === 'home' || next === 'home';
   scrollPositions.set(currentRoute, scrollY);
   scrollToPosition(scrollY);
   const swap = () => {
     if (version !== navigationVersion) return false;
     if (push) history.pushState({}, '', url.href);
-    const main = renderPage(next);
+    const main = renderPage(next, false, portalEntry);
     currentRoute = routeKey(url);
     currentURL = new URL(url.href);
     const restore = !push || trigger?.hasAttribute('data-restore-scroll');
@@ -513,7 +534,7 @@ function navigate(url, push = true, trigger = null) {
     return true;
   };
   if (libraryPages.has(page) && libraryPages.has(next)) { cancelPageTransition(); transitionLibrary(currentURL, url, trigger, swap); }
-  else { cancelLibraryTransition(); transitionPage(document.querySelector('main'), swap); }
+  else { cancelLibraryTransition(); transitionPage(document.querySelector('main'), swap, { slow: portalEntry }); }
 }
 document.addEventListener('click', event => {
   const link = event.target.closest('a[href]');
@@ -537,7 +558,7 @@ document.addEventListener('click', event => {
 window.addEventListener('popstate', () => navigate(new URL(location.href), false));
 document.addEventListener('keydown', event => {
   if (event.key !== 'Escape' || event.defaultPrevented || document.querySelector('dialog[open]') || event.target.closest('input, textarea, [contenteditable="true"]')) return;
-  const back = document.querySelector('.library-back, .case-back-link');
+  const back = document.querySelector('.library-back:not([hidden]), .case-back-link');
   if (back) { event.preventDefault(); back.click(); }
 });
 history.scrollRestoration = 'manual';

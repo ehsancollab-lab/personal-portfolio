@@ -1,5 +1,26 @@
+export const siteHeaderMarkup = `
+    <header class="site-header portal-header" id="top">
+      <div class="portal-header-left">
+        <a class="library-back portal-back" href="./index.html" data-restore-scroll aria-keyshortcuts="Escape" hidden>
+          <span class="library-back-icon" aria-hidden="true"></span>
+          <span class="portal-back-label">Back to Home</span>
+          <kbd class="back-shortcut" aria-hidden="true">ESC</kbd>
+        </a>
+        <div class="display-controls" aria-label="Display settings">
+          <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+            <img src="./assets/ui/moon-fill.svg" width="20" height="20" alt="" />
+          </button>
+        </div>
+      </div>
+      <p class="portal-page-title"></p>
+      <a class="cv-link" id="cv-link" href="./assets/Ehsan-Masoomi-CV-EN-November-2026.pdf" download="Ehsan-Masoomi-CV-EN-November-2026.pdf">
+        <img src="./assets/figma/download-cv.svg" width="20" height="20" alt="" />
+        <span id="cv-label">Download CV</span>
+      </a>
+    </header>`;
+
 export function createSiteHeader() {
-  const template = document.createElement("template");
-  template.innerHTML = "    <header class=\"site-header\" id=\"top\">\n      <div class=\"header-top\">\n        <a class=\"avatar-mark\" href=\"./index.html\" aria-label=\"Ehsan Masoomi\">\n          <img src=\"./assets/figma/profile.png\" width=\"40\" height=\"40\" alt=\"\" />\n        </a>\n        <div class=\"display-controls\" aria-label=\"Display settings\">\n          <a class=\"cv-link\" id=\"cv-link\" href=\"./assets/Ehsan-Masoomi-CV-EN-November-2026.pdf\" download=\"Ehsan-Masoomi-CV-EN-November-2026.pdf\">\n            <img src=\"./assets/figma/download-cv.svg\" width=\"20\" height=\"20\" alt=\"\" />\n            <span id=\"cv-label\">Download CV</span>\n          </a>\n          <button class=\"theme-toggle\" id=\"theme-toggle\" type=\"button\" aria-pressed=\"false\" aria-label=\"Switch to dark theme\">\n            <img src=\"./assets/ui/moon-fill.svg\" width=\"20\" height=\"20\" alt=\"\" />\n          </button>\n        </div>\n      </div>\n\n      <section class=\"profile-intro\" aria-labelledby=\"greeting\">\n        <h1 id=\"greeting\">Hi, I\u2019m Ehsan \ud83d\udc4b\ud83c\udffb</h1>\n        <p class=\"bio\" id=\"bio\"></p>\n      </section>\n\n      <section class=\"contact-block\" aria-labelledby=\"contact-prompt\">\n        <p class=\"contact-prompt\" id=\"contact-prompt\">\n          Feel free to reach out to me through any of the channels below.\n        </p>\n        <nav class=\"contact-links\" id=\"header-contact-links\" aria-label=\"Contact links\"></nav>\n      </section>\n\n      <nav class=\"primary-nav\" aria-label=\"Portfolio sections\">\n        <a class=\"nav-tab\" href=\"./index.html#selected-work\" data-page-link=\"selected-work\">Selected Work</a>\n        <a class=\"nav-tab\" href=\"./case-studies.html\" data-page-link=\"case-studies\">Case Studies</a>\n        <a class=\"nav-tab\" href=\"./experience.html\" data-page-link=\"experience\">Experience</a>\n        <a class=\"nav-tab\" href=\"./about.html\" data-page-link=\"about\">About Me</a>\n      </nav>\n    </header>";
+  const template = document.createElement('template');
+  template.innerHTML = siteHeaderMarkup;
   return template.content.firstElementChild;
 }

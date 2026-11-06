@@ -13,7 +13,7 @@ const bookURL = id => './book.html?id=' + encodeURIComponent(id);
 export const libraryPages = new Set(['about', 'books', 'book']);
 const palettes = ['sand', 'sage', 'ink', 'rose', 'blue', 'ochre'];
 
-function cover(book) {
+function cover(book, options = {}) {
   book = localizeBook(book);
   const wrapper = element('span', 'book-cover');
   wrapper.dataset.bookCover = book.id;
@@ -26,7 +26,7 @@ function cover(book) {
     const viewport = element('span', 'book-cover-viewport');
     const image = element('img');
     const scale = art ? art.width / width : 1;
-    responsiveImage(image, book.cover, { eager: true, sizes: `(max-width: 700px) ${Math.ceil(42 * scale)}vw, ${Math.ceil(285 * scale)}px` });
+    responsiveImage(image, book.cover, { eager: true, sizes: options.sizes || `(max-width: 700px) ${Math.ceil(42 * scale)}vw, ${Math.ceil(285 * scale)}px` });
     image.alt = phrase('{title} — book cover', 'جلد کتاب {title}', { title: book.title });
     if (art) {
       image.style.width = art.width / width * 100 + '%';
@@ -59,12 +59,14 @@ function backLink(href, text, showShortcut = true) {
   return link;
 }
 function toolbar(main, href, text, showShortcut = true) {
+  if (document.querySelector('.portal-header')) return;
   const bar = element('div', 'library-toolbar');
   const theme = element('button', 'theme-toggle library-theme-toggle');
   theme.type = 'button'; theme.setAttribute('aria-label', 'Switch to dark theme'); theme.setAttribute('aria-pressed', 'false');
   const icon = element('img'); icon.src = './assets/ui/moon-fill.svg'; icon.width = 20; icon.height = 20; icon.alt = '';
   theme.append(icon); bar.append(backLink(href, text, showShortcut), theme); main.append(bar);
 }
+export { cover as createBookCover };
 function categoryCard(category, index) {
   const items = booksInCategory(category.id);
   const link = element('a', 'book-collection-card'); link.href = categoryURL(category.id); link.dataset.categoryId = category.id;

@@ -15,7 +15,7 @@ const files = target === 'site'
   : ['admin.js', 'admin.css', 'content.js', 'case-content.js', 'assets', 'login.html', 'login.css', 'login.js'];
 files.push('typography.js', 'story-model.js', 'story-render.js', 'images.js', 'image-manifest.js', 'case-cards.js', 'case-cards.css', 'published-content.js', 'site-shell.js');
 if (target === 'admin') files.push('case-editor.js', 'case-editor.css');
-if (target === 'site') files.push('motion.js', 'experience-timeline.js', 'work-scene.js', 'smooth-scroll.js', 'i18n.js', 'i18n.css', 'content-fa.js', 'books-fa.js', 'viewport-blur.js', 'pointer-feedback.js', 'click-sound.js', 'interaction.css');
+if (target === 'site') files.push('home.js', 'home.css', 'work.html', 'motion.js', 'experience-timeline.js', 'work-scene.js', 'smooth-scroll.js', 'i18n.js', 'i18n.css', 'content-fa.js', 'books-fa.js', 'viewport-blur.js', 'pointer-feedback.js', 'click-sound.js', 'interaction.css');
 for (const file of files) await cp(resolve(root, file), resolve(output, file), { recursive: true });
 await optimizeImages(root, output);
 await mkdir(resolve(output, 'assets/fonts'), { recursive: true });
@@ -27,7 +27,7 @@ if (target === 'site') {
   await writeFile(resolve(output, 'CNAME'), 'ehsandesigns.com\n');
   await writeFile(resolve(output, 'admin.html'), '<!doctype html><html lang="en"><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=https://admin.ehsandesigns.com/"><title>Portfolio dashboard</title><p><a href="https://admin.ehsandesigns.com/">Open the portfolio dashboard</a></p></html>\n');
   // Keep the previously shared extensionless links, including detail query strings.
-  for (const page of ['case-studies', 'case-study', 'experience', 'about', 'books', 'book']) {
+  for (const page of ['work', 'case-studies', 'case-study', 'experience', 'about', 'books', 'book']) {
     const html = await readFile(resolve(output, `${page}.html`), 'utf8');
     await mkdir(resolve(output, page), { recursive: true });
     await writeFile(resolve(output, page, 'index.html'), html.replace('<head>', '<head>\n    <base href="../" />'));
@@ -43,7 +43,7 @@ if (target === 'site') {
 const entryPoints = target === 'site' ? [resolve(output, 'app.js')] : [resolve(output, 'admin.js')];
 await build({ entryPoints, outdir: output, bundle: true, splitting: true, format: 'esm', minify: true, target: 'es2022', allowOverwrite: true, chunkNames: 'chunks/[name]-[hash]' });
 if (target === 'admin') await build({ entryPoints: [resolve(root, 'server/dashboard-worker.mjs')], outfile: resolve(output, '_worker.js'), bundle: true, format: 'esm', target: 'es2022' });
-for (const filename of target === 'site' ? ['index.html', 'case-studies.html', 'case-study.html', 'experience.html', 'about.html', 'books.html', 'book.html', 'case-studies/index.html', 'case-study/index.html', 'experience/index.html', 'about/index.html', 'books/index.html', 'book/index.html'] : ['index.html', 'login.html']) {
+for (const filename of target === 'site' ? ['index.html', 'work.html', 'case-studies.html', 'case-study.html', 'experience.html', 'about.html', 'books.html', 'book.html', 'work/index.html', 'case-studies/index.html', 'case-study/index.html', 'experience/index.html', 'about/index.html', 'books/index.html', 'book/index.html'] : ['index.html', 'login.html']) {
   const path = resolve(output, filename);
   let html = await readFile(path, 'utf8');
   html = html.replace(/    <link rel="preconnect"[^>]+>\n/g, '').replace(/    <link href="https:\/\/fonts.googleapis.com[^>]+>\n/g, '');
