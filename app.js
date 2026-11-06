@@ -397,8 +397,6 @@ function renderHeaderAndFooter() {
     backText = localizeText('Back');
   }
   back.querySelector('.portal-back-label').textContent = backText;
-  document.querySelector('.portal-page-title').textContent = page === 'home' ? '' : page === 'case-studies' || page === 'case-study'
-    ? phrase('Case Study', 'کیس‌استادی') : localizeText({ 'selected-work': 'Selected Work', experience: 'Experience', about: 'About Me', books: 'MY BOOKSHELF', book: 'MY BOOKSHELF' }[page]);
 }
 
 function updateTheme() {

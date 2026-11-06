@@ -8,7 +8,6 @@ export const siteHeaderMarkup = `
           <kbd class="back-shortcut" aria-hidden="true">ESC</kbd>
         </a>
       </div>
-      <p class="portal-page-title"></p>
       <div class="portal-header-right">
         <a class="cv-link" id="cv-link" href="./assets/Ehsan-Masoomi-CV-EN-November-2026.pdf" download="Ehsan-Masoomi-CV-EN-November-2026.pdf">
           <img src="./assets/figma/download-cv.svg" width="20" height="20" alt="" />

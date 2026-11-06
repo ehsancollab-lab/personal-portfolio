@@ -3,18 +3,34 @@
 .about-section { width: min(690px, calc(100% - 48px)); margin-top: 24px; }
 .about-introduction { width: 100%; margin: 0 0 64px; }
 .about-introduction p { max-width: 690px; }
-.about-introduction h2, .bookshelf-heading h2 { margin: 0 0 18px; font-size: 23px; font-weight: 500; line-height: 1.4; letter-spacing: -.025em; }
 .about-introduction p { margin: 0 0 16px; color: var(--muted); font-size: 15px; line-height: 1.8; text-wrap: pretty; }
-.bookshelf-heading { margin-bottom: 28px; text-align: center; }
-.bookshelf-heading h2 { margin-bottom: 7px; }
-.bookshelf-heading p, .collection-page-heading > p:last-child { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.7; }
+.collection-page-heading > p:last-child { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.7; }
 .library-result-count { margin: 25px 0 18px; color: var(--muted); font-size: 12px; line-height: 1.6; }
 .book-collections { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
-.book-collection-card { position: relative; display: block; min-width: 0; height: 360px; overflow: hidden; border-radius: var(--card-radius); background: var(--library-panel); box-shadow: var(--card-shadow); color: var(--text); text-decoration: none; isolation: isolate; }
+.book-collection-card {
+  position: relative; display: block; min-width: 0; height: 392px; overflow: hidden;
+  border-radius: var(--card-radius); background: #60402b url('./assets/books/walnut-grain.svg') center / cover;
+  box-shadow: var(--card-shadow), inset 14px 0 16px #160a0799, inset -14px 0 16px #160a0780, inset 0 12px 15px #160a07b3;
+  color: #fff8ef; text-decoration: none; isolation: isolate;
+}
+.book-collection-card::before {
+  position: absolute; z-index: 0; inset: 0; border: 12px solid transparent; border-bottom-width: 14px;
+  border-image: linear-gradient(90deg, #6d4931, #b18860 2%, #5c3a26 5%, #41291c 50%, #966847 96%, #bb9369 98%, #62402b) 12;
+  box-shadow: inset 0 9px 15px #1a0c0780, inset 0 0 0 1px #24120980;
+  pointer-events: none; content: '';
+}
+.book-collection-card::after {
+  position: absolute; z-index: 2; inset: auto 0 0; height: 14px;
+  border-top: 1px solid #c09870; background: linear-gradient(#a77c54, #7e5435 25%, #50311f 90%, #362014);
+  box-shadow: 0 -6px 12px #1c0c0733; pointer-events: none; content: '';
+}
+.book-collection-card > :is(.collection-card-meta, .collection-card-title, .collection-card-description) { position: relative; z-index: 2; color: inherit; text-shadow: 0 1px 2px #1a0d08; }
+.book-collection-card > :is(.collection-card-meta, .collection-card-description) { color: #f0e2d2; }
+:root[data-theme="dark"] .book-collection-card { background-color: #3f2a1d; box-shadow: var(--card-shadow), inset 14px 0 16px #160a07b3, inset -14px 0 16px #160a07b3, inset 0 12px 20px #160a07cc; }
 .collection-card-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 22px 0; color: var(--muted); font-size: 10px; letter-spacing: .05em; }
 .collection-card-title { margin: 25px 16px 4px; font-size: 19px; font-weight: 500; letter-spacing: -.025em; line-height: 1.4; text-align: center; }
 .collection-card-description { margin: 0 16px; color: var(--muted); font-size: 12px; line-height: 1.6; text-align: center; }
-.book-fan { --fan-height: 230px; --fan-spread: 106px; --fan-hover-spread: 118px; position: absolute; left: 50%; bottom: -18px; display: block; width: 161px; height: var(--fan-height); transform: translateX(-50%); }
+.book-fan { --fan-height: 230px; --fan-spread: 106px; --fan-hover-spread: 118px; position: absolute; z-index: 1; left: 50%; bottom: 14px; display: block; width: 161px; height: var(--fan-height); transform: translateX(-50%); }
 .book-fan > .book-cover { position: absolute; inset: auto auto 0 50%; height: var(--fan-height); width: calc(var(--fan-height) * var(--book-ratio, .7)); margin-left: calc(var(--fan-height) * var(--book-ratio, .7) / -2); transform-origin: 50% 90%; transition: transform 520ms cubic-bezier(.22,.75,.2,1); }
 .book-fan > .book-cover:nth-child(1) { z-index: 1; transform: translateX(calc(-1 * var(--fan-spread))) rotate(-7deg); }
 .book-fan > .book-cover:nth-child(2) { z-index: 2; transform: translateY(-7px); }
@@ -129,10 +145,8 @@
 @media (max-width: 600px) {
   .about-section, .library-section { width: calc(100% - 40px); }
   .about-introduction { margin-bottom: 48px; }
-  .about-introduction h2, .bookshelf-heading h2 { font-size: 21px; }
-  .bookshelf-heading p { font-size: 13px; }
   .book-collections { grid-template-columns: minmax(0, 1fr); gap: 20px; }
-  .book-collection-card { height: 300px; }
+  .book-collection-card { height: 332px; }
   .collection-card-title { margin-top: 24px; font-size: 18px; }
   .collection-card-meta { padding: 17px 18px 0; }
   .collection-card-description { font-size: 12px; }

@@ -90,17 +90,12 @@ function bookCard(book) {
   return link;
 }
 function renderAbout(main) {
-  const intro = element('section', 'about-introduction'); intro.setAttribute('aria-labelledby', 'about-title');
-  const heading = element('h2', '', 'A little about me'); heading.id = 'about-title'; intro.append(heading);
+  const intro = element('section', 'about-introduction'); intro.setAttribute('aria-label', localizeText('About Me'));
   aboutIntro.forEach(text => intro.append(element('p', '', text)));
-  const library = element('section', 'about-library'); library.id = 'my-books'; library.setAttribute('aria-labelledby', 'bookshelf-title');
-  const head = element('div', 'bookshelf-heading');
-  const copy = element('div'); const title = element('h2', '', 'My bookshelf'); title.id = 'bookshelf-title';
-  copy.append(title, element('p', '', phrase('{count} books. {categories} collections. A few ideas that stayed with me.', '{count} کتاب در {categories} دسته؛ چند ایده که با من مانده‌اند.', { count: number(books.length), categories: number(bookCategories.length) })));
-  head.append(copy);
+  const library = element('section', 'about-library'); library.id = 'my-books'; library.setAttribute('aria-label', localizeText('My bookshelf'));
   const grid = element('div', 'book-collections');
   grid.append(...bookCategories.map(categoryCard));
-  library.append(head, grid);
+  library.append(grid);
   if (books.some(book => !book.cover)) library.append(element('p', 'library-cover-note', 'Sample cover art. Original covers coming soon.'));
   main.append(intro, library);
   document.title = localizeText('About Me') + ' — ' + localizeText('Ehsan Masoomi');
