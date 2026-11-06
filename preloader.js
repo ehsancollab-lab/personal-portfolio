@@ -6,7 +6,9 @@
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const previousBusy = root.getAttribute('aria-busy');
   const inertNodes = new Map();
+  const revealAt = 4600, progressStartsAt = 300, progressDuration = 4100;
   let overlay, mountedAt, ready = false, revealing = false, complete = false, revealTimer, exitTimer;
+  let progressFrame, progressCompletedAt, lastPercent = -1;
   let previews = [];
   root.classList.add('is-preloading');
   root.dataset.preloader = 'loading';
@@ -21,6 +23,7 @@
     if (complete) return;
     complete = true;
     clearTimeout(deadline); clearTimeout(revealTimer); clearTimeout(exitTimer);
+    cancelAnimationFrame(progressFrame);
     restorePage();
     overlay?.remove();
     root.dataset.preloader = 'complete';
@@ -40,13 +43,28 @@
     if (!overlay || immediate || reduced.matches) { finish(); return; }
     overlay.dataset.phase = 'exit';
     // Cleanup does not depend on an animationend event or browser animation support.
-    exitTimer = setTimeout(finish, 420);
+    exitTimer = setTimeout(finish, 400);
   }
   function scheduleReveal() {
     if (!overlay || !ready || complete || revealing) return;
     clearTimeout(revealTimer);
-    const delay = reduced.matches ? 0 : Math.max(0, 1680 - (performance.now() - mountedAt));
+    if (!reduced.matches && progressCompletedAt === undefined) return;
+    const delay = reduced.matches ? 0 : Math.max(0, mountedAt + revealAt - performance.now(), progressCompletedAt + 200 - performance.now());
     revealTimer = setTimeout(() => reveal(), delay);
+  }
+  function updateProgress(now) {
+    if (!overlay || complete || revealing) return;
+    const fraction = Math.max(0, Math.min(1, (now - mountedAt - progressStartsAt) / progressDuration));
+    const percent = reduced.matches && ready ? 100 : Math.min(ready ? 100 : 99, Math.floor(fraction * 100));
+    const progress = overlay.querySelector('.intro-progress');
+    if (percent !== lastPercent) {
+      lastPercent = percent;
+      progress.setAttribute('aria-valuenow', String(percent));
+      progress.querySelector('.intro-percentage').textContent = percent + '%';
+    }
+    progress.querySelector('.intro-progress-fill').style.transform = `scaleX(${percent === 100 ? 1 : Math.min(fraction, ready ? 1 : .99)})`;
+    if (percent === 100) { progressCompletedAt = now; scheduleReveal(); }
+    else progressFrame = requestAnimationFrame(updateProgress);
   }
   function onKey(event) {
     if (event.key === 'Escape' || event.key === 'Tab' || event.key === 'Enter') reveal(true);
@@ -75,8 +93,8 @@
     overlay.setAttribute('role', 'status'); overlay.setAttribute('aria-live', 'polite');
     overlay.innerHTML = `
       <span class="visually-hidden">Opening Ehsan Masoomi’s portfolio</span>
-      <div class="intro-composition" aria-hidden="true">
-        <div class="intro-stage">
+      <div class="intro-composition">
+        <div class="intro-stage" aria-hidden="true">
           <svg class="intro-clip-definitions" width="0" height="0" focusable="false"><defs>
             <clipPath id="intro-folder-back" clipPathUnits="objectBoundingBox"><path transform="scale(.0007067138 .0009000900)" d="M130 346V154C130 84 183 35 251 35H390C457 35 506 114 591 117H1161C1235 117 1281 165 1281 235V346Z"/></clipPath>
             <clipPath id="intro-folder-front" clipPathUnits="objectBoundingBox"><path transform="scale(.0007067138 .0009000900)" d="M277 324H1143C1225 324 1282 369 1280 447L1259 965C1256 1026 1217 1060 1155 1060H243C181 1060 146 1026 143 964L130 448C128 374 183 324 277 324Z"/></clipPath>
@@ -84,15 +102,16 @@
           <div class="intro-folder">
             <span class="intro-folder-back"><img src="./assets/home/folder.webp" width="154" height="121" alt="" /></span>
             <span class="intro-card" data-kind="work"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 10h18M10 10v10"/></svg></span>
-            <span class="intro-card" data-kind="case"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="3"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span>
-            <span class="intro-card" data-kind="experience"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="3"/><path d="M8 7V4h8v3M3 12a22 22 0 0 0 18 0M12 12v3"/></svg></span>
-            <span class="intro-card" data-kind="books"><svg viewBox="0 0 24 24"><path d="M12 5C9 3 6 3 3 4v15c3-1 6-1 9 1 3-2 6-2 9-1V4c-3-1-6-1-9 1v15"/></svg></span>
+            <span class="intro-card" data-kind="work"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 10h18M10 10v10"/></svg></span>
+            <span class="intro-card" data-kind="work"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 10h18M10 10v10"/></svg></span>
+            <span class="intro-card" data-kind="work"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 10h18M10 10v10"/></svg></span>
             <span class="intro-folder-front"><img src="./assets/home/folder.webp" width="154" height="121" alt="" /></span>
           </div>
         </div>
-        <p class="intro-name">Ehsan Masoomi<span class="intro-name-dot"></span></p>
-        <p class="intro-role">Senior AI Product Designer</p>
-        <div class="intro-indicator"><span></span><span></span><span></span><span></span></div>
+        <div class="intro-progress" role="progressbar" aria-label="Opening portfolio" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-live="off">
+          <span class="intro-percentage">0%</span>
+          <span class="intro-progress-track" aria-hidden="true"><span class="intro-progress-fill"></span></span>
+        </div>
       </div>`;
     for (const node of document.body.children) {
       if (node.matches('script, style, link')) continue;
@@ -102,11 +121,12 @@
     overlay.addEventListener('touchmove', event => { if (!revealing) event.preventDefault(); }, { passive: false });
     document.body.append(overlay);
     setPreviews();
+    progressFrame = requestAnimationFrame(updateProgress);
     scheduleReveal();
   }
 
   // Fail open even if the application bundle or one of its imports cannot load.
-  const deadline = setTimeout(() => reveal(true), 4500);
+  const deadline = setTimeout(() => reveal(true), 8000);
   document.addEventListener('keydown', onKey);
   reduced.addEventListener('change', onMotionChange);
   window.addEventListener('pageshow', event => { if (event.persisted) reveal(true); });
