@@ -202,7 +202,7 @@ test('book details keep a minimal header, plain aligned quotation, short Back an
     await expect(page.locator('.language-switch')).toHaveCSS('border-top-width', '0px');
     await expect(page.locator('.book-summary h2')).toHaveCSS('font-size', '19px');
     await expect(page.locator('.book-quote-name')).toHaveCSS('font-size', '15px');
-    await expect(attribution.locator('img')).toHaveAttribute('src', './assets/home/portrait.webp');
+    await expect(attribution.locator('img')).toHaveAttribute('src', './assets/home/book-avatar.webp');
     await expect.poll(() => attribution.locator('img').evaluate(node => node.complete && node.naturalWidth > 0)).toBe(true);
     await expect(page.locator('.book-source')).toHaveCount(0);
     await expect(page.getByRole('link', { name: /Book information in Persian|اطلاعات کتاب در منبع فارسی/ })).toHaveCount(0);

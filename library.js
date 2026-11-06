@@ -150,7 +150,7 @@ function renderBook(main, params) {
   const attribution = element('figcaption', 'book-quote-attribution');
   const avatar = element('span', 'book-quote-avatar');
   const portrait = element('img', 'book-quote-portrait');
-  portrait.src = './assets/home/portrait.webp'; portrait.alt = ''; portrait.width = 989; portrait.height = 1100; portrait.decoding = 'async';
+  portrait.src = './assets/home/book-avatar.webp'; portrait.alt = ''; portrait.width = 192; portrait.height = 192; portrait.decoding = 'async';
   avatar.append(portrait);
   attribution.append(avatar, element('span', 'book-quote-name', 'Ehsan Masoomi'), element('span', 'book-quote-role', 'Product Designer'));
   quotation.append(quote, attribution); takeaway.append(quotation);

@@ -564,6 +564,12 @@ history.scrollRestoration = 'manual';
 initSmoothScroll(motionRuntime);
 mountViewportBlur();
 mountPointerFeedback();
+window.portfolioPreloader?.ready({ previews: [
+  assetPath(content().projects.find(item => item.visible !== false)?.image),
+  assetPath(content().caseStudies.find(item => item.visible !== false)?.image),
+  companyLogos['experience-nibex'],
+  bookById('why-nobody-told-me')?.cover
+].map(source => source ? responsiveImage(new Image(64, 80), source, { eager: true, sizes: '60px' }) : null) });
 // Revalidate in the background; the build embeds content for an immediate first render.
 (async () => {
   try {

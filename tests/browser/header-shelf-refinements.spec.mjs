@@ -107,7 +107,7 @@ for (const scenario of [
       }
       if (route.startsWith('book.html')) {
         const portrait = page.locator('.book-quote-portrait');
-        await expect(portrait).toHaveAttribute('src', './assets/home/portrait.webp');
+        await expect(portrait).toHaveAttribute('src', './assets/home/book-avatar.webp');
         await expect.poll(() => portrait.evaluate(image => image.complete && image.naturalWidth > 0)).toBe(true);
         await expect(page.locator('.book-quote-avatar')).toHaveCSS('width', '40px');
         await expect(page.locator('.book-quote-avatar')).toHaveCSS('height', '40px');
