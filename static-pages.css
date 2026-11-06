@@ -1,0 +1,4 @@
+/* Real HTML detail views remain usable if the enhancement bundle is unavailable. */
+.static-route-panel { display: none; }
+.static-route-panel:target { display: block; }
+.static-route-panel:target ~ .static-route-index { display: none; }

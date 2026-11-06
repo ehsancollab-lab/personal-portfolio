@@ -51,3 +51,14 @@ The production build and 20 focused Chromium checks passed (2.2m). A further all
 ## Final visual revision — 7 November 2026 (Tehran)
 
 The loader portrait remains centered and fades out after the counter; its flight into navigation is removed. Navigation portraits are 40×40px. Header and loader slashes use 14px #737373, matching the owner’s marked screenshot. The loader is independent of the main bundle and no longer hides the document with a global visibility rule.
+
+
+## Slow and failed downloads
+
+The public build now includes real static content for eight page types, six collections, fifty books and the published case studies, with English/Persian templates. Native links include both query strings and fragments so library detail navigation also works without JavaScript. The small fallback controls preserve language and theme while a delayed enhancement bundle arrives. Already-visible content does not replay entrance motion during that late initialization.
+
+The initial-theme and preloader scripts are embedded in HTML, eliminating separate parser-blocking startup requests. The preloader releases independently of the main bundle and has a 4.5-second deadline. It never globally hides the document body. Required fonts, scripts and styles are served from the portfolio's own host. Production entry assets use content version queries to avoid reusing stale cached code.
+
+Network failure checks cover a blocked main bundle, every downloaded script blocked, a 6.5-second main bundle delay, all external domains blocked, all fifty legacy direct book URLs, and JavaScript disabled. These are controlled browser scenarios, not a verified test from an Iranian ISP. Actual Iranian connectivity remains to be confirmed after deployment.
+
+The production build, all 38 Node checks and all 27 focused Chromium checks passed. The full browser pass took 2.8 minutes. Measured loader lifetimes were 3628.2ms (1440px), 3619.6ms (390px) and 3621.3ms (320px), with zero portrait-flight samples. Home-return checks measured zero horizontal drift in both locales across all four sections. The 320px English/Persian headers and mobile homepage screenshots were visually reviewed.

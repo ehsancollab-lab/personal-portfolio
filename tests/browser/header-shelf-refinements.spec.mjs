@@ -160,12 +160,13 @@ test('plain shelf preserves the overlapping three-book fan and its original hove
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto(site + '/about.html');
   await page.evaluate(() => document.fonts.ready);
+  await expect(page.locator('html')).toHaveAttribute('data-preloader', 'complete');
   const card = page.locator('.book-collection-card').first();
   const center = card.locator('.book-cover').nth(1);
   const first = card.locator('.book-cover').first();
   const matrix = node => { const m = new DOMMatrixReadOnly(getComputedStyle(node).transform); return { x: m.m41, y: m.m42, rotation: Math.atan2(m.m12, m.m11) * 180 / Math.PI }; };
   for (const locale of ['en', 'fa']) {
-    if (locale === 'fa') await page.locator('[data-language="fa"]').click();
+    if (locale === 'fa') { await page.locator('[data-language="fa"]').click(); await page.evaluate(() => document.fonts.ready); }
     await page.mouse.move(0, 0);
     await card.evaluate(node => node.scrollIntoView({ block: 'center', behavior: 'instant' }));
     await expect.poll(async () => (await center.evaluate(matrix)).y).toBeCloseTo(-7);

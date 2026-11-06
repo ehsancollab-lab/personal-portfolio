@@ -3,6 +3,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 import { optimizeImages } from './optimize-images.mjs';
+import { createHash } from 'node:crypto';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export async function buildPages(target) {
@@ -16,6 +17,7 @@ const files = target === 'site'
 files.push('typography.js', 'story-model.js', 'story-render.js', 'images.js', 'image-manifest.js', 'case-cards.js', 'case-cards.css', 'published-content.js', 'site-shell.js');
 if (target === 'admin') files.push('case-editor.js', 'case-editor.css');
 if (target === 'site') files.push('home.js', 'home.css', 'work.html', 'motion.js', 'experience-timeline.js', 'work-scene.js', 'smooth-scroll.js', 'i18n.js', 'i18n.css', 'content-fa.js', 'books-fa.js', 'viewport-blur.js', 'pointer-feedback.js', 'click-sound.js', 'interaction.css', 'preloader.js', 'preloader.css');
+if (target === 'site') files.push('basic-navigation.js', 'static-pages.css');
 for (const file of files) await cp(resolve(root, file), resolve(output, file), { recursive: true });
 await optimizeImages(root, output);
 await mkdir(resolve(output, 'assets/fonts'), { recursive: true });
@@ -47,8 +49,28 @@ for (const filename of target === 'site' ? ['index.html', 'work.html', 'case-stu
   const path = resolve(output, filename);
   let html = await readFile(path, 'utf8');
   html = html.replace(/    <link rel="preconnect"[^>]+>\n/g, '').replace(/    <link href="https:\/\/fonts.googleapis.com[^>]+>\n/g, '');
+  if (target === 'site') {
+    // These small startup scripts must not block HTML parsing on a slow request.
+    for (const name of ['theme-init.js', 'preloader.js']) {
+      const script = (await readFile(resolve(output, name), 'utf8')).replaceAll('</script', '<\\/script');
+      html = html.replace('<script src="./' + name + '"></script>', '<script>' + script + '</script>');
+    }
+  }
   html = html.replace('</head>', '  <link rel="icon" href="./assets/figma/profile.png" type="image/png" />\n  <link rel="preload" href="./assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />\n  </head>');
   await writeFile(path, html);
+}
+if (target === 'site') {
+  const { prerenderSite } = await import('./prerender-site.mjs');
+  await prerenderSite(output);
+  const versions = {};
+  for (const name of ['app.js', 'basic-navigation.js', 'preloader.js', 'theme-init.js', 'styles.css', 'home.css', 'library.css', 'preloader.css']) versions[name] = createHash('sha256').update(await readFile(resolve(output, name))).digest('hex').slice(0, 12);
+  for (const name of ['index', 'work', 'case-studies', 'case-study', 'experience', 'about', 'books', 'book']) {
+    const path = resolve(output, name + '.html');
+    let html = await readFile(path, 'utf8');
+    html = html.replace(/(src|href)="\.\/([^"?]+\.(?:js|css))"/g, (match, attribute, asset) => versions[asset] ? attribute + '="./' + asset + '?v=' + versions[asset] + '"' : match);
+    await writeFile(path, html);
+    if (name !== 'index') await writeFile(resolve(output, name, 'index.html'), html.replace('<head>', '<head>\n    <base href="../" />'));
+  }
 }
 console.log(`Built ${target}: ${output}`);
 return output;

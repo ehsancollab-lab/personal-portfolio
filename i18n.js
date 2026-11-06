@@ -1,7 +1,7 @@
 import { faContent } from './content-fa.js';
 import { faBooks } from './books-fa.js';
 
-let locale = 'en';
+let locale = globalThis.document?.documentElement?.lang === 'fa' ? 'fa' : 'en';
 export const getLocale = () => locale;
 export function setLocale(value) {
   locale = value === 'fa' ? 'fa' : 'en';

@@ -8,7 +8,7 @@ Fresh visits show the owner’s portrait, a slash and a 0–100% counter for abo
 
 ## Build and hosting
 
-Use Node 24 (see `.nvmrc`) and install the locked dependencies. Tiptap powers the story composer; Sharp generates responsive WebP images during deployment; esbuild bundles the browser code.
+Use Node 24 (see `.nvmrc`), an installed Chrome/Chromium browser, and the locked dependencies. Set `CHROME_BIN` if the browser is outside the standard Linux executable paths. Tiptap powers the story composer; Sharp generates responsive WebP images during deployment; esbuild bundles the browser code.
 
 ```sh
 npm ci
@@ -18,6 +18,12 @@ npm run build:admin
 ```
 
 The public build is `build/site` for `ehsandesigns.com`. The dashboard build is `build/admin` for `admin.ehsandesigns.com` and includes its authentication worker. See [DEPLOYMENT.md](DEPLOYMENT.md) for account setup, encrypted secrets, domain records, and ongoing maintenance. Provider-side account configuration is required before these builds can be served in production.
+
+## Resilient public rendering
+
+The public build pre-renders the real homepage, work, experience, cases, six collections and fifty book details in both languages. Content and native links remain available when the large enhancement bundle fails. A small independent script supports the clock, language and theme controls while that bundle loads. The tiny initial-theme and preloader scripts are embedded in HTML to avoid blocking the document on separate startup downloads. The loader has a 4.5-second deadline and cannot leave the page globally hidden. Late app loading preserves language/theme choices and skips replaying entrance motion over visible content. Production script and stylesheet links use content versions.
+
+See [IRAN-ACCESS-DIAGNOSIS.md](IRAN-ACCESS-DIAGNOSIS.md) for the confirmed frontend failure mode, simulated-network checks and the remaining need to verify the live domain from an Iranian connection.
 
 ## Local public preview
 

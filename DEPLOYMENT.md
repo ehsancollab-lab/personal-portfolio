@@ -17,6 +17,12 @@ Repository: `ehsancollab-lab/personal-portfolio`.
 
 The workflow tests the security-critical dashboard code, builds `build/site`, and deploys that directory only. It excludes admin scripts and server code. `data/portfolio.json` is the shared published content. Dashboard updates create commits to `main`, which trigger deployment automatically. A commit is saved before its Pages deployment finishes; a successful save and a successful public deployment are distinct states.
 
+### Public build browser requirement
+
+The public build pre-renders actual content with Playwright and an installed Chrome/Chromium executable; `CHROME_BIN` can override the standard Linux paths. The GitHub build job uses `ubuntu-24.04`, whose hosted image includes Chrome. The public build and its build-artifact checks need development dependencies installed (`npm ci`), while the dashboard build does not import the prerender helper or require a browser. No prerender service is used at runtime.
+
+The generated HTML includes readable content and native links before the app runs. Its startup theme/preloader logic is embedded; heavier JavaScript remains a progressive enhancement. Inspect all eight entry pages and their extensionless copies when changing the build. Content updates still flow through the existing GitHub deployment.
+
 ## 2. Dashboard: Cloudflare Pages
 
 Create the project in the owner's Cloudflare account:

@@ -93,7 +93,7 @@
     overlay.addEventListener('touchmove', event => { if (!revealing) event.preventDefault(); }, { passive: false });
     document.body.append(overlay);
     progressFrame = requestAnimationFrame(updateProgress);
-    // The loader never depends on the large application download.
+    // The HTML is already complete; the loader never depends on the large app.
     Promise.race([document.fonts?.ready, new Promise(resolve => setTimeout(resolve, 600))])
       .then(() => { ready = true; scheduleReveal(); });
     scheduleReveal();

@@ -107,7 +107,7 @@ function normalizeContent(candidate) {
 
 let contentOverride = normalizeContent(publishedContent);
 
-let theme = 'light';
+let theme = root.dataset.theme === 'dark' ? 'dark' : 'light';
 
 function content() {
   return contentOverride || defaultContent();
@@ -483,8 +483,9 @@ function renderPage(next, fresh = false, portalEntry = false) {
   main.querySelector('#case-studies-list')?.setAttribute('aria-label', localizeText('Case Studies'));
   syncLanguageControls();
   updateTheme();
-  animateTypography(main);
-  mountPageMotion(main, next, { portalEntry });
+  const lateStaticView = newView && main === initialMain && main.dataset.staticRendered === 'true' && window.portfolioPreloader?.active === false;
+  if (!lateStaticView) animateTypography(main);
+  mountPageMotion(main, next, { portalEntry, skipEntrance: lateStaticView });
   requestAnimationFrame(ensureActiveNavVisible);
   return main;
 }
@@ -562,6 +563,7 @@ history.scrollRestoration = 'manual';
 initSmoothScroll(motionRuntime);
 mountViewportBlur();
 mountPointerFeedback();
+root.dataset.appReady = 'true';
 window.portfolioPreloader?.ready();
 // Revalidate in the background; the build embeds content for an immediate first render.
 (async () => {

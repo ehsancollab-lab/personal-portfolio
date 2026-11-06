@@ -35,6 +35,19 @@ test('public deployment excludes dashboard code, server code, and environment fi
   assert.match(await read('site/admin.html'), /https:\/\/admin\.ehsandesigns\.com\//);
 });
 
+test('public HTML contains readable content and versioned enhancement assets', async () => {
+  const home = await read('site/index.html');
+  assert.match(home, /<p[^>]*id="bio"[^>]*>Senior AI Product Designer/);
+  assert.match(home, /data-static-locale="fa"/);
+  assert.match(home, /src="\.\/app\.js\?v=[a-f0-9]{12}"/);
+  assert.match(home, /src="\.\/basic-navigation\.js\?v=[a-f0-9]{12}"/);
+  assert.doesNotMatch(home, /fonts\.googleapis\.com|fonts\.gstatic\.com|127\.0\.0\.1/);
+  assert.doesNotMatch(home, /<script(?![^>]*(?:type="module"|defer|async))[^>]*src=/);
+  assert.match(home, /const deadline = setTimeout\(finish, 4500\)/);
+  assert.match(await read('site/book.html'), /id="book-behave"/);
+  assert.match(await read('site/books.html'), /id="collection-growth"/);
+});
+
 test('dashboard is deployed with the authentication worker on every route', async () => {
   const routes = JSON.parse(await read('admin/_routes.json'));
   assert.deepEqual(routes.include, ['/*']);

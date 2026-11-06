@@ -23,7 +23,7 @@ export function transitionPage(main, commit, { slow = false } = {}) {
   }).catch(() => {});
 }
 
-export function mountPageMotion(main, page, { portalEntry = false } = {}) {
+export function mountPageMotion(main, page, { portalEntry = false, skipEntrance = false } = {}) {
   cleanup();
   const token = ++generation;
   let stage;
@@ -34,7 +34,7 @@ export function mountPageMotion(main, page, { portalEntry = false } = {}) {
     if (page === 'experience') timelineCleanup = createExperienceTimeline(main, reduced.matches);
     if (reduced.matches) return;
     // The bookshelf already shares its actual surfaces and covers between views.
-    if (portalEntry || !['about', 'books', 'book'].includes(page)) {
+    if (!skipEntrance && (portalEntry || !['about', 'books', 'book'].includes(page))) {
       gsap.fromTo(main, { opacity: 0, y: 14, filter: 'blur(5px)' }, {
         opacity: 1, y: 0, filter: 'blur(0px)', duration: portalEntry || page === 'home' ? .9 : .6, ease: 'power3.out',
         clearProps: 'opacity,transform,filter', onUpdate: invalidate,
@@ -42,14 +42,14 @@ export function mountPageMotion(main, page, { portalEntry = false } = {}) {
       });
     }
     if (page === 'selected-work') {
-      main.querySelectorAll('.project-card').forEach(card => {
+      if (!skipEntrance) main.querySelectorAll('.project-card').forEach(card => {
         gsap.fromTo(card, { opacity: .12, y: 64, scale: .975 }, {
           opacity: 1, y: 0, scale: 1, duration: 1.05, ease: 'power3.out',
           clearProps: 'opacity,transform', onUpdate: invalidate,
           scrollTrigger: { trigger: card, start: 'top 94%', once: true }
         });
       });
-      if (matchMedia('(hover: hover) and (pointer: fine)').matches && !navigator.connection?.saveData) {
+      if (!skipEntrance && matchMedia('(hover: hover) and (pointer: fine)').matches && !navigator.connection?.saveData) {
         import('./work-scene.js').then(({ createWorkScene }) => {
           if (token === generation && main.isConnected && !reduced.matches) stage = createWorkScene(main);
         }).catch(() => {}); // The semantic image gallery remains usable without WebGL.
