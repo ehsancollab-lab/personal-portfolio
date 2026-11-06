@@ -7,7 +7,7 @@ import { normalizeStoryDoc } from "./story-model.js";
 import { renderStory } from "./story-render.js";
 import { publishedContent } from "./published-content.js";
 import { animateTypography } from "./typography.js";
-import { createSiteHeader } from "./site-shell.js";
+import { createSiteHeader, mountTehranClock } from "./site-shell.js";
 import { createHomePage, renderHomeFolders } from './home.js';
 import { bookById } from './library-content.js';
 import { renderLibrary, transitionLibrary, cancelLibraryTransition, libraryPages } from './library.js';
@@ -427,6 +427,7 @@ document.addEventListener("click", (event) => {
 const pageViews = new Map();
 const scrollPositions = new Map();
 const sharedHeader = document.querySelector('.site-header') || createSiteHeader();
+mountTehranClock(sharedHeader);
 const initialMain = document.querySelector('main');
 const initialPage = page;
 const routeKey = (url = new URL(location.href)) => routeFor(url) + url.search + '::' + getLocale();

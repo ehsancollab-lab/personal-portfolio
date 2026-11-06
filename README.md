@@ -2,7 +2,7 @@
 
 Responsive English/Persian portfolio based on the supplied Figma frames, with independent GitHub Pages hosting and a password-protected Cloudflare Pages dashboard.
 
-The homepage introduces Ehsan with a centered biography, the approved cap-and-hoodie portrait, and four compact folders. Each folder shows its current content count and lifts actual project images, case banners, company logos, or book covers on hover and keyboard focus. The folders open Selected Work, Case Studies, the Experience timeline, and About Me with its 50-book library.
+The homepage introduces Ehsan with a centered biography, the approved cap-and-hoodie portrait, and four compact folders. Each folder lifts actual project images, case banners, company logos, or book covers on hover and keyboard focus. The folders open Selected Work, Case Studies, the Experience timeline, and About Me with its 50-book library.
 
 ## Build and hosting
 
@@ -32,7 +32,7 @@ Browser integration checks use `npm run test:browser`. They run Chromium against
 - assets/projects/ contains the 20 supplied Figma exports in the same order as the Selected Work frame.
 - The November 2026 English and Persian PDFs under `assets/Ehsan-Masoomi-CV-{EN,FA}-November-2026.pdf` are the supplied downloadable resumes. The active website language determines the download. The superseded PDF is removed.
 - assets/figma/ contains the profile portrait and header icons exported from the Figma frame.
-- The shared top bar places the CV download on the physical right and the language/theme controls on the physical left in both languages. Interior pages add the original Back component and a centered section title. The theme control uses the Figma moon icon in light mode and a filled sun icon in dark mode.
+- The shared top bar groups the CV download, language switch, and theme control on the physical right in both languages. The homepage shows a live Tehran clock (Asia/Tehran, including seconds) on the left in locally served 15px DM Mono, and its greeting is 17px Medium. Interior pages place the original Back component on the left and the section title in the center. Folder counts are removed. The theme control uses the Figma moon icon in light mode and a filled sun icon in dark mode.
 - The public portfolio switches between English/LTR and Persian/RTL. Every fresh public document starts in English and light mode. Language and theme choices last through internal navigation in that visit and reset on reload. Persian uses the supplied On webfonts: 19px Bold headings and 18px SemiBold body copy with 25px line height; the dashboard remains English/LTR.
 - `i18n.js`, `content-fa.js`, and `books-fa.js` contain UI labels and the Persian versions of the current published copy. Future English copy edits keep their source text until a corresponding translation is added.
 - Book detail covers stand upright. Book headers show the title and author, with a short Back/بازگشت action. Personal takeaways have no panel background, align to the start of the chosen language, and show Ehsan’s portrait, localized name and Product Designer/طراح محصول caption. Quotation text is 17px and Ehsan’s name is 15px in both languages and at every breakpoint. Research sources remain in the metadata and are not shown as external links.
