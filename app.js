@@ -363,13 +363,10 @@ function renderHeaderAndFooter() {
   if (copyrightYear) copyrightYear.textContent = number(new Date().getFullYear());
   const copyright = document.querySelector('.copyright');
   if (copyright?.lastElementChild) copyright.lastElementChild.textContent = ' ' + localizeText('Ehsan Masoomi');
-  const cv = document.querySelector('#cv-label'); if (cv) cv.textContent = localizeText('Download CV');
-  const cvLink = document.querySelector('#cv-link');
-  if (cvLink) {
-    const filename = 'Ehsan-Masoomi-CV-' + (getLocale() === 'fa' ? 'FA' : 'EN') + '-November-2026.pdf';
-    cvLink.href = './assets/' + filename; cvLink.download = filename; cvLink.hreflang = getLocale();
-  }
-  document.querySelector('.avatar-mark')?.setAttribute('aria-label', localizeText('Ehsan Masoomi'));
+  const homeAvatar = document.querySelector('.nav-home-avatar');
+  homeAvatar?.setAttribute('aria-label', localizeText('Home'));
+  if (page === 'home') homeAvatar?.setAttribute('aria-current', 'page');
+  else homeAvatar?.removeAttribute('aria-current');
 
   const current = page === "case-study" ? "case-studies" : libraryPages.has(page) ? 'about' : page;
   document.querySelectorAll("[data-page-link]").forEach((link) => {
@@ -396,7 +393,8 @@ function renderHeaderAndFooter() {
     back.href = book ? './books.html?category=' + encodeURIComponent(book.category) : './about.html#my-books';
     backText = localizeText('Back');
   }
-  back.querySelector('.portal-back-label').textContent = backText;
+  back.querySelector('.portal-back-label').textContent = localizeText('Back');
+  back.setAttribute('aria-label', backText);
 }
 
 function updateTheme() {
@@ -564,10 +562,7 @@ history.scrollRestoration = 'manual';
 initSmoothScroll(motionRuntime);
 mountViewportBlur();
 mountPointerFeedback();
-window.portfolioPreloader?.ready({ previews: content().projects
-  .filter(item => item.visible !== false).slice(0, 4)
-  .map(item => responsiveImage(new Image(64, 80), assetPath(item.image), { eager: true, sizes: '60px' }))
-});
+window.portfolioPreloader?.ready();
 // Revalidate in the background; the build embeds content for an immediate first render.
 (async () => {
   try {

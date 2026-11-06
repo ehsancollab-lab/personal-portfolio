@@ -1,5 +1,7 @@
 /* The approved folder homepage uses the site's existing fonts and color tokens. */
 @font-face { font-family: 'DM Mono'; src: url('./assets/fonts/dm-mono-latin-400-normal.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+:root { --portal-header-height: 92px; }
+body { min-width: 0; }
 [hidden] { display: none !important; }
 .site-header.portal-header {
   position: relative;
@@ -10,24 +12,26 @@
   align-items: center;
   gap: 16px;
   width: 100%;
-  min-height: 88px;
+  min-height: var(--portal-header-height);
   margin: 0;
   padding: 24px clamp(20px, 3.4vw, 64px);
   direction: ltr;
 }
 .portal-header-left { grid-area: left; display: flex; align-items: center; gap: 12px; min-width: 0; }
 .portal-header-right { grid-area: right; justify-self: end; display: flex; align-items: center; gap: 12px; }
+.nav-home-avatar { flex: 0 0 44px; text-decoration: none; }
+.nav-home-avatar:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; }
+.nav-home-avatar.is-intro-target { visibility: hidden; }
+.nav-divider { flex: 0 0 auto; color: var(--muted); font: 400 18px/1 Inter, sans-serif; user-select: none; }
 .tehran-clock { margin: 0; color: var(--muted); font: 400 11px/1.5 'DM Mono', monospace; white-space: nowrap; font-variant-numeric: tabular-nums; }
 body:not([data-page="home"]) .tehran-clock { display: none; }
 .portal-header .display-controls { flex: 0 0 auto; }
-.portal-header #cv-link { width: auto; font-size: 13px; }
 .library-back, .case-back-link { border-radius: 999px; }
-.portal-header .portal-back { flex: 0 0 auto; gap: 8px; min-height: 36px; padding: 6px 10px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); box-shadow: var(--control-shadow); font-size: 13px; line-height: 22px; white-space: nowrap; }
-.portal-header .portal-back:hover { background: var(--card-hover); box-shadow: var(--card-shadow); text-decoration: none; }
-.portal-back .library-back-icon { width: 18px; height: 18px; flex-basis: 18px; }
-:root:lang(fa) .portal-back, :root:lang(fa) #cv-link { direction: rtl; }
+.portal-header .portal-back { flex: 0 0 auto; min-height: 44px; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; font-size: 14px; font-weight: 400; line-height: 22px; white-space: nowrap; text-decoration: underline; text-underline-offset: 3px; }
+.portal-header .portal-back:hover { color: var(--muted); }
+:root:lang(fa) .portal-back { direction: rtl; }
 :root:lang(fa) .portal-header .portal-back { font-size: 16px; }
-.home-scene { display: flex; flex-direction: column; align-items: center; min-height: calc(100svh - 88px); padding-top: clamp(20px, 4vh, 60px); overflow: clip; outline: none; }
+.home-scene { display: flex; flex-direction: column; align-items: center; min-height: calc(100svh - var(--portal-header-height)); padding-top: clamp(20px, 4vh, 60px); overflow: clip; outline: none; }
 .centered-intro { position: relative; z-index: 2; width: min(640px, calc(100% - 44px)); text-align: center; }
 .centered-intro h1 { margin: 0; line-height: 1.5; }
 :root body[data-page="home"] #greeting { font-size: 17px; font-weight: 500; }
@@ -67,19 +71,19 @@ body:not([data-page="home"]) .tehran-clock { display: none; }
 body[data-page="home"] > :is(.site-footer, .viewport-blur) { display: none; }
 body[data-page="book"] .library-book-detail { margin-top: 36px; }
 @media (min-width: 701px) and (max-height: 780px) {
-  .site-header.portal-header { min-height: 72px; padding-block: 18px; }
-  .home-scene { min-height: calc(100svh - 72px); padding-top: 10px; }
+  :root { --portal-header-height: 76px; }
+  .site-header.portal-header { padding-block: 16px; }
+  .home-scene { padding-top: 10px; }
   .centered-intro .contact-block { margin-top: 15px; }
   .folder-navigation { margin-top: 22px; }
   .portrait-stage { flex-basis: 220px; min-height: 220px; margin-top: 10px; }
 }
 @media (max-width: 700px) {
-  .site-header.portal-header { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'left' 'right'; min-height: 116px; padding: 20px; gap: 13px 8px; }
+  :root { --portal-header-height: 80px; }
+  .site-header.portal-header { padding: 18px 20px; gap: 8px; }
+  .portal-header-left { gap: 8px; }
   .portal-header .display-controls { gap: 8px; }
-  .portal-header #cv-link { gap: 7px; padding-inline: 10px; font-size: 13px; }
-  .portal-header #cv-link img { width: 17px; height: 17px; flex-basis: 17px; }
-  :root:lang(fa) .portal-header #cv-link { font-size: 13px; }
-  .home-scene { min-height: calc(100svh - 116px); padding-top: 20px; }
+  .home-scene { padding-top: 20px; }
   .centered-intro { width: calc(100% - 40px); }
   .centered-intro .contact-block { margin-top: 20px; }
   .centered-intro .contact-links { gap: 6px 15px; }
@@ -98,7 +102,8 @@ body[data-page="book"] .library-book-detail { margin-top: 36px; }
   .portrait-stage { flex-basis: 270px; min-height: 270px; }
 }
 @media (max-width: 360px) {
-  .site-header.portal-header { padding-inline: 16px; }
+  .site-header.portal-header { padding-inline: 12px; gap: 6px; }
+  .portal-header .display-controls { gap: 6px; }
   .folder-button { font-size: 10px; }
   .portrait-stage { flex-basis: 250px; min-height: 250px; }
 }

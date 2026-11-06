@@ -54,20 +54,44 @@ test('Experience cursor smoothly follows the solid progress line, updates gray s
   expect(errors).toEqual([]);
 });
 
-test('Persian CV label is SemiBold and its button hugs its contents on desktop and mobile', async ({ page }) => {
+test('portrait navigation stays on one row from 320px to desktop in both languages', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto(site + '/about.html');
-  await page.locator('[data-language="fa"]').click();
-  await page.evaluate(() => document.fonts.ready);
-  for (const width of [1920, 700, 390, 350, 320]) {
-    await page.setViewportSize({ width, height: 900 });
-    await expect(page.locator('#cv-link')).toHaveCSS('font-weight', '600');
-    const metrics = await page.locator('#cv-link').evaluate(node => {
-      const style = getComputedStyle(node);
-      return { actual: node.getBoundingClientRect().width, contents: [...node.children].reduce((sum, item) => sum + item.getBoundingClientRect().width, 0) + parseFloat(style.columnGap) + parseFloat(style.paddingLeft) + parseFloat(style.paddingRight) };
-    });
-    expect(Math.abs(metrics.actual - metrics.contents)).toBeLessThan(1);
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    if (width === 1920 || width === 350) await page.screenshot({ path: resolve(work, `fa-cv-${width}.png`) });
+  await page.goto(site + '/experience.html');
+  for (const locale of ['en', 'fa']) {
+    if (locale === 'fa') await page.locator('[data-language="fa"]').click();
+    await page.evaluate(() => document.fonts.ready);
+    for (const route of ['home', 'experience']) {
+      if (route === 'home') await page.locator('.nav-home-avatar').click();
+      else await page.locator('.folder-button[data-section="experience"]').click();
+      await expect(page.locator('body')).toHaveAttribute('data-page', route);
+      for (const width of [1920, 1024, 701, 700, 430, 390, 360, 350, 320]) {
+        await page.setViewportSize({ width, height: 900 });
+        await expect(page.locator('#cv-link, #cv-label')).toHaveCount(0);
+        await expect(page.locator('.nav-home-avatar')).toHaveCSS('border-radius', '50%');
+        await expect(page.locator('.nav-home-avatar')).toHaveCSS('border-top-width', '3px');
+        const metrics = await page.locator('.portal-header').evaluate(node => {
+          const header = node.getBoundingClientRect();
+          const left = node.querySelector('.portal-header-left').getBoundingClientRect();
+          const right = node.querySelector('.portal-header-right').getBoundingClientRect();
+          const page = document.documentElement.getBoundingClientRect();
+          const avatar = node.querySelector('.nav-home-avatar').getBoundingClientRect();
+          return { gap: right.x - left.right, rowOffset: Math.abs(left.y + left.height / 2 - right.y - right.height / 2), leftInside: left.x >= header.x, rightInside: right.right <= header.right, pageInside: header.x >= page.x && header.right <= page.right, avatarInside: avatar.x >= page.x && avatar.right <= page.right };
+        });
+        expect(metrics.gap).toBeGreaterThanOrEqual(5);
+        expect(metrics.rowOffset).toBeLessThan(1);
+        expect(metrics.leftInside && metrics.rightInside).toBe(true);
+        expect(metrics.pageInside && metrics.avatarInside).toBe(true);
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+        if (route === 'home') {
+          await expect(page.locator('.tehran-clock')).toBeVisible();
+          await expect(page.locator('.portal-back')).toBeHidden();
+        } else {
+          await expect(page.locator('.tehran-clock')).toBeHidden();
+          await expect(page.locator('.portal-back-label')).toHaveText(locale === 'fa' ? 'بازگشت' : 'Back');
+          await expect(page.locator('.portal-back')).toHaveCSS('text-decoration-line', 'underline');
+        }
+        if ([1920, 390, 320].includes(width)) await page.locator('.portal-header').screenshot({ path: resolve(work, 'portrait-header-' + route + '-' + locale + '-' + width + '.png') });
+      }
+    }
   }
 });

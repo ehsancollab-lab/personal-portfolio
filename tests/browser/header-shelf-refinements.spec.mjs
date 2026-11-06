@@ -26,7 +26,8 @@ for (const scenario of [
     if (scenario.locale === 'fa') await page.locator('[data-language="fa"]').click();
     if (scenario.theme === 'dark') await page.locator('.theme-toggle').click();
     await expect(page.locator('.tehran-clock')).toHaveCSS('font-size', '11px');
-    await expect(page.locator('#cv-label')).toHaveCSS('font-size', '13px');
+    await expect(page.locator('#cv-link, #cv-label')).toHaveCount(0);
+    await expect(page.locator('.nav-home-avatar')).toHaveCSS('border-radius', '50%');
     await expect(page.locator('#greeting')).toHaveCSS('font-size', scenario.locale === 'fa' ? '19px' : '17px');
     await expect(page.locator('#greeting')).toHaveCSS('font-weight', scenario.locale === 'fa' ? '700' : '500');
     for (const link of await page.locator('#header-contact-links a').all()) {
@@ -46,7 +47,6 @@ for (const scenario of [
     if (scenario.theme === 'light') {
       await expect(page.locator('body')).toHaveCSS('color', 'rgb(40, 40, 40)');
       await expect(page.locator('#greeting')).toHaveCSS('color', 'rgb(40, 40, 40)');
-      await expect(page.locator('#cv-link')).toHaveCSS('background-color', 'rgb(40, 40, 40)');
     }
     for (const logo of await page.locator('.folder-button[data-section="experience"] .folder-thumb').all()) {
       await expect(logo).toHaveCSS('border-radius', '50%');
@@ -65,8 +65,9 @@ for (const scenario of [
       await expect(page.locator('body')).toHaveAttribute('data-page', route.startsWith('work') ? 'selected-work' : route.split('.')[0]);
       await expect(page.locator('.portal-page-title')).toHaveCount(0);
       await expect(page.locator('.portal-header')).toHaveCSS('position', 'relative');
-      await expect(page.locator('.portal-back')).toHaveCSS('border-radius', '999px');
-      await expect(page.locator('#cv-label')).toHaveCSS('font-size', '13px');
+      await expect(page.locator('.portal-back')).toHaveCSS('text-decoration-line', 'underline');
+      await expect(page.locator('.portal-back-label')).toHaveText(scenario.locale === 'fa' ? 'بازگشت' : 'Back');
+      await expect(page.locator('#cv-link, #cv-label, .portal-back .back-shortcut, .portal-back .library-back-icon')).toHaveCount(0);
       await expect(page.locator('.tehran-clock')).toBeHidden();
       await expect(page.locator('.site-footer')).toHaveCSS('text-align', 'center');
       await expect(page.locator('.site-footer')).toHaveCSS('justify-content', 'center');

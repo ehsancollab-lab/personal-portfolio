@@ -34,7 +34,8 @@ for (const locale of ['en', 'fa']) {
             window.__returnSamples.push({
               time: time - start, opacity: Number(getComputedStyle(main).opacity),
               center: bio.x + bio.width / 2, portrait: portrait.x + portrait.width / 2,
-              right: document.querySelector('#cv-link').getBoundingClientRect().right,
+              right: document.querySelector('.display-controls').getBoundingClientRect().right,
+              avatar: document.querySelector('.nav-home-avatar').getBoundingClientRect().left,
               client: document.documentElement.clientWidth, scroll: scrollY
             });
             if (time - start > 1300) { window.__returnFinished = true; return; }
@@ -49,11 +50,12 @@ for (const locale of ['en', 'fa']) {
       const samples = await page.evaluate(() => window.__returnSamples);
       const visible = samples.filter(s => s.opacity >= .15);
       const spread = key => Math.max(...visible.map(s => s[key])) - Math.min(...visible.map(s => s[key]));
-      reports.push({ section, samples, drift: { content: spread('center'), portrait: spread('portrait'), controls: spread('right') } });
+      reports.push({ section, samples, drift: { content: spread('center'), portrait: spread('portrait'), controls: spread('right'), avatar: spread('avatar') } });
       await writeFile(resolve(output, `home-return-${locale}.json`), JSON.stringify(reports, null, 2));
       expect(spread('center'), section + ': content shifted horizontally').toBeLessThan(1);
       expect(spread('portrait'), section + ': portrait shifted horizontally').toBeLessThan(1);
-      expect(spread('right'), section + ': CV controls shifted horizontally').toBeLessThan(1);
+      expect(spread('right'), section + ': language/theme controls shifted horizontally').toBeLessThan(1);
+      expect(spread('avatar'), section + ': navigation avatar shifted horizontally').toBeLessThan(1);
     }
     await page.screenshot({ path: resolve(output, `home-return-stable-${locale}.png`) });
   });

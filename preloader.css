@@ -1,47 +1,19 @@
-/* The same silver folder, neutral palette and typography as the homepage. */
+/* The same portrait frame makes the loading-to-navigation handoff continuous. */
+.portrait-badge { display: block; flex: 0 0 44px; width: 44px; height: 44px; padding: 0; overflow: hidden; border: 3px solid #fff; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px #2828281f, 0 3px 6px #28282826; }
+.portrait-badge > img { display: block; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
 html.is-preloading body > :not(.site-preloader) { visibility: hidden; }
-.site-preloader { position: fixed; z-index: 10000; inset: 0; display: grid; place-items: center; overflow: hidden; background: var(--page-bg); color: var(--text); touch-action: none; opacity: 1; transition: opacity 380ms ease, visibility 380ms; }
-.intro-composition { width: min(300px, calc(100vw - 48px)); margin-top: -38px; text-align: center; transition: transform 380ms cubic-bezier(.4,0,1,1), filter 380ms ease; }
-.intro-stage { position: relative; height: 200px; }
-.intro-stage::after { position: absolute; right: 54px; bottom: 0; left: 54px; height: 20px; border-radius: 50%; background: #2828280c; filter: blur(12px); content: ''; animation: intro-shadow 4600ms ease both; }
-.intro-clip-definitions { position: absolute; width: 0; height: 0; overflow: hidden; }
-.intro-folder { position: absolute; z-index: 1; bottom: 8px; left: 50%; width: 154px; height: 121px; margin-left: -77px; transform-origin: 50% 85%; animation: intro-folder-arrive 4600ms cubic-bezier(.22,.75,.2,1) both; }
-.intro-folder-back, .intro-folder-front { position: absolute; inset: 0; display: block; filter: drop-shadow(0 7px 6px #28282812); }
-.intro-folder-back { z-index: 0; }
-.intro-folder-front { z-index: 5; }
-.intro-folder-back img, .intro-folder-front img { display: block; width: 100%; height: 100%; object-fit: fill; }
-.intro-folder-back img { clip-path: url('#intro-folder-back'); }
-.intro-folder-front img { clip-path: url('#intro-folder-front'); }
-.intro-card { --x: -66px; --angle: -16deg; --packed-x: -10px; position: absolute; z-index: 1; bottom: 45px; left: 50%; display: grid; place-items: center; width: 60px; height: 76px; margin-left: -30px; overflow: hidden; padding: 4px; border: 1px solid #2828280d; border-radius: 9px; background: #fff; box-shadow: 0 2px 5px #28282812, 0 9px 17px #28282812; transform-origin: 50% 100%; animation: intro-file-arrive 3600ms cubic-bezier(.22,.75,.2,1) 160ms both; }
-.intro-card:nth-of-type(3) { --x: -23px; --angle: -5deg; --packed-x: -3px; z-index: 2; animation-delay: 400ms; }
-.intro-card:nth-of-type(4) { --x: 23px; --angle: 6deg; --packed-x: 3px; z-index: 3; animation-delay: 640ms; }
-.intro-card:nth-of-type(5) { --x: 66px; --angle: 16deg; --packed-x: 10px; z-index: 4; animation-delay: 880ms; }
-.intro-card > svg { width: 23px; height: 23px; color: #737373; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
-.intro-card > img { position: absolute; inset: 4px; display: block; width: calc(100% - 8px); height: calc(100% - 8px); border-radius: 5px; object-fit: cover; opacity: 0; transition: opacity 160ms ease; }
-.intro-card.has-image > img { opacity: 1; }
-.intro-card.has-image > svg { visibility: hidden; }
-.intro-progress { display: grid; justify-items: center; gap: 12px; width: 80px; margin: 25px auto 0; color: var(--text); }
-.intro-percentage { display: block; min-width: 5ch; font: 400 16px/1.6 'DM Mono', monospace; font-variant-numeric: tabular-nums; }
-.intro-progress-track { display: block; width: 80px; height: 2px; overflow: hidden; border-radius: 2px; background: #28282820; }
-.intro-progress-fill { display: block; width: 100%; height: 100%; background: currentColor; transform: scaleX(0); transform-origin: left center; }
-.site-preloader[data-phase="exit"] { opacity: 0; visibility: hidden; pointer-events: none; }
-.site-preloader[data-phase="exit"] .intro-composition { transform: translateY(-8px) scale(.98); filter: blur(3px); }
-@keyframes intro-folder-arrive {
-  0% { opacity: 0; transform: translateY(15px) scale(.92); }
-  18% { opacity: 1; transform: translateY(0) scale(1); }
-  68% { transform: translateY(0) scale(1); }
-  83% { transform: translateY(3px) scale(1.025,.98); }
-  100% { opacity: 1; transform: translateY(0) scale(1.015); }
-}
-@keyframes intro-file-arrive {
-  0% { opacity: 0; transform: translate(calc(var(--x) * 1.2), -65px) rotate(calc(var(--angle) * 1.3)) scale(.88); }
-  23% { opacity: 1; transform: translate(var(--x), -35px) rotate(var(--angle)) scale(1); }
-  64% { opacity: 1; transform: translate(var(--x), -39px) rotate(var(--angle)) scale(1); }
-  100% { opacity: 1; transform: translate(var(--packed-x), 30px) rotate(0) scale(.9); }
-}
-@keyframes intro-shadow { from { opacity: 0; transform: scale(.7); } to { opacity: 1; transform: scale(1); } }
+.site-preloader { position: fixed; z-index: 10000; inset: 0; display: grid; place-items: center; overflow: hidden; background: var(--page-bg); color: var(--text); touch-action: none; opacity: 1; transition: opacity 400ms ease, visibility 400ms; }
+.intro-composition { display: flex; align-items: center; gap: 14px; width: max-content; max-width: calc(100vw - 40px); direction: ltr; transition: opacity 240ms ease, transform 400ms ease; }
+.intro-avatar { animation: intro-portrait-arrive 550ms cubic-bezier(.16,1,.3,1) both; }
+.intro-divider { color: var(--muted); font: 400 18px/1 Inter, sans-serif; user-select: none; }
+.intro-progress { width: 4ch; color: var(--text); font: 400 16px/1.5 'DM Mono', monospace; font-variant-numeric: tabular-nums; text-align: left; }
+.intro-percentage { display: block; }
+.intro-avatar-placeholder { flex: 0 0 44px; width: 44px; height: 44px; }
+.intro-avatar-flight { position: fixed; z-index: 10001; top: 0; left: 0; margin: 0; pointer-events: none; transform-origin: top left; animation: none !important; }
+.site-preloader[data-phase="handoff"] { opacity: 0; visibility: hidden; pointer-events: none; }
+.site-preloader[data-phase="handoff"] .intro-composition { opacity: 0; transform: translateY(-3px); }
+@keyframes intro-portrait-arrive { from { opacity: 0; transform: translateY(6px) scale(.94); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @media (prefers-reduced-motion: reduce) {
-  .site-preloader, .intro-composition, .intro-card > img { transition: none; }
-  .intro-folder, .intro-card, .intro-stage::after { animation: none; }
-  .intro-card { transform: translate(var(--x), -25px) rotate(var(--angle)); }
+  .site-preloader, .intro-composition { transition: none; }
+  .intro-avatar { animation: none; }
 }
