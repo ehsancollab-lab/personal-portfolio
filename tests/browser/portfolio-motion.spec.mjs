@@ -17,7 +17,7 @@ test('Selected Work has large single-column cards, smaller corners and responsiv
     expect(second.y).toBeGreaterThanOrEqual(first.y + first.height + 15);
     expect(first.width).toBeCloseTo(width <= 420 ? width - 32 : width <= 700 ? width - 40 : Math.min(1360, width * .708), 0);
     expect(first.width / first.height).toBeCloseTo(2760 / 1921, 2);
-    await expect(cards.first()).toHaveCSS('border-top-left-radius', width <= 700 ? '8px' : '12px');
+    await expect(cards.first()).toHaveCSS('border-top-left-radius', '18px');
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   }
   await expect(page.locator('.project-card img').first()).toHaveAttribute('sizes', /1360px/);

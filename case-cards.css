@@ -26,6 +26,7 @@
 .case-study-card-media.is-placeholder > img { width: 40px; height: 40px; border-radius: 50%; object-fit: contain; filter: grayscale(1); }
 
 /* Public links have a quiet image/title hover; dashboard editing controls retain their overlay. */
+a.case-study-card .case-study-card-media { border-radius: var(--card-radius, 18px); box-shadow: var(--card-shadow); }
 a.case-study-card .case-study-card-media > img { transition: transform 360ms cubic-bezier(.2,.65,.3,1); }
 a.case-study-card .case-study-card-title { transition: color 180ms ease; }
 a.case-study-card:focus-visible .case-study-card-media > img { transform: scale(1.04); }

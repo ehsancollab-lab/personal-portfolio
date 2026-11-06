@@ -1,4 +1,12 @@
-# Blossom color mapping — November 5, 2026
+# Blossom card finish and collection shelf — November 6, 2026
+
+The latest owner-supplied images define the current scope: shared soft card/media shadows and rounded edges, 15px English mobile book-list titles, and a dimensional shelf that separates white featured covers from their background. The shelf uses a neutral recessed back, side walls and beveled ledge around the original three book links. The requested 15px value in the written instruction takes precedence over the 13px handwritten image label.
+
+The public build succeeds. No local automated test or browser run was performed for this revision. Existing typography/radius expectations are updated for later runs. Older reports below describe their original revision scope.
+
+---
+
+# Historical: Blossom color mapping — November 5, 2026
 
 The owner's five mobile screenshots and `https://blossom-carousel.com/` define the current color target. Flat reference areas sample to `#fafafa` pages, white cards and black type/actions. `COLOR-PALETTE.md` records the public role mappings, secondary-text adaptation and derived neutral dark theme. The colors cover all public routes, controls, library panels/shelf, hover/focus, timeline and bottom blur.
 

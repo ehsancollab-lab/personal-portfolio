@@ -1,6 +1,13 @@
 # Portfolio and story editor verification
 
-Latest verification: 2026-11-05.
+Latest implementation: 2026-11-06. Verification scope is recorded per revision.
+
+## November 6 card finish, compact book titles and recessed shelf
+
+- The latest Blossom card screenshot supplies the requested media finish. Public project cards, case previews, article images/video frames and collection panels share an 18px corner token and a fine edge with compact, soft shadows. Book covers use the common shadow while keeping their book-shaped corners. The project shader already reads the computed CSS radius, so its clipping follows the new frame.
+- English collection book-list titles now use exactly 15px below 701px, overriding the earlier shared 19px rule only for that scope. The existing typography/radius expectations are updated; no new tests are added.
+- The three featured book links sit in a new CSS shelf alcove, with a gray back wall, angled side panels, a top ledge and a beveled front edge. White covers separate from the backdrop. Spacing uses the existing responsive grid/container sizing, with narrower shelf insets on mobile and a corresponding dark palette. Links, accessible names and shared-cover transitions retain the original elements.
+- No local automated tests were run for this revision. The public production build succeeds; publication is verified through the commit's hosting checks.
 
 ## Blossom reference palette
 

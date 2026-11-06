@@ -89,7 +89,7 @@ test('updated CV downloads match the active language and every fresh document st
   expect((await request.get(site + '/assets/Ehsan-Masoomi-CV-EN.pdf')).status()).toBe(404);
 });
 
-test('all public headings stay 19px Bold and 18px body copy is SemiBold with 25px leading', async ({ page }) => {
+test('public headings keep their shared scale with compact English mobile book titles and SemiBold body copy', async ({ page }) => {
   test.setTimeout(90000);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   const routes = ['/', '/about.html', '/experience.html', '/case-studies.html', '/case-study.html?id=mohtavachi-content-calendar', '/books.html?category=psychology', '/book.html?id=self-compassion'];
@@ -103,10 +103,10 @@ test('all public headings stay 19px Bold and 18px body copy is SemiBold with 25p
         await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
         const headings = await page.locator('h1, h2, h3, h4, h5, h6, .experience-role').evaluateAll(nodes => nodes.map(node => {
           const css = getComputedStyle(node);
-          return { text: node.textContent, size: css.fontSize, weight: css.fontWeight };
+          return { text: node.textContent, size: css.fontSize, weight: css.fontWeight, bookListTitle: node.matches('.library-book-copy h3') };
         }));
         expect(headings.length).toBeGreaterThan(0);
-        expect(headings.filter(node => node.size !== '19px' || node.weight !== '700'), `${route}, ${locale}, ${width}`).toEqual([]);
+        expect(headings.filter(node => node.size !== (node.bookListTitle && locale === 'en' && width <= 700 ? '15px' : '19px') || node.weight !== '700'), `${route}, ${locale}, ${width}`).toEqual([]);
         const body = await page.locator('p, li, blockquote').evaluateAll(nodes => nodes.map(node => {
           const css = getComputedStyle(node);
           return { text: node.textContent, size: css.fontSize, weight: css.fontWeight, leading: css.lineHeight };

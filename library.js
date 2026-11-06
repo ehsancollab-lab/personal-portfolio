@@ -120,7 +120,9 @@ function renderCollection(main, params) {
     const link = element('a', 'shelf-book'); link.href = bookURL(book.id); link.dataset.bookId = book.id;
     link.setAttribute('aria-label', phrase('Read about {title}', 'دربارهٔ کتاب {title}', { title: localizeBook(book).title })); link.append(cover(book)); shelf.append(link);
   });
-  panel.append(heading, shelf);
+  const alcove = element('div', 'bookshelf-alcove');
+  alcove.append(shelf);
+  panel.append(heading, alcove);
   const list = element('section', 'collection-book-list'); list.setAttribute('aria-label', localizeText('Books in this collection'));
   const items = booksInCategory(category.id);
   const count = element('p', 'library-result-count', phrase('Showing all {count} books', 'همهٔ {count} کتاب این دسته', { count: number(items.length) }));
