@@ -3,6 +3,32 @@ import { books } from '../../library-content.js';
 const site = process.env.PORTFOLIO_REFINEMENTS_URL || 'http://localhost:4173';
 const app = /\/app\.js(?:\?|$)/;
 
+test('first paint and readable content never wait for a stylesheet download', async ({ page }) => {
+  const styles = [];
+  await page.route('**/*', route => {
+    if (route.request().resourceType() === 'stylesheet') { styles.push(route.request().url()); return route.abort(); }
+    if (app.test(route.request().url())) return route.abort();
+    return route.continue();
+  });
+  await page.goto(site + '/', { waitUntil: 'commit' });
+  await expect.poll(() => page.evaluate(() => performance.getEntriesByType('paint').length), { timeout: 2000 }).toBeGreaterThan(0);
+  await expect(page.locator('#site-preloader')).toHaveCount(0, { timeout: 5000 });
+  await expect(page.locator('#bio')).toBeVisible();
+  await expect(page.locator('#bio')).toHaveCSS('color', 'rgb(115, 115, 115)');
+  expect(styles).toEqual([]);
+});
+
+test('connection check remains readable with all subresources blocked', async ({ page }) => {
+  const subresources = [];
+  await page.route('**/*', route => {
+    if (route.request().resourceType() !== 'document') { subresources.push(route.request().url()); return route.abort(); }
+    return route.continue();
+  });
+  await page.goto(site + '/connection-check.html');
+  await expect(page.getByRole('heading', { name: 'اتصال برقرار است' })).toBeVisible();
+  expect(subresources).toEqual([]);
+});
+
 test('all content and native navigation work when the main application cannot download', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.route(app, route => route.abort());

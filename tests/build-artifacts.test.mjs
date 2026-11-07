@@ -44,8 +44,17 @@ test('public HTML contains readable content and versioned enhancement assets', a
   assert.doesNotMatch(home, /fonts\.googleapis\.com|fonts\.gstatic\.com|127\.0\.0\.1/);
   assert.doesNotMatch(home, /<script(?![^>]*(?:type="module"|defer|async))[^>]*src=/);
   assert.match(home, /const deadline = setTimeout\(finish, 4500\)/);
+  assert.match(home, /<style data-local-styles="styles\.css">/);
+  assert.doesNotMatch(home, /<link[^>]+rel="stylesheet"|@import/);
   assert.match(await read('site/book.html'), /id="book-behave"/);
   assert.match(await read('site/books.html'), /id="collection-growth"/);
+});
+
+test('plain connection check needs only its HTML document', async () => {
+  const check = await read('site/connection-check.html');
+  assert.match(check, /Connection check: 2026-11-07/);
+  assert.doesNotMatch(check, /<script|<link|<img|<style/);
+  await assert.rejects(() => access(new URL('../build/admin/connection-check.html', import.meta.url)));
 });
 
 test('dashboard is deployed with the authentication worker on every route', async () => {

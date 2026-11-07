@@ -1,5 +1,5 @@
 import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
-import { dirname, resolve } from 'node:path';
+import { basename, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 import { optimizeImages } from './optimize-images.mjs';
@@ -17,7 +17,7 @@ const files = target === 'site'
 files.push('typography.js', 'story-model.js', 'story-render.js', 'images.js', 'image-manifest.js', 'case-cards.js', 'case-cards.css', 'published-content.js', 'site-shell.js');
 if (target === 'admin') files.push('case-editor.js', 'case-editor.css');
 if (target === 'site') files.push('home.js', 'home.css', 'work.html', 'motion.js', 'experience-timeline.js', 'work-scene.js', 'smooth-scroll.js', 'i18n.js', 'i18n.css', 'content-fa.js', 'books-fa.js', 'viewport-blur.js', 'pointer-feedback.js', 'click-sound.js', 'interaction.css', 'preloader.js', 'preloader.css');
-if (target === 'site') files.push('basic-navigation.js', 'static-pages.css');
+if (target === 'site') files.push('basic-navigation.js', 'static-pages.css', 'connection-check.html');
 for (const file of files) await cp(resolve(root, file), resolve(output, file), { recursive: true });
 await optimizeImages(root, output);
 await mkdir(resolve(output, 'assets/fonts'), { recursive: true });
@@ -45,11 +45,18 @@ if (target === 'site') {
 const entryPoints = target === 'site' ? [resolve(output, 'app.js')] : [resolve(output, 'admin.js')];
 await build({ entryPoints, outdir: output, bundle: true, splitting: true, format: 'esm', minify: true, target: 'es2022', allowOverwrite: true, chunkNames: 'chunks/[name]-[hash]' });
 if (target === 'admin') await build({ entryPoints: [resolve(root, 'server/dashboard-worker.mjs')], outfile: resolve(output, '_worker.js'), bundle: true, format: 'esm', target: 'es2022' });
+const embeddedStyles = new Map();
+if (target === 'site') {
+  // First paint must not wait for a separate stylesheet or its nested imports.
+  const css = await build({ entryPoints: ['preloader.css', 'styles.css', 'library.css', 'home.css'].map(name => resolve(output, name)), outdir: output, bundle: true, write: false, minify: true, external: ['./assets/*'] });
+  for (const file of css.outputFiles) embeddedStyles.set(basename(file.path), file.text.replaceAll('</style', '<\\/style'));
+}
 for (const filename of target === 'site' ? ['index.html', 'work.html', 'case-studies.html', 'case-study.html', 'experience.html', 'about.html', 'books.html', 'book.html', 'work/index.html', 'case-studies/index.html', 'case-study/index.html', 'experience/index.html', 'about/index.html', 'books/index.html', 'book/index.html'] : ['index.html', 'login.html']) {
   const path = resolve(output, filename);
   let html = await readFile(path, 'utf8');
   html = html.replace(/    <link rel="preconnect"[^>]+>\n/g, '').replace(/    <link href="https:\/\/fonts.googleapis.com[^>]+>\n/g, '');
   if (target === 'site') {
+    html = html.replace(/<link rel="stylesheet" href="\.\/([^"?]+\.css)"\s*\/?>/g, (tag, name) => embeddedStyles.has(name) ? '<style data-local-styles="' + name + '">' + embeddedStyles.get(name) + '</style>' : tag);
     // These small startup scripts must not block HTML parsing on a slow request.
     for (const name of ['theme-init.js', 'preloader.js']) {
       const script = (await readFile(resolve(output, name), 'utf8')).replaceAll('</script', '<\\/script');
