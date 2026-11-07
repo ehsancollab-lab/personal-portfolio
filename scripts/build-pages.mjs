@@ -17,7 +17,7 @@ const files = target === 'site'
 files.push('typography.js', 'story-model.js', 'story-render.js', 'images.js', 'image-manifest.js', 'case-cards.js', 'case-cards.css', 'published-content.js', 'site-shell.js');
 if (target === 'admin') files.push('case-editor.js', 'case-editor.css');
 if (target === 'site') files.push('home.js', 'home.css', 'work.html', 'motion.js', 'experience-timeline.js', 'work-scene.js', 'smooth-scroll.js', 'i18n.js', 'i18n.css', 'content-fa.js', 'books-fa.js', 'viewport-blur.js', 'pointer-feedback.js', 'click-sound.js', 'interaction.css', 'preloader.js', 'preloader.css');
-if (target === 'site') files.push('basic-navigation.js', 'static-pages.css', 'connection-check.html');
+if (target === 'site') files.push('basic-navigation.js', 'static-pages.css', 'connection-check.html', 'asset-check.html', 'asset-probe.js');
 for (const file of files) await cp(resolve(root, file), resolve(output, file), { recursive: true });
 await optimizeImages(root, output);
 await mkdir(resolve(output, 'assets/fonts'), { recursive: true });

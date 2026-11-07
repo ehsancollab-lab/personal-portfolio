@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>بررسی بارگذاری فایل‌های سایت</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#fafafa;color:#282828;font:15px/1.9 system-ui,sans-serif}main{max-width:920px;margin:40px auto;padding:0 20px}h1{font-size:23px}a{color:inherit}button{font:inherit;padding:8px 20px;border:1px solid #ccc;border-radius:24px;background:white;color:inherit;cursor:pointer}button:disabled{opacity:.5}table{width:100%;border-collapse:collapse;margin:20px 0;background:white}th,td{text-align:start;padding:10px;border-bottom:1px solid #ddd;vertical-align:top}small{display:block;overflow-wrap:anywhere;color:#737373}td:first-child{width:38%}.ok{color:#286538}.fail{color:#a22}textarea{width:100%;min-height:210px;margin:16px 0;padding:12px;direction:ltr;text-align:left;font:12px/1.5 monospace}#preview img{width:48px;height:48px;border-radius:50%}noscript{display:block;padding:16px;border:1px solid #a22}p{margin:12px 0}@media(max-width:480px){main{margin:20px auto;padding:0 12px}th,td{padding:8px;font-size:13px}}
+  </style>
+</head>
+<body>
+<main>
+  <h1>بررسی بارگذاری فایل‌های سایت</h1>
+  <p>این صفحه را با همان اینترنتی باز کن که عکس‌های سایت روی آن دیده نمی‌شوند. بررسی به‌صورت خودکار انجام می‌شود.</p>
+  <p>نتیجه فقط در همین مرورگر نمایش داده می‌شود. پس از پایان، «کپی نتیجه» را بزن و متن را در گفتگو بفرست؛ عکس جدول هم کافی است.</p>
+  <noscript>جاوااسکریپت در این مرورگر اجرا نمی‌شود. لطفاً از همین پیام عکس بفرست؛ این مورد می‌تواند علت کارنکردن ساعت و دکمه‌ها باشد.</noscript>
+  <p id="progress" role="status">در انتظار شروع بررسی… اگر بررسی شروع نشد، از همین صفحه عکس بفرست.</p>
+  <table><thead><tr><th>بخش</th><th>نتیجه</th></tr></thead><tbody id="results"></tbody></table>
+  <div id="preview"></div>
+  <button id="copy" type="button" disabled>کپی نتیجه</button>
+  <p id="copy-status" role="status"></p>
+  <textarea id="report" aria-label="نتیجهٔ بررسی" readonly></textarea>
+  <p><a id="open-home" href="./index.html">بازکردن صفحهٔ اصلی با آدرس تازه</a></p>
+</main>
+<script>
+(function () {
+  'use strict';
+  var stamp = String(Date.now());
+  var rows = document.getElementById('results');
+  var progress = document.getElementById('progress');
+  var output = document.getElementById('report');
+  var copy = document.getElementById('copy');
+  var report = { version: 'assets-1', page: location.href, browser: navigator.userAgent, online: navigator.onLine, serviceWorker: navigator.serviceWorker && navigator.serviceWorker.controller ? navigator.serviceWorker.controller.scriptURL : null, results: [] };
+  document.getElementById('open-home').href = './index.html?loading-check=' + stamp;
+  function save() { output.value = JSON.stringify(report, null, 2); }
+  function row(label, path) {
+    var tr = document.createElement('tr'), name = document.createElement('td'), result = document.createElement('td');
+    var link = document.createElement('a'); link.textContent = label; link.href = path; link.target = '_blank'; link.rel = 'noopener';
+    var detail = document.createElement('small'); detail.dir = 'ltr'; detail.textContent = path;
+    name.append(link, detail); result.textContent = 'در حال بررسی…'; tr.append(name, result); rows.append(tr);
+    return result;
+  }
+  function finish(cell, entry, message) { cell.className = entry.ok ? 'ok' : 'fail'; cell.textContent = message; report.results.push(entry); save(); }
+  function url(path) { var value = new URL(path, location.href); if (value.origin !== location.origin) throw new Error('Unexpected external origin'); value.searchParams.set('asset-check', stamp); return value; }
+  async function request(label, path, kind, fresh) {
+    var cell = row(label, path), started = performance.now(), controller = new AbortController();
+    var timer = setTimeout(function () { controller.abort(); }, 10000);
+    try {
+      var response = await fetch(fresh === false ? new URL(path, location.href) : url(path), { cache: fresh === false ? 'default' : 'no-store', signal: controller.signal });
+      var bytes = new Uint8Array(await response.arrayBuffer());
+      var type = response.headers.get('content-type') || '';
+      var format = kind === 'js' ? /(?:java|ecma)script/i.test(type) : kind === 'image' ? /^image\//i.test(type) : kind === 'font' ? /font|woff|octet-stream/i.test(type) : /text\/html/i.test(type);
+      var entry = { label: label, path: path, status: response.status, type: type, bytes: bytes.length, elapsedMs: Math.round(performance.now() - started), finalURL: response.url, server: response.headers.get('server'), ok: response.ok && format && bytes.length > 0 };
+      var timings = performance.getEntriesByName(response.url), timing = timings[timings.length - 1];
+      if (timing) entry.transfer = { transferSize: timing.transferSize, encodedBodySize: timing.encodedBodySize, deliveryType: timing.deliveryType || null };
+      finish(cell, entry, entry.ok ? 'دریافت شد — HTTP ' + entry.status + ' — ' + entry.elapsedMs + ' ms' : 'پاسخ ناموفق — HTTP ' + entry.status + ' — ' + type);
+      return { entry: entry, text: kind === 'html' || kind === 'js' ? new TextDecoder().decode(bytes) : '' };
+    } catch (error) {
+      var entry = { label: label, path: path, ok: false, elapsedMs: Math.round(performance.now() - started), error: error.name + ': ' + error.message };
+      finish(cell, entry, error.name === 'AbortError' ? 'تا ۱۰ ثانیه دریافت نشد' : 'درخواست فایل ناموفق بود — ' + error.message);
+      return { entry: entry, text: '' };
+    } finally { clearTimeout(timer); }
+  }
+  function nativeResource(label, path, kind) {
+    var cell = row(label, path), started = performance.now();
+    return new Promise(function (resolve) {
+      var node = kind === 'image' ? new Image() : document.createElement('script'), done = false;
+      var timer = setTimeout(function () { end(false, 'تا ۱۰ ثانیه بارگذاری نشد'); }, 10000);
+      function end(ok, message) {
+        if (done) return; done = true; clearTimeout(timer); node.onload = node.onerror = null;
+        var entry = { label: label, path: path, ok: ok, elapsedMs: Math.round(performance.now() - started) };
+        if (kind === 'image') { entry.width = node.naturalWidth; entry.height = node.naturalHeight; }
+        finish(cell, entry, message);
+        if (!ok || kind !== 'image') node.remove();
+        resolve();
+      }
+      node.onload = function () { var ok = kind === 'image' ? node.naturalWidth > 0 : document.documentElement.dataset.assetProbe === 'loaded'; end(ok, ok ? (kind === 'image' ? 'تصویر در مرورگر باز شد' : 'فایل برنامه در مرورگر اجرا شد') : 'فایل رسید، اما اجرا یا نمایش تأیید نشد'); };
+      node.onerror = function () { end(false, kind === 'image' ? 'مرورگر نتوانست تصویر را باز کند' : 'مرورگر نتوانست فایل برنامه را اجرا کند'); };
+      node.src = url(path).href;
+      if (kind === 'image') { node.alt = 'عکس احسان'; document.getElementById('preview').append(node); }
+      else document.body.append(node);
+    });
+  }
+  copy.addEventListener('click', async function () {
+    try { await navigator.clipboard.writeText(output.value); document.getElementById('copy-status').textContent = 'نتیجه کپی شد؛ آن را در گفتگو بفرست.'; }
+    catch (error) { output.focus(); output.select(); document.getElementById('copy-status').textContent = 'متن نتیجه انتخاب شد؛ آن را کپی کن.'; }
+  });
+  async function run() {
+    progress.textContent = 'در حال بررسی دریافت صفحه، عکس‌ها، فونت و فایل‌های برنامه…';
+    var pages = await Promise.all([request('آدرس کوتاه سایت', './', 'html', false), request('نسخهٔ تازهٔ صفحهٔ اصلی', './index.html', 'html')]);
+    var home = pages[1];
+    var parsed = new DOMParser().parseFromString(home.text.split('</head>')[0] + '</head>', 'text/html');
+    var app = parsed.querySelector('script[type="module"][src]');
+    var basic = parsed.querySelector('script[src*="basic-navigation.js"]');
+    report.home = { staticContent: /\bid=["']bio["']/.test(home.text), embeddedStyles: parsed.querySelectorAll('style[data-local-styles]').length, appURL: app ? app.getAttribute('src') : null };
+    var rootDocument = new DOMParser().parseFromString(pages[0].text.split('</head>')[0] + '</head>', 'text/html'), rootApp = rootDocument.querySelector('script[type="module"][src]');
+    report.root = { staticContent: /\bid=["']bio["']/.test(pages[0].text), embeddedStyles: rootDocument.querySelectorAll('style[data-local-styles]').length, appURL: rootApp ? rootApp.getAttribute('src') : null };
+    await Promise.all([request('عکس هدر', './assets/home/book-avatar.webp', 'image'), request('فایل ساعت و کنترل‌ها', basic ? basic.getAttribute('src') : './basic-navigation.js', 'js')]);
+    var application = await request('فایل اصلی برنامه', app ? app.getAttribute('src') : './app.js', 'js');
+    var chunk = application.text.match(/(?:from|import)\s*["'](\.\/chunks\/[^"']+)["']/);
+    if (chunk) await request('بخش مشترک برنامه', chunk[1], 'js');
+    await Promise.all([request('آیکن تم', './assets/ui/moon-fill.svg', 'image'), request('فونت اصلی', './assets/fonts/inter-latin-wght-normal.woff2', 'font')]);
+    await Promise.all([nativeResource('نمایش واقعی عکس', './assets/home/book-avatar.webp', 'image'), nativeResource('اجرای فایل کوچک برنامه', './asset-probe.js', 'js')]);
+    progress.textContent = 'بررسی تمام شد؛ لطفاً نتیجه یا عکس جدول را در گفتگو بفرست.';
+    document.documentElement.dataset.checkComplete = 'true'; copy.disabled = false; save();
+  }
+  run().catch(function (error) { report.error = error.name + ': ' + error.message; save(); progress.textContent = 'خودِ بررسی با خطا روبه‌رو شد؛ لطفاً متن نتیجه را بفرست.'; copy.disabled = false; document.documentElement.dataset.checkComplete = 'true'; });
+}());
+</script>
+</body>
+</html>

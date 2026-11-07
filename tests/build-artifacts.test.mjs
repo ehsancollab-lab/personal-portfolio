@@ -57,6 +57,15 @@ test('plain connection check needs only its HTML document', async () => {
   await assert.rejects(() => access(new URL('../build/admin/connection-check.html', import.meta.url)));
 });
 
+test('asset diagnostics are standalone, opt-in and excluded from the dashboard', async () => {
+  const html = await read('site/asset-check.html');
+  assert.match(html, /version: 'assets-1'/);
+  assert.doesNotMatch(html, /<script[^>]+src=|<link[^>]+stylesheet|https?:\/\//);
+  assert.match(await read('site/asset-probe.js'), /dataset\.assetProbe = 'loaded'/);
+  await assert.rejects(() => access(new URL('../build/admin/asset-check.html', import.meta.url)));
+  await assert.rejects(() => access(new URL('../build/admin/asset-probe.js', import.meta.url)));
+});
+
 test('every public route uses the current portrait as a versioned browser tab icon', async () => {
   const portrait = await readFile(new URL('../assets/home/book-avatar.webp', import.meta.url));
   const version = createHash('sha256').update(portrait).digest('hex').slice(0, 12);
