@@ -62,3 +62,8 @@ The initial-theme and preloader scripts are embedded in HTML, eliminating separa
 Network failure checks cover a blocked main bundle, every downloaded script blocked, a 6.5-second main bundle delay, all external domains blocked, all fifty legacy direct book URLs, and JavaScript disabled. These are controlled browser scenarios, not a verified test from an Iranian ISP. Actual Iranian connectivity remains to be confirmed after deployment.
 
 The production build, all 38 Node checks and all 27 focused Chromium checks passed. The full browser pass took 2.8 minutes. Measured loader lifetimes were 3628.2ms (1440px), 3619.6ms (390px) and 3621.3ms (320px), with zero portrait-flight samples. Home-return checks measured zero horizontal drift in both locales across all four sections. The 320px English/Persian headers and mobile homepage screenshots were visually reviewed.
+
+
+## Current portrait in the browser tab
+
+All eight public entry documents and their extensionless copies now use the approved `assets/home/book-avatar.webp` as their favicon instead of the previous profile photograph. A content-hash query refreshes the browser's cached icon. The portrait asset itself is unchanged. All 40 Node checks passed. A Chromium check opened Home, About and the extensionless Behave detail URL, decoded each linked icon at 192×192px, received HTTP 200 with image/webp, and verified that its bytes match the current portrait exactly.

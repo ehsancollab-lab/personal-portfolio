@@ -57,6 +57,19 @@ test('plain connection check needs only its HTML document', async () => {
   await assert.rejects(() => access(new URL('../build/admin/connection-check.html', import.meta.url)));
 });
 
+test('every public route uses the current portrait as a versioned browser tab icon', async () => {
+  const portrait = await readFile(new URL('../assets/home/book-avatar.webp', import.meta.url));
+  const version = createHash('sha256').update(portrait).digest('hex').slice(0, 12);
+  for (const name of ['index', 'work', 'case-studies', 'case-study', 'experience', 'about', 'books', 'book']) {
+    for (const path of [name + '.html', ...(name === 'index' ? [] : [name + '/index.html'])]) {
+      const html = await read('site/' + path);
+      assert.ok(html.includes('<link rel="icon" href="./assets/home/book-avatar.webp?v=' + version + '" type="image/webp" sizes="192x192" />'), path);
+      assert.doesNotMatch(html, /<link rel="icon"[^>]+assets\/figma\/profile\.png/);
+    }
+  }
+  assert.deepEqual(await readFile(new URL('../build/site/assets/home/book-avatar.webp', import.meta.url)), portrait);
+});
+
 test('dashboard is deployed with the authentication worker on every route', async () => {
   const routes = JSON.parse(await read('admin/_routes.json'));
   assert.deepEqual(routes.include, ['/*']);

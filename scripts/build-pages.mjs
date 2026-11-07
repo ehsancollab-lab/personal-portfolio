@@ -46,7 +46,10 @@ const entryPoints = target === 'site' ? [resolve(output, 'app.js')] : [resolve(o
 await build({ entryPoints, outdir: output, bundle: true, splitting: true, format: 'esm', minify: true, target: 'es2022', allowOverwrite: true, chunkNames: 'chunks/[name]-[hash]' });
 if (target === 'admin') await build({ entryPoints: [resolve(root, 'server/dashboard-worker.mjs')], outfile: resolve(output, '_worker.js'), bundle: true, format: 'esm', target: 'es2022' });
 const embeddedStyles = new Map();
+let favicon = '<link rel="icon" href="./assets/figma/profile.png" type="image/png" />';
 if (target === 'site') {
+  const portraitVersion = createHash('sha256').update(await readFile(resolve(output, 'assets/home/book-avatar.webp'))).digest('hex').slice(0, 12);
+  favicon = '<link rel="icon" href="./assets/home/book-avatar.webp?v=' + portraitVersion + '" type="image/webp" sizes="192x192" />';
   // First paint must not wait for a separate stylesheet or its nested imports.
   const css = await build({ entryPoints: ['preloader.css', 'styles.css', 'library.css', 'home.css'].map(name => resolve(output, name)), outdir: output, bundle: true, write: false, minify: true, external: ['./assets/*'] });
   for (const file of css.outputFiles) embeddedStyles.set(basename(file.path), file.text.replaceAll('</style', '<\\/style'));
@@ -63,7 +66,7 @@ for (const filename of target === 'site' ? ['index.html', 'work.html', 'case-stu
       html = html.replace('<script src="./' + name + '"></script>', '<script>' + script + '</script>');
     }
   }
-  html = html.replace('</head>', '  <link rel="icon" href="./assets/figma/profile.png" type="image/png" />\n  <link rel="preload" href="./assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />\n  </head>');
+  html = html.replace('</head>', '  ' + favicon + '\n  <link rel="preload" href="./assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />\n  </head>');
   await writeFile(path, html);
 }
 if (target === 'site') {

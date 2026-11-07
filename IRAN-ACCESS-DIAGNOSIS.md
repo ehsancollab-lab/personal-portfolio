@@ -37,3 +37,14 @@ A controlled 6.5-second delay of CSS requests reproduced a separate blank-render
 Direct HTTPS inspection from the execution environment was also attempted: the normal sandbox could not reach its inherited proxy; the approved outside-sandbox retry received a proxy CONNECT 403. The runtime reports restricted egress with no user domain grants and no Iranian egress. This is an environment-policy denial, not an HTTP 403 from the portfolio or evidence about MCI. No DNS, TLS or provider block has been established, and no DNS or hosting configuration has been changed.
 
 The updated production build passed all 39 Node checks and all 29 focused Chromium checks (2.8 minutes), including first paint with stylesheet downloads blocked, the plain connection page with every subresource blocked, delayed/failed scripts, both locales at mobile widths, existing library hover and home-return stability. The 320px Persian header and mobile home/library screenshots were reviewed. Actual MCI reachability remains unverified. The owner was asked for the Namecheap Host Records table because DNS account access is not available.
+
+
+## Follow-up: phone data versus an MCI SIM router
+
+The owner can read the dependency-free connection page on the phone's MCI mobile data, but not through Wi-Fi supplied by a router that also uses an MCI SIM. This establishes a successful Iranian mobile path to the domain and a separate failing path. It does not establish that every Iranian IP or all of MCI is blocked, nor does it yet isolate the router from differences between devices/browsers.
+
+The supplied Namecheap screenshot shows the four apex A records `185.199.108.153`, `185.199.109.153`, `185.199.110.153` and `185.199.111.153`, matching GitHub's documented Pages targets. Its visible `admin` CNAME points to `ehsan-portfolio-admin.pages.dev`. No stale apex A or AAAA record is visible in the displayed rows; the screenshot also has a Show More control, so this is not verification of every possible record. No domain record was changed. The missing visible `www` record does not explain failure of the tested apex URL.
+
+The next controlled check uses the exact same phone/browser and connection URL while switching only from mobile data to the router's Wi-Fi. If that reproduces the failure, inspect the router model and its actual DNS/APN configuration before changing it. DNS cache/resolver behavior and the SIM router's upstream route remain hypotheses. No remote router access or credentials are available.
+
+References: GitHub Pages custom-domain records at https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site and Cloudflare's reversible router DNS setup at https://developers.cloudflare.com/1.1.1.1/setup/router/.
